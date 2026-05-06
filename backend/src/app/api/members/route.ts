@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseClient } from '@/lib/supabase'
-import type { ApiResponse } from '@/types'
-import type { User } from '@/types'
+import { select, del } from '@/lib/supabase'
+import type { ApiResponse, User } from '@/types'
 
 // GET /api/members?topicId=xxx
 export async function GET(request: NextRequest) {
@@ -14,11 +13,10 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const supabase = getSupabaseClient()
-    const { data: members } = await supabase
-      .from('Member')
-      .select('user:User(id, name, avatar, role)')
-      .eq('topicId', topicId)
+    const members = await select<any[]>('Member', {
+      columns: 'user:User(id, name, avatar, role)',
+      eq: { topicId },
+    })
 
     const users = (members ?? []).map((m: any) => m.user).filter(Boolean)
     return NextResponse.json<ApiResponse<User[]>>({ ok: true, data: users })
@@ -42,12 +40,7 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    const supabase = getSupabaseClient()
-    await supabase
-      .from('Member')
-      .delete()
-      .eq('topicId', topicId)
-      .eq('userId', userId)
+    await del('Member', { topicId, userId })
 
     return NextResponse.json<ApiResponse>({ ok: true })
   } catch (err) {

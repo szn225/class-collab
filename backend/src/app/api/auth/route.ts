@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseClient } from '@/lib/supabase'
+import { select, count, insert } from '@/lib/supabase'
 import type { ApiResponse, User } from '@/types'
 
 // POST /api/auth/login
@@ -14,14 +14,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = getSupabaseClient()
-
     // Check if user exists
-    const { data: existing } = await supabase
-      .from('User')
-      .select('*')
-      .eq('name', name.trim())
-      .single()
+    const existing = await select<User>('User', {
+      eq: { name: name.trim() },
+      single: true,
+    })
 
     if (existing) {
       return NextResponse.json<ApiResponse<User>>({
@@ -37,19 +34,13 @@ export async function POST(request: NextRequest) {
     }
 
     // First user becomes admin, others are members
-    const { count } = await supabase
-      .from('User')
-      .select('*', { count: 'exact', head: true })
+    const userCount = await count('User')
+    const role = userCount === 0 ? 'admin' : 'member'
 
-    const role = count === 0 ? 'admin' : 'member'
+    const newUsers = await insert('User', { name: name.trim(), role })
+    const newUser = newUsers[0]
 
-    const { data: newUser, error } = await supabase
-      .from('User')
-      .insert({ name: name.trim(), role })
-      .select()
-      .single()
-
-    if (error || !newUser) {
+    if (!newUser) {
       return NextResponse.json<ApiResponse>(
         { ok: false, error: '注册失败' },
         { status: 500 }

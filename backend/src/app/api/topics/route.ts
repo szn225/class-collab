@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseClient } from '@/lib/supabase'
-import type { ApiResponse } from '@/types'
-import type { Topic } from '@/types'
+import { select, insert } from '@/lib/supabase'
+import type { ApiResponse, Topic } from '@/types'
 
 // Generate a simple invite code
 function generateInviteCode(): string {
@@ -24,20 +23,18 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const supabase = getSupabaseClient()
-
     // Get topics where user is a member or creator
-    const { data: memberTopics } = await supabase
-      .from('Member')
-      .select('topicId')
-      .eq('userId', userId)
+    const memberTopics = await select<{ topicId: string }[]>('Member', {
+      columns: 'topicId',
+      eq: { userId },
+    })
 
     const topicIds = memberTopics?.map(m => m.topicId) ?? []
 
-    const { data: createdTopics } = await supabase
-      .from('Topic')
-      .select('id')
-      .eq('createdBy', userId)
+    const createdTopics = await select<{ id: string }[]>('Topic', {
+      columns: 'id',
+      eq: { createdBy: userId },
+    })
 
     const allIds = [...new Set([
       ...topicIds,
@@ -48,15 +45,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json<ApiResponse<Topic[]>>({ ok: true, data: [] })
     }
 
-    const { data: topics } = await supabase
-      .from('Topic')
-      .select(`
-        *,
-        member:Member(count),
-        material:Material(count)
-      `)
-      .in('id', allIds)
-      .order('createdAt', { ascending: false })
+    const topics = await select<any[]>('Topic', {
+      columns: '*, member:Member(count), material:Material(count)',
+      in: { column: 'id', values: allIds },
+      order: { column: 'createdAt', ascending: false },
+    })
 
     const result = (topics ?? []).map((t: any) => ({
       ...t,
@@ -85,14 +78,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = getSupabaseClient()
-
     // Verify user is admin
-    const { data: user } = await supabase
-      .from('User')
-      .select('role')
-      .eq('id', userId)
-      .single()
+    const user = await select<{ role: string }>('User', {
+      columns: 'role',
+      eq: { id: userId },
+      single: true,
+    })
 
     if (user?.role !== 'admin') {
       return NextResponse.json<ApiResponse>(
@@ -104,27 +95,24 @@ export async function POST(request: NextRequest) {
     let inviteCode = generateInviteCode()
     // Ensure unique invite code
     for (let i = 0; i < 10; i++) {
-      const { data: existing } = await supabase
-        .from('Topic')
-        .select('id')
-        .eq('inviteCode', inviteCode)
-        .single()
+      const existing = await select<{ id: string }>('Topic', {
+        columns: 'id',
+        eq: { inviteCode },
+        single: true,
+      })
       if (!existing) break
       inviteCode = generateInviteCode()
     }
 
-    const { data: topic, error } = await supabase
-      .from('Topic')
-      .insert({
-        title: title.trim(),
-        description: description?.trim(),
-        inviteCode,
-        createdBy: userId,
-      })
-      .select()
-      .single()
+    const topics = await insert('Topic', {
+      title: title.trim(),
+      description: description?.trim(),
+      inviteCode,
+      createdBy: userId,
+    })
+    const topic = topics[0]
 
-    if (error || !topic) {
+    if (!topic) {
       return NextResponse.json<ApiResponse>(
         { ok: false, error: '创建失败' },
         { status: 500 }
@@ -132,10 +120,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Auto-add creator as member
-    await supabase.from('Member').insert({
-      topicId: topic.id,
-      userId,
-    })
+    await insert('Member', { topicId: topic.id, userId })
 
     return NextResponse.json<ApiResponse<Topic>>(
       { ok: true, data: topic },

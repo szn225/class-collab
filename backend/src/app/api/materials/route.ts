@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseClient } from '@/lib/supabase'
+import { select, insert } from '@/lib/supabase'
 import type { ApiResponse, Material } from '@/types'
 
 // GET /api/materials?topicId=xxx
@@ -13,12 +13,11 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const supabase = getSupabaseClient()
-    const { data: materials } = await supabase
-      .from('Material')
-      .select('*, user:User(name, avatar)')
-      .eq('topicId', topicId)
-      .order('createdAt', { ascending: true })
+    const materials = await select<any[]>('Material', {
+      columns: '*, user:User(name, avatar)',
+      eq: { topicId },
+      order: { column: 'createdAt', ascending: true },
+    })
 
     const result = (materials ?? []).map((m: any) => ({
       id: m.id,
@@ -53,15 +52,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = getSupabaseClient()
-
     // Verify member
-    const { data: member } = await supabase
-      .from('Member')
-      .select('id')
-      .eq('topicId', topicId)
-      .eq('userId', userId)
-      .single()
+    const member = await select<{ id: string }>('Member', {
+      columns: 'id',
+      eq: { topicId, userId },
+      single: true,
+    })
 
     if (!member) {
       return NextResponse.json<ApiResponse>(
@@ -70,13 +66,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { data: material, error } = await supabase
-      .from('Material')
-      .insert({ topicId, userId, type, content, imageUrl })
-      .select()
-      .single()
+    const materials = await insert('Material', { topicId, userId, type, content, imageUrl })
+    const material = materials[0]
 
-    if (error || !material) {
+    if (!material) {
       return NextResponse.json<ApiResponse>(
         { ok: false, error: '提交失败' },
         { status: 500 }

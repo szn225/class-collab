@@ -1,6 +1,6 @@
 // /api/topics/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseClient } from '@/lib/supabase'
+import { select, update } from '@/lib/supabase'
 import type { ApiResponse, Topic } from '@/types'
 
 interface Params { params: { id: string } }
@@ -8,12 +8,10 @@ interface Params { params: { id: string } }
 // GET /api/topics/:id
 export async function GET(_: NextRequest, { params }: Params) {
   try {
-    const supabase = getSupabaseClient()
-    const { data: topic } = await supabase
-      .from('Topic')
-      .select('*')
-      .eq('id', params.id)
-      .single()
+    const topic = await select<Topic>('Topic', {
+      eq: { id: params.id },
+      single: true,
+    })
 
     if (!topic) {
       return NextResponse.json<ApiResponse>(
@@ -36,16 +34,10 @@ export async function GET(_: NextRequest, { params }: Params) {
 export async function PATCH(request: NextRequest, { params }: Params) {
   try {
     const body = await request.json()
-    const supabase = getSupabaseClient()
+    const topics = await update('Topic', params.id, body)
+    const topic = topics[0]
 
-    const { data: topic, error } = await supabase
-      .from('Topic')
-      .update(body)
-      .eq('id', params.id)
-      .select()
-      .single()
-
-    if (error || !topic) {
+    if (!topic) {
       return NextResponse.json<ApiResponse>(
         { ok: false, error: '更新失败' },
         { status: 500 }

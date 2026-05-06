@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseClient } from '@/lib/supabase'
+import { select, insert } from '@/lib/supabase'
 import type { ApiResponse, Topic } from '@/types'
 
 // POST /api/topics/join
@@ -13,14 +13,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = getSupabaseClient()
-
     // Find topic by invite code
-    const { data: topic } = await supabase
-      .from('Topic')
-      .select('*')
-      .eq('inviteCode', inviteCode.toUpperCase())
-      .single()
+    const topic = await select<Topic>('Topic', {
+      eq: { inviteCode: inviteCode.toUpperCase() },
+      single: true,
+    })
 
     if (!topic) {
       return NextResponse.json<ApiResponse>(
@@ -37,12 +34,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if already a member
-    const { data: existing } = await supabase
-      .from('Member')
-      .select('id')
-      .eq('topicId', topic.id)
-      .eq('userId', userId)
-      .single()
+    const existing = await select<{ id: string }>('Member', {
+      columns: 'id',
+      eq: { topicId: topic.id, userId },
+      single: true,
+    })
 
     if (existing) {
       return NextResponse.json<ApiResponse<Topic>>({
@@ -52,17 +48,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Add member
-    const { error } = await supabase.from('Member').insert({
-      topicId: topic.id,
-      userId,
-    })
-
-    if (error) {
-      return NextResponse.json<ApiResponse>(
-        { ok: false, error: '加入失败' },
-        { status: 500 }
-      )
-    }
+    await insert('Member', { topicId: topic.id, userId })
 
     return NextResponse.json<ApiResponse<Topic>>({ ok: true, data: topic })
   } catch (err) {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseClient } from '@/lib/supabase'
+import { select, insert, update } from '@/lib/supabase'
 import { callDeepSeek, buildArticlePrompt } from '@/lib/deepseek'
 import { markdownToWeChatHTML, buildWeChatHTML } from '@/lib/template'
 import type { ApiResponse, Article } from '@/types'
@@ -15,14 +15,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = getSupabaseClient()
-
     // Verify user is admin
-    const { data: user } = await supabase
-      .from('User')
-      .select('role')
-      .eq('id', userId)
-      .single()
+    const user = await select<{ role: string }>('User', {
+      columns: 'role',
+      eq: { id: userId },
+      single: true,
+    })
 
     if (user?.role !== 'admin') {
       return NextResponse.json<ApiResponse>(
@@ -32,11 +30,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Get topic
-    const { data: topic } = await supabase
-      .from('Topic')
-      .select('*')
-      .eq('id', topicId)
-      .single()
+    const topic = await select<any>('Topic', {
+      eq: { id: topicId },
+      single: true,
+    })
 
     if (!topic) {
       return NextResponse.json<ApiResponse>(
@@ -46,11 +43,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Get all materials for this topic
-    const { data: materials } = await supabase
-      .from('Material')
-      .select('*, user:User(name)')
-      .eq('topicId', topicId)
-      .order('createdAt', { ascending: true })
+    const materials = await select<any[]>('Material', {
+      columns: '*, user:User(name)',
+      eq: { topicId },
+      order: { column: 'createdAt', ascending: true },
+    })
 
     if (!materials || materials.length === 0) {
       return NextResponse.json<ApiResponse>(
@@ -100,39 +97,27 @@ export async function POST(request: NextRequest) {
     const fullHtml = buildWeChatHTML(title, bodyHtml)
 
     // Save or update article
-    const { data: existing } = await supabase
-      .from('Article')
-      .select('id')
-      .eq('topicId', topicId)
-      .single()
+    const existing = await select<{ id: string }>('Article', {
+      columns: 'id',
+      eq: { topicId },
+      single: true,
+    })
 
     let articleData: any
     if (existing) {
-      const { data } = await supabase
-        .from('Article')
-        .update({
-          title,
-          content: articleMarkdown,
-          html: fullHtml,
-        })
-        .eq('topicId', topicId)
-        .select()
-        .single()
-      articleData = data
+      const articles = await update('Article', existing.id, {
+        title,
+        content: articleMarkdown,
+        html: fullHtml,
+      })
+      articleData = articles[0]
     } else {
-      const { data } = await supabase
-        .from('Article')
-        .insert({ topicId, title, content: articleMarkdown, html: fullHtml })
-        .select()
-        .single()
-      articleData = data
+      const articles = await insert('Article', { topicId, title, content: articleMarkdown, html: fullHtml })
+      articleData = articles[0]
     }
 
     // Update topic status
-    await supabase
-      .from('Topic')
-      .update({ status: 'generated' })
-      .eq('id', topicId)
+    await update('Topic', topicId, { status: 'generated' })
 
     return NextResponse.json<ApiResponse<Article>>({
       ok: true,

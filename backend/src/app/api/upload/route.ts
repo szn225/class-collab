@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseClient, getStorageBucket } from '@/lib/supabase'
+import { uploadFile, getPublicUrl } from '@/lib/supabase'
 import type { ApiResponse } from '@/types'
 
 // POST /api/upload
@@ -34,29 +34,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = getSupabaseClient()
     const ext = file.name.split('.').pop() || 'jpg'
     const fileName = `${userId}/${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`
 
-    const { data, error } = await supabase.storage
-      .from(getStorageBucket())
-      .upload(fileName, file, {
-        contentType: file.type,
-        cacheControl: '3600',
-      })
+    await uploadFile('materials', fileName, file)
 
-    if (error) {
-      console.error('Upload error:', error)
-      return NextResponse.json<ApiResponse>(
-        { ok: false, error: '上传失败' },
-        { status: 500 }
-      )
-    }
-
-    // Get public URL
-    const { data: { publicUrl } } = supabase.storage
-      .from(getStorageBucket())
-      .getPublicUrl(data.path)
+    // Use the constructed path directly for the public URL
+    const publicUrl = getPublicUrl('materials', fileName)
 
     return NextResponse.json<ApiResponse<{ url: string }>>({
       ok: true,

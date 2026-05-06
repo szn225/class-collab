@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseClient } from '@/lib/supabase'
+import { select } from '@/lib/supabase'
 import type { ApiResponse, Article } from '@/types'
 
 // GET /api/article?topicId=xxx
@@ -13,12 +13,10 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const supabase = getSupabaseClient()
-    const { data: article } = await supabase
-      .from('Article')
-      .select('*')
-      .eq('topicId', topicId)
-      .single()
+    const article = await select<Article>('Article', {
+      eq: { topicId },
+      single: true,
+    })
 
     if (!article) {
       return NextResponse.json<ApiResponse>(
