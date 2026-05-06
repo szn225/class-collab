@@ -1,0 +1,31 @@
+<view class="container">
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+
+  <view wx:if="{{!loading && article}}" class="article-page">
+    <view class="card">
+      <view class="article-title">{{article.title}}</view>
+      <view class="article-meta">由 AI 基于 {{materialCount}} 条素材生成</view>
+      <view class="article-meta">生成时间: {{formatTime(article.createdAt)}}</view>
+    </view>
+
+    <view class="card article-content">
+      <rich-text nodes="{{article.html}}" />
+    </view>
+
+    <button class="btn-primary" bindtap="copyHTML">📋 复制 HTML 到微信公众号</button>
+
+    <view class="tip">
+      <view style="font-weight: 600; margin-bottom: 5px;">使用说明：</view>
+      <view>1. 点击上方按钮复制 HTML</view>
+      <view>2. 打开 <text style="color: #07c160;">微信公众平台</text> → 新建图文消息</view>
+      <view>3. 在编辑器中粘贴（Ctrl+V / Cmd+V）</view>
+      <view>4. 调整格式和图片后发布</view>
+    </view>
+  </view>
+
+  <view wx:elif="{{!loading && !article}}" class="empty-state">
+    <view style="font-size: 40px; margin-bottom: 10px;">📄</view>
+    <view>文章尚未生成</view>
+    <view style="font-size: 12px; margin-top: 5px;">请联系管理员生成文章</view>
+  </view>
+</view>

@@ -1,0 +1,71 @@
+// This is a reference schema. Tables are created via Supabase SQL editor.
+// Run the SQL in supabase-schema.sql against your Supabase project.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  name      String
+  avatar    String?
+  role      String     @default("member")
+  createdAt DateTime   @default(now())
+  topics    Topic[]    @relation("Creator")
+  materials Material[]
+}
+
+model Topic {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  coverImage  String?
+  status      String     @default("active")
+  inviteCode  String     @unique
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  createdBy   String
+  creator     User       @relation("Creator", fields: [createdBy], references: [id])
+  members     Member[]
+  materials   Material[]
+  article     Article?
+}
+
+model Member {
+  id        String   @id @default(cuid())
+  topicId   String
+  topic     Topic    @relation(fields: [topicId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([topicId, userId])
+}
+
+model Material {
+  id        String   @id @default(cuid())
+  topicId   String
+  topic     Topic    @relation(fields: [topicId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  type      String
+  content   String?
+  imageUrl  String?
+  createdAt DateTime @default(now())
+}
+
+model Article {
+  id        String   @id @default(cuid())
+  topicId   String   @unique
+  topic     Topic    @relation(fields: [topicId], references: [id])
+  title     String
+  content   String
+  html      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

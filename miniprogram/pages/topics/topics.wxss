@@ -1,0 +1,76 @@
+.join-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px 15px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.join-section .input-field {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.join-section .btn-small {
+  width: auto;
+  white-space: nowrap;
+}
+
+.topic-card {
+  cursor: pointer;
+}
+
+.topic-card:active {
+  opacity: 0.8;
+}
+
+.topic-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.topic-title {
+  font-size: 17px;
+  font-weight: 600;
+  flex: 1;
+}
+
+.topic-status {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 8px;
+}
+
+.status-active {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-closed {
+  background: #f5f5f5;
+  color: #999;
+}
+
+.status-generated {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.topic-desc {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.topic-meta {
+  font-size: 12px;
+  color: #999;
+  display: flex;
+  gap: 16px;
+}

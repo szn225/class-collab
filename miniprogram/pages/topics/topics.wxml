@@ -1,0 +1,28 @@
+<view class="container">
+  <!-- Join Topic Section -->
+  <view class="join-section">
+    <input class="input-field" placeholder="输入6位邀请码加入主题" model:value="{{inviteCode}}" maxlength="6" />
+    <button class="btn-primary btn-small" bindtap="handleJoin" loading="{{joining}}">加入</button>
+  </view>
+
+  <!-- Topic List -->
+  <view wx:if="{{topics.length === 0 && !loading}}" class="empty-state">
+    <view style="font-size: 40px; margin-bottom: 10px;">📋</view>
+    <view>暂无主题</view>
+    <view style="font-size: 12px; margin-top: 5px;">输入邀请码加入，或联系管理员创建</view>
+  </view>
+
+  <view wx:for="{{topics}}" wx:key="id" class="card topic-card" data-id="{{item.id}}" bindtap="goToTopic">
+    <view class="topic-header">
+      <view class="topic-title">{{item.title}}</view>
+      <view class="topic-status status-{{item.status}}">{{statusText(item.status)}}</view>
+    </view>
+    <view class="topic-desc" wx:if="{{item.description}}">{{item.description}}</view>
+    <view class="topic-meta">
+      <text>{{item.memberCount || 0}} 人参与</text>
+      <text>{{item.materialCount || 0}} 条素材</text>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+</view>

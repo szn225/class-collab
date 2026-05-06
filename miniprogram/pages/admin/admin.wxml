@@ -1,0 +1,53 @@
+<view class="container">
+  <!-- User Info -->
+  <view class="card user-card">
+    <view class="user-avatar">{{userName ? userName[0] : '?'}}</view>
+    <view>
+      <view class="user-name">{{userName}}</view>
+      <view class="user-role">{{isAdmin ? '管理员' : '成员'}}</view>
+    </view>
+    <button class="logout-btn" bindtap="handleLogout">退出</button>
+  </view>
+
+  <view wx:if="{{!isAdmin}}" class="empty-state">
+    <view>只有管理员可以使用管理功能</view>
+  </view>
+
+  <view wx:if="{{isAdmin}}">
+    <!-- Create Topic -->
+    <view class="card">
+      <view class="section-title">创建新主题</view>
+      <input class="input-field" placeholder="主题名称（如：2026春季运动会）" model:value="{{newTopicTitle}}" />
+      <input class="input-field" style="margin-top: 8px;" placeholder="主题描述（可选）" model:value="{{newTopicDesc}}" />
+      <button class="btn-primary btn-small" style="margin-top: 10px;" bindtap="createTopic" loading="{{creating}}">创建主题</button>
+    </view>
+
+    <!-- Topic list for admin -->
+    <view class="card">
+      <view class="section-title">管理主题</view>
+      <view wx:for="{{topics}}" wx:key="id" class="admin-topic-item">
+        <view>
+          <view class="admin-topic-title">{{item.title}}</view>
+          <view class="admin-topic-meta">{{item.memberCount || 0}} 人 · {{item.materialCount || 0}} 条素材</view>
+        </view>
+        <view class="admin-actions">
+          <button class="action-btn-mini" wx:if="{{item.status === 'active'}}" bindtap="closeTopic" data-id="{{item.id}}">关闭</button>
+          <button class="action-btn-mini primary" wx:if="{{item.materialCount > 0 && item.status !== 'generated'}}" bindtap="generateArticle" data-id="{{item.id}}">生成文章</button>
+          <button class="action-btn-mini" wx:if="{{item.status === 'generated'}}" bindtap="viewArticle" data-id="{{item.id}}">查看</button>
+        </view>
+      </view>
+      <view wx:if="{{topics.length === 0}}" style="color: #999; font-size: 13px; text-align: center; padding: 10px;">暂无主题</view>
+    </view>
+
+    <!-- Members -->
+    <view class="card">
+      <view class="section-title">班级成员 ({{members.length}} 人)</view>
+      <view wx:for="{{members}}" wx:key="id" class="member-item">
+        <view class="member-avatar">{{item.name ? item.name[0] : '?'}}</view>
+        <view class="member-name">{{item.name}}</view>
+        <view class="member-role-badge" wx:if="{{item.role === 'admin'}}">管理员</view>
+      </view>
+      <view wx:if="{{members.length === 0}}" style="color: #999; font-size: 13px; text-align: center; padding: 10px;">暂无成员</view>
+    </view>
+  </view>
+</view>

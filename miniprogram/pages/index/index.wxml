@@ -1,0 +1,18 @@
+<view class="login-container">
+  <view class="login-box">
+    <view class="logo">📝</view>
+    <view class="title">班级共创</view>
+    <view class="subtitle">一起记录我们的班级故事</view>
+
+    <view class="form">
+      <input class="input" placeholder="请输入你的姓名" model:value="{{name}}" maxlength="10" />
+      <button class="btn-primary" bindtap="handleLogin" loading="{{loading}}">
+        {{loading ? '登录中...' : '进入'}}
+      </button>
+    </view>
+
+    <view class="hint">
+      首次使用自动注册，第一位用户默认为管理员
+    </view>
+  </view>
+</view>

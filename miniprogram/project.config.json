@@ -1,0 +1,58 @@
+{
+  "description": "班级共创公众号文章",
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "setting": {
+    "bundle": false,
+    "userConfirmedBundleSwitch": false,
+    "urlCheck": true,
+    "scopeDataCheck": false,
+    "coverView": true,
+    "es6": true,
+    "postcss": true,
+    "compileHotReLoad": false,
+    "lazyloadPlaceholderEnable": false,
+    "preloadBackgroundData": false,
+    "minified": true,
+    "autoAudits": false,
+    "newFeature": false,
+    "uglifyFileName": false,
+    "uploadWithSourceMap": true,
+    "useIsolateContext": true,
+    "nodeModules": false,
+    "enhance": true,
+    "useMultiFrameRuntime": true,
+    "useApiHook": true,
+    "useApiHostProcess": true,
+    "showShadowRootInWxmlPanel": true,
+    "packNpmManually": false,
+    "enableShareTimeline": false,
+    "packNpmRelationList": [],
+    "compileWorklet": false,
+    "minifyWXSS": true,
+    "minifyWXML": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "condition": false,
+    "swc": false,
+    "disableSWC": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
+  },
+  "appid": "wxfd53c8b15bc8fa51",
+  "projectname": "班级共创",
+  "libVersion": "3.3.4",
+  "condition": {},
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
+  },
+  "compileType": "miniprogram",
+  "simulatorPluginLibVersion": {}
+}

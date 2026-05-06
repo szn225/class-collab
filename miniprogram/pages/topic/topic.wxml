@@ -1,0 +1,62 @@
+<view class="page">
+  <!-- Topic Header -->
+  <view class="topic-header-card">
+    <view class="topic-title">{{topic.title}}</view>
+    <view class="topic-desc" wx:if="{{topic.description}}">{{topic.description}}</view>
+    <view class="topic-info">
+      <text>邀请码: <text class="invite-code">{{topic.inviteCode}}</text></text>
+      <text class="status-tag status-{{topic.status}}">{{statusText(topic.status)}}</text>
+    </view>
+  </view>
+
+  <!-- Generated article entry -->
+  <view wx:if="{{topic.status === 'generated'}}" class="card article-entry" bindtap="goToArticle">
+    <text>📄 查看生成的文章</text>
+    <text style="color: #999;">›</text>
+  </view>
+
+  <!-- Materials Timeline -->
+  <view class="timeline" wx:if="{{materials.length > 0}}">
+    <view wx:for="{{materials}}" wx:key="id" class="material-item">
+      <view class="material-avatar">{{item.userName ? item.userName[0] : '?'}}</view>
+      <view class="material-body">
+        <view class="material-header">
+          <text class="material-user">{{item.userName}}</text>
+          <text class="material-time">{{formatTime(item.createdAt)}}</text>
+        </view>
+
+        <view wx:if="{{item.type === 'text'}}" class="material-text">{{item.content}}</view>
+        <view wx:if="{{item.type === 'voice'}}" class="material-voice">
+          <text>🎤 {{item.content}}</text>
+        </view>
+        <view wx:if="{{item.type === 'image'}}" class="material-image">
+          <image src="{{item.imageUrl}}" mode="widthFix" style="width:100%;border-radius:6px;" bindtap="previewImage" data-url="{{item.imageUrl}}" />
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{materials.length === 0 && !loading}}" class="empty-state">
+    <view style="font-size: 40px; margin-bottom: 10px;">💬</view>
+    <view>暂无素材</view>
+    <view style="font-size: 12px; margin-top: 5px;">在下方提交第一条素材吧</view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+
+  <!-- Bottom Input Bar -->
+  <view class="bottom-bar" wx:if="{{topic.status !== 'closed' && topic.status !== 'generated'}}">
+    <view class="input-wrapper">
+      <input class="text-input" placeholder="输入文字..." model:value="{{inputText}}" maxlength="500" />
+      <button class="send-btn" bindtap="sendText" disabled="{{!inputText.trim()}}">发送</button>
+    </view>
+    <view class="action-row">
+      <button class="action-btn" bindtap="chooseImage">📷 图片</button>
+      <button class="action-btn" bindtap="startRecording" wx:if="{{!recording}}">🎤 录音</button>
+      <button class="action-btn recording" bindtap="stopRecording" wx:if="{{recording}}">⏹ 停止</button>
+    </view>
+  </view>
+
+  <!-- Placeholder for bottom bar -->
+  <view class="bottom-placeholder" wx:if="{{topic.status !== 'closed' && topic.status !== 'generated'}}"></view>
+</view>
