@@ -1,8 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // API routes need larger body for image uploads
-  experimental: {
-    serverComponentsExternalPackages: ['@prisma/client'],
+  outputFileTracingExcludes: {
+    '*': [
+      'node_modules/@swc/core-linux-x64-gnu',
+      'node_modules/@swc/core-linux-x64-musl',
+      'node_modules/esbuild',
+    ],
   },
 }
 
