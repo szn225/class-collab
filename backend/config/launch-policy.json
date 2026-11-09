@@ -1,0 +1,12 @@
+{
+  "gift": 12,
+  "writing": 5,
+  "perImage": 0,
+  "visionEnabled": false,
+  "dailyBudget": 500,
+  "monthlyBudget": 0,
+  "writingInputCentsPerMillion": 200,
+  "writingOutputCentsPerMillion": 800,
+  "confirmed": true,
+  "enabled": false
+}

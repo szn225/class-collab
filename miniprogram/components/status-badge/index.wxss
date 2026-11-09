@@ -1,0 +1,80 @@
+.state {
+  text-align: center;
+  padding: 64rpx 24rpx;
+}
+.state-icon {
+  width: 88rpx;
+  height: 88rpx;
+  margin-bottom: 20rpx;
+}
+.title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #20304a;
+}
+.description {
+  font-size: 26rpx;
+  color: #59677d;
+  margin: 16rpx 0 28rpx;
+  line-height: 1.7;
+}
+button {
+  background: #eef3ff;
+  color: #2457d6;
+  border: 0;
+  border-radius: 20rpx;
+  min-height: 88rpx;
+  font-size: 28rpx;
+}
+button::after {
+  border: 0;
+}
+.badge {
+  display: inline-block;
+  font-size: 24rpx;
+  line-height: 36rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 12rpx;
+  white-space: nowrap;
+  background: #edf0f4;
+  color: #526075;
+}
+.badge-active {
+  background: #ddf3e8;
+  color: #176341;
+}
+.badge-generated {
+  background: #e9efff;
+  color: #2457d6;
+}
+.skeleton-card {
+  background: white;
+  border: 2rpx solid #e8ebef;
+  padding: 32rpx;
+  border-radius: 24rpx;
+  margin-bottom: 20rpx;
+}
+.skeleton {
+  height: 24rpx;
+  background: #e8edf5;
+  border-radius: 8rpx;
+  margin: 16rpx 0;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+.short {
+  width: 45%;
+  height: 32rpx;
+}
+.medium {
+  width: 65%;
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}

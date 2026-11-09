@@ -8,14 +8,19 @@
     "start": "next start",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "test": "node --test ../scripts/v2-domain.test.cjs ../scripts/v2-http.test.cjs ../scripts/v2-miniprogram.test.cjs ../scripts/v2-network.test.cjs",
+    "test:grades": "node ../scripts/grades-integration.test.cjs",
+    "typecheck:mini": "tsc -p ../miniprogram/tsconfig.json",
+    "test:guest": "node ../scripts/guest-save.test.cjs"
   },
   "dependencies": {
-"next": "^14.2.0",
+    "next": "^14.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@types/node": "25.6.0",
     "@types/react": "19.2.14",
     "typescript": "^5.3.0"
   }

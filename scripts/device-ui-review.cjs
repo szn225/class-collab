@@ -1,0 +1,17 @@
+// Local UI fixtures never call write APIs. Restore the real account page on exit.
+const automator=require('/private/tmp/hui-miniprogram-automation/node_modules/miniprogram-automator')
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict')
+const out=path.resolve(__dirname,'../docs/device-test/ui-review')
+async function settled(p){for(let i=0;i<160;i++){if(!await p.data('busy')&&!await p.data('loading'))return;await new Promise(r=>setTimeout(r,150))}throw Error('界面加载超时')}
+async function main(){fs.mkdirSync(out,{recursive:true});const m=await automator.connect({wsEndpoint:'ws://127.0.0.1:9431'});try{
+ let p=await m.currentPage();await settled(p);await p.callMethod('goHome');await settled(p)
+ async function capture(name){await settled(p);await new Promise(r=>setTimeout(r,250));const layout=await m.evaluate(()=>new Promise(resolve=>{const width=wx.getSystemInfoSync().windowWidth;const q=wx.createSelectorQuery();q.selectAll('.page > button,.heading button,.card,.composer,.bottom-nav,.activity-tabs').boundingClientRect();q.selectAll('.setting-row,.page > button.primary').boundingClientRect();q.exec(results=>resolve({width,rects:results[0].map(r=>({left:r.left,right:r.right,width:r.width})),full:results[1].map(r=>r.width)}))}));for(const r of layout.rects)assert.ok(r.left>=-1&&r.right<=layout.width+1,`${name}: horizontal overflow ${JSON.stringify(r)}`);for(const w of layout.full)assert.ok(w>=layout.width*.75,`${name}: full-width control shrunk to ${w}`);await m.screenshot({path:path.join(out,name+'.png')});console.log('PASS native layout '+name)}
+ await capture('home');const activities=await p.data('activities');assert.ok(activities.length);await p.callMethod('openActivity',{currentTarget:{dataset:{id:activities[0].id}}});await settled(p);await capture('stream')
+ for(const s of ['materials','article','settings','members','invite']){await p.callMethod('navigate',{currentTarget:{dataset:{screen:s}}});await settled(p);await capture(s)}
+ await p.callMethod('goHome');await settled(p);await p.callMethod('navigate',{currentTarget:{dataset:{screen:'profile'}}});await settled(p);await capture('profile');await p.callMethod('navigate',{currentTarget:{dataset:{screen:'points'}}});await settled(p);await capture('points')
+ // Render non-mutating local edge states, including participant navigation.
+ const saved={activity:await p.data('activity'),user:await p.data('user')};
+ const article={title:'一起记录春日的美好',paragraphs:['大家带着各自的观察和记录来到活动中，用文字和照片留下当天的片段。','这些共同收集的资料，让活动里的每一个真实细节得以保留。'],status:'draft',statusText:'草稿',revision:1,images:[],imageUrls:[],usedDetails:[],changed:false};
+ for(const [screen,data] of [['create',{name:'',description:''}],['join',{inviteCode:''}],['generate',{}],['quote',{quote:{texts:12,images:6,price:5,balance:12,visionEnabled:false}}],['article',{article}],['edit',{editTitle:article.title,editBody:article.paragraphs.join('\n\n'),editImages:[],dirty:false}],['login',{consent:false}],['stream',{activity:{...saved.activity,role:'participant',manager:false,owner:false},materials:[],photos:[],message:''}]]){await p.callMethod('to',screen);await p.setData({screen,error:'',busy:false,loading:false,keyboardHeight:0,...data});await m.evaluate(()=>wx.pageScrollTo({scrollTop:0,duration:0}));await capture(screen==='stream'?'participant-empty':screen+'-fixture')}
+ }finally{await m.reLaunch('/pages/co-create/index');await m.disconnect()}}
+main().catch(e=>{console.error(e.message);process.exitCode=1})

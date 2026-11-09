@@ -1,0 +1,6 @@
+<view class="state">
+  <image class="state-icon" src="/images/campus/notebook.png" />
+  <view class="title">{{title}}</view>
+  <view class="description">{{description}}</view>
+  <button wx:if="{{action}}" bindtap="activate">{{action}}</button>
+</view>

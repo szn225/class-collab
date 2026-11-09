@@ -1,0 +1,13 @@
+<!-- 键值对分组列表：157 校 20 列的「纵向降维」呈现，不做横向滚动表 -->
+<view class="kv">
+  <view class="kv-title" wx:if="{{title}}">{{title}}</view>
+  <view class="rows">
+    <view class="row" wx:for="{{items}}" wx:key="k">
+      <view class="grow">
+        <view class="ttl">{{item.k}}</view>
+        <view class="cap" wx:if="{{item.sub}}">{{item.sub}}</view>
+      </view>
+      <view class="kv-v num {{item.strong ? 'strong' : ''}}">{{item.v}}</view>
+    </view>
+  </view>
+</view>

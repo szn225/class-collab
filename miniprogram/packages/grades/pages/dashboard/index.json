@@ -1,0 +1,16 @@
+{
+  "navigationBarTitleText": "成绩记录",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "nav-bar": "../../components/nav-bar/index",
+    "metric-hero": "../../components/metric-hero/index",
+    "tier-verdict": "../../components/tier-verdict/index",
+    "trend-mini": "../../components/trend-mini/index",
+    "empty-state": "../../components/empty-state/index",
+    "disclaimer-bar": "../../components/disclaimer-bar/index",
+    "t-icon": "/packages/grades/miniprogram_npm/tdesign-miniprogram/icon/icon",
+    "grade-context": "../../components/grade-context/index",
+    "grade-tabs": "../../components/grade-tabs/index"
+  },
+  "navigationStyle": "custom"
+}

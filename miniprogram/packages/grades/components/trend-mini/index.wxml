@@ -1,0 +1,49 @@
+<!-- 趋势迷你图：反向 Y 轴（位次优在上）；跨口径断点 + 空心点隔离（AC-19/20/21） -->
+<view class="trend">
+  <view class="spread trend-head">
+    <text class="h2">折算全市位次趋势</text>
+    <text class="sub">越靠上越好</text>
+  </view>
+
+  <!-- 全部记录均为校内考试 → 空态文案，不画折线（AC-19 第 5 条） -->
+  <empty-state
+    wx:if="{{emptyText}}"
+    icon="chart-line"
+    title="{{emptyText}}"
+    desc="录入一次集团联考或全市统考，就能看到全市位次趋势"
+  />
+
+  <block wx:else>
+    <canvas
+      type="2d"
+      id="trend"
+      class="trend-cv"
+      style="width:100%;height:{{chartHeight}}px"
+      bindlongpress="onLongPress"
+      bindtouchstart="onTouchStart"
+      bindtouchend="onTouchEnd"
+    ></canvas>
+
+    <!-- 图例：空心点语义必须显式标注（文案取 core 常量，单一来源） -->
+    <view class="legend">
+      <view class="lg-dot lg-solid"></view>
+      <text>折算位次</text>
+      <view class="lg-dot lg-hollow"></view>
+      <text>{{legend}}</text>
+      <text class="lg-hint">长按圆点看详情</text>
+    </view>
+
+    <!-- 反向指标三重保险之③：显式语义声明 -->
+    <view class="semantic">
+      <view class="semantic-ic">
+        <t-icon name="arrow-down" size="16px" />
+      </view>
+      <text>位次下降代表进步（不用股市红涨绿跌；<text class="txt-up">绿=进步</text>、<text class="txt-down">红=退步</text>）</text>
+    </view>
+
+    <view class="tip" wx:if="{{singlePointTip}}">{{singlePointTip}}</view>
+  </block>
+
+  <!-- 屏幕阅读器文字摘要（UIUX §12） -->
+  <view class="sr-only">{{summary}}</view>
+</view>

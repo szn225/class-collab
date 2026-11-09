@@ -1,28 +1,85 @@
-<view class="container">
-  <!-- Join Topic Section -->
-  <view class="join-section">
-    <input class="input-field" placeholder="输入6位邀请码加入主题" model:value="{{inviteCode}}" maxlength="6" />
-    <button class="btn-primary btn-small" bindtap="handleJoin" loading="{{joining}}">加入</button>
+<view class="page">
+  <view class="row spread">
+    <text class="eyebrow">一起记录 · 一起成长</text>
+    <image class="icon" src="/images/campus/star.png" />
   </view>
-
-  <!-- Topic List -->
-  <view wx:if="{{topics.length === 0 && !loading}}" class="empty-state">
-    <view style="font-size: 40px; margin-bottom: 10px;">📋</view>
-    <view>暂无主题</view>
-    <view style="font-size: 12px; margin-top: 5px;">输入邀请码加入，或联系管理员创建</view>
-  </view>
-
-  <view wx:for="{{topics}}" wx:key="id" class="card topic-card" data-id="{{item.id}}" bindtap="goToTopic">
-    <view class="topic-header">
-      <view class="topic-title">{{item.title}}</view>
-      <view class="topic-status status-{{item.status}}">{{statusText(item.status)}}</view>
+  <view class="page-title">{{userName}}，今天好！</view>
+  <view class="muted">让班级里的精彩，被更多人看见。</view>
+  <view class="card join-card">
+    <label class="field-label" for="invite">加入新的班级主题</label>
+    <view class="row">
+      <input
+        id="invite"
+        class="input-field grow"
+        value="{{inviteCode}}"
+        bindinput="onInviteCodeInput"
+        placeholder="6位邀请码"
+        maxlength="6"
+        confirm-type="done"
+        bindconfirm="handleJoin"
+      />
+      <button
+        class="button-primary"
+        bindtap="handleJoin"
+        disabled="{{joining}}"
+        loading="{{joining}}"
+      >
+        加入
+      </button>
     </view>
-    <view class="topic-desc" wx:if="{{item.description}}">{{item.description}}</view>
-    <view class="topic-meta">
-      <text>{{item.memberCount || 0}} 人参与</text>
-      <text>{{item.materialCount || 0}} 条素材</text>
+    <view wx:if="{{joinError}}" class="error">{{joinError}}</view>
+  </view>
+  <view class="row spread section-heading">
+    <text class="section-title">我的主题</text>
+    <text class="small">{{topics.length}} 个故事</text>
+  </view>
+  <view class="filters">
+    <button
+      wx:for="{{filters}}"
+      wx:key="id"
+      class="filter {{filter === item.id ? 'selected' : ''}}"
+      data-id="{{item.id}}"
+      bindtap="selectFilter"
+    >
+      {{item.label}}
+    </button>
+  </view>
+  <view wx:if="{{error}}" class="error-banner">
+    <state-panel
+      title="暂时无法加载"
+      description="{{error}}"
+      action="重新加载"
+      bind:action="loadTopics"
+    />
+  </view>
+  <skeleton-list wx:if="{{loading && !topics.length}}" />
+  <view
+    wx:for="{{visibleTopics}}"
+    wx:key="id"
+    class="card topic-card"
+    data-id="{{item.id}}"
+    bindtap="goToTopic"
+    hover-class="tap"
+    role="button"
+    aria-label="打开主题：{{item.title}}"
+  >
+    <view class="row spread">
+      <image class="topic-icon" src="/images/campus/notebook.png" />
+      <status-badge status="{{item.status}}" label="{{item.statusLabel}}" />
+    </view>
+    <view class="topic-title">{{item.title}}</view>
+    <view wx:if="{{item.description}}" class="topic-description">{{item.description}}</view>
+    <view class="row spread">
+      <view class="meta">
+        <text>{{item.memberCount || 0}} 位同学</text>
+        <text>{{item.materialCount || 0}} 条素材</text>
+      </view>
+      <image class="icon" src="/images/campus/arrow.png" />
     </view>
   </view>
-
-  <view wx:if="{{loading}}" class="loading">加载中...</view>
+  <state-panel
+    wx:if="{{!loading && !error && !visibleTopics.length}}"
+    title="{{topics.length ? '这里还没有主题' : '你的班级故事，即将开始'}}"
+    description="{{topics.length ? '试试切换上方状态分类' : '向管理员获取邀请码，在上方加入主题'}}"
+  />
 </view>

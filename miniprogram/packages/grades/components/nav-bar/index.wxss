@@ -1,0 +1,56 @@
+/* 组件宿主显式块级：保证文档流内的 .nav-spacer 正常撑高，不被当成行内盒 */
+:host {
+  display: block;
+}
+
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 90;
+  box-sizing: border-box;
+  background: var(--surface);
+  /* 用 --border 而非 --border-soft：border-soft 在白底上几乎不可见，
+   * 导航与页面 bg 之间没有边界，观感上像"没有导航栏"。 */
+  border-bottom: var(--border-width) solid var(--border);
+}
+.nav-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-left: 12px;
+  box-sizing: border-box;
+}
+.nav-back {
+  width: 44px;
+  height: 44px;
+  margin-left: -8px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg-2);
+}
+.nav-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  /* 原型 17px 不在字号阶梯内，取 --text-lg(18px) 保持 token 单一来源 */
+  font-size: var(--text-lg);
+  line-height: var(--leading-lg);
+  font-weight: 590;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+}
+.nav-actions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.nav-spacer {
+  display: block;
+}

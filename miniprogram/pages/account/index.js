@@ -1,0 +1,23 @@
+const {call}=require('../../utils/v2')
+const grades=require('../../utils/grades')
+Page({
+ data:{user:null,consent:false,busy:false,error:'',students:[],backups:[],active:'',guestStudents:[],sync:{},name:'',studentName:'',conflict:false},
+ onShow(){grades.stopDemo();this.refresh();if(getApp().globalData.sessionToken)this.run(async()=>{await call('me').then(u=>getApp().setUserInfo(u));await grades.refreshStudents()})},
+ refresh(){const r=grades.students();this.setData({user:getApp().globalData.userInfo||null,name:getApp().globalData.userInfo?.name||'',students:r.students,active:r.active,guestStudents:grades.guestInfo(),sync:grades.status(),backups:grades.conflictBackups()})},
+ async run(fn){if(this.data.busy)return;this.setData({busy:true,error:''});try{await fn()}catch(e){this.setData({error:e.message||'操作失败，请重试'})}finally{this.setData({busy:false});this.refresh()}},
+ input(e){this.setData({[e.currentTarget.dataset.field]:e.detail.value})},
+ consent(e){this.setData({consent:e.detail.value.length>0})},
+ login(){this.run(async()=>{if(!this.data.consent)throw new Error('请先阅读并同意隐私说明');await require('../../utils/auth').login();await grades.refreshStudents()})},
+ saveName(){this.run(async()=>{const user=await call('profile.update',{name:this.data.name});getApp().setUserInfo(user)})},
+ addStudent(){this.run(async()=>{grades.addStudent(this.data.studentName);this.setData({studentName:''})})},
+ selectStudent(e){if(this.data.busy)return;grades.selectStudent(e.currentTarget.dataset.id);this.refresh()},
+ importGuest(e){const id=e.currentTarget.dataset.id,student=this.data.students.find(s=>s.id===this.data.active),source=this.data.guestStudents.find(s=>s.id===id);wx.showModal({title:'导入本机游客记录',content:'将「'+source.name+'」的 '+source.count+' 条考试及复盘资料导入「'+student.name+'」。原游客记录会保留；不会自动开启云同步。',success:r=>{if(r.confirm)this.run(async()=>{grades.importGuest(id)})}})},
+ enableSync(){wx.showModal({title:'开启当前学生云端同步',content:'将当前学生的成绩、复盘、草稿和设置保存到你的账号，供其他设备读取。仅对当前学生生效。',success:r=>{if(r.confirm)this.run(()=>grades.enableSync())}})},
+ syncNow(){this.run(()=>grades.sync())},
+ stopSync(){grades.stopSync();this.refresh()},
+ resolveConflict(e){const choice=e.currentTarget.dataset.choice;wx.showModal({title:choice==='local'?'使用本机版本':'使用云端版本',content:'将以所选版本作为当前学生的完整资料。包括删除在内的差异都按所选版本处理；双方内容会先保存在本机冲突备份中。',success:r=>{if(r.confirm)this.run(()=>grades.resolveConflict(choice))}})},
+ restoreBackup(e){const id=e.currentTarget.dataset.id;wx.showActionSheet({itemList:['恢复当时的本机版本','恢复当时的云端版本'],success:r=>wx.showModal({title:'恢复冲突备份',content:'恢复后将暂停当前学生的云端同步。请核对资料，再决定是否重新开启同步。',success:confirm=>{if(confirm.confirm)this.run(async()=>grades.restoreConflictBackup(id,r.tapIndex===0?'local':'remote'))}})})},
+ grades(){wx.navigateTo({url:'/packages/grades/pages/dashboard/index'})},
+ back(){wx.navigateBack({fail:()=>wx.reLaunch({url:'/pages/home/index'})})},
+ logout(){wx.showModal({title:'退出账号',content:'当前账号的本机数据保留在独立空间，游客和其他账号无法读取。',success:r=>{if(r.confirm)this.run(async()=>{await call('auth.logout');getApp().clearSession()})}})},
+})

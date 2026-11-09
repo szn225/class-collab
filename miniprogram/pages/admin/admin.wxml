@@ -1,53 +1,143 @@
-<view class="container">
-  <!-- User Info -->
-  <view class="card user-card">
-    <view class="user-avatar">{{userName ? userName[0] : '?'}}</view>
-    <view>
-      <view class="user-name">{{userName}}</view>
-      <view class="user-role">{{isAdmin ? '管理员' : '成员'}}</view>
+<view class="page">
+  <text class="eyebrow">班级共创 · 我的空间</text>
+  <view class="page-title">每一份分享，都很珍贵。</view>
+  <view class="card profile row">
+    <view class="avatar">{{initial}}</view>
+    <view class="grow">
+      <view class="section-title wrap">{{userName}}</view>
+      <text class="tag">{{isAdmin ? '管理员' : '班级成员'}}</text>
     </view>
-    <button class="logout-btn" bindtap="handleLogout">退出</button>
+    <button class="button-outline" bindtap="handleLogout">退出</button>
   </view>
-
-  <view wx:if="{{!isAdmin}}" class="empty-state">
-    <view>只有管理员可以使用管理功能</view>
+  <view wx:if="{{!isAdmin}}" class="card">
+    <image class="member-art" src="/images/campus/people.png" />
+    <view class="section-title">一起写下班级的故事</view>
+    <view class="muted">回到主题，分享你的活动照片和精彩瞬间。</view>
+    <button class="button-primary" bindtap="goToTopics">去分享素材</button>
   </view>
-
-  <view wx:if="{{isAdmin}}">
-    <!-- Create Topic -->
-    <view class="card">
-      <view class="section-title">创建新主题</view>
-      <input class="input-field" placeholder="主题名称（如：2026春季运动会）" model:value="{{newTopicTitle}}" />
-      <input class="input-field" style="margin-top: 8px;" placeholder="主题描述（可选）" model:value="{{newTopicDesc}}" />
-      <button class="btn-primary btn-small" style="margin-top: 10px;" bindtap="createTopic" loading="{{creating}}">创建主题</button>
+  <block wx:if="{{isAdmin}}">
+    <view class="row spread section-heading">
+      <text class="section-title">主题管理</text>
+      <button class="button-primary" bindtap="openCreate">＋ 创建主题</button>
     </view>
-
-    <!-- Topic list for admin -->
-    <view class="card">
-      <view class="section-title">管理主题</view>
-      <view wx:for="{{topics}}" wx:key="id" class="admin-topic-item">
-        <view>
-          <view class="admin-topic-title">{{item.title}}</view>
-          <view class="admin-topic-meta">{{item.memberCount || 0}} 人 · {{item.materialCount || 0}} 条素材</view>
-        </view>
-        <view class="admin-actions">
-          <button class="action-btn-mini" wx:if="{{item.status === 'active'}}" bindtap="closeTopic" data-id="{{item.id}}">关闭</button>
-          <button class="action-btn-mini primary" wx:if="{{item.materialCount > 0 && item.status !== 'generated'}}" bindtap="generateArticle" data-id="{{item.id}}">生成文章</button>
-          <button class="action-btn-mini" wx:if="{{item.status === 'generated'}}" bindtap="viewArticle" data-id="{{item.id}}">查看</button>
-        </view>
+    <state-panel
+      wx:if="{{error}}"
+      title="暂时无法加载"
+      description="{{error}}"
+      action="重新加载"
+      bind:action="loadData"
+    />
+    <skeleton-list wx:if="{{loading && !topics.length}}" />
+    <view wx:for="{{topics}}" wx:key="id" class="card">
+      <view class="row spread">
+        <text class="tag">班级主题</text>
+        <status-badge status="{{item.status}}" label="{{item.statusLabel}}" />
       </view>
-      <view wx:if="{{topics.length === 0}}" style="color: #999; font-size: 13px; text-align: center; padding: 10px;">暂无主题</view>
+      <view class="manage-title">{{item.title}}</view>
+      <view class="meta">
+        <text>{{item.memberCount || 0}} 位成员</text>
+        <text>{{item.materialCount || 0}} 条素材</text>
+      </view>
+      <view class="manage-actions">
+        <button
+          wx:if="{{item.status === 'active'}}"
+          class="button-outline"
+          data-id="{{item.id}}"
+          bindtap="closeTopic"
+          disabled="{{busyIds[item.id]}}"
+        >
+          {{busyKinds[item.id] === 'close' ? '正在结束…' : '结束收集'}}
+        </button>
+        <button
+          wx:if="{{item.materialCount > 0 && item.status !== 'generated'}}"
+          class="button-primary"
+          data-id="{{item.id}}"
+          bindtap="generateArticle"
+          loading="{{busyKinds[item.id] === 'generate'}}"
+          disabled="{{busyIds[item.id]}}"
+        >
+          {{busyKinds[item.id] === 'generate' ? '正在生成…' : '生成文章'}}
+        </button>
+        <button
+          wx:if="{{item.status === 'generated'}}"
+          class="button-primary"
+          data-id="{{item.id}}"
+          bindtap="viewArticle"
+        >
+          查看文章
+        </button>
+      </view>
     </view>
-
-    <!-- Members -->
-    <view class="card">
-      <view class="section-title">班级成员 ({{members.length}} 人)</view>
-      <view wx:for="{{members}}" wx:key="id" class="member-item">
-        <view class="member-avatar">{{item.name ? item.name[0] : '?'}}</view>
-        <view class="member-name">{{item.name}}</view>
-        <view class="member-role-badge" wx:if="{{item.role === 'admin'}}">管理员</view>
+    <state-panel
+      wx:if="{{!loading && !error && !topics.length}}"
+      title="开启一个新故事"
+      description="创建主题后，将邀请码分享给班级成员"
+      action="创建主题"
+      bind:action="openCreate"
+    />
+    <view wx:if="{{topics.length}}" class="card">
+      <text class="section-title">当前主题成员</text>
+      <picker
+        range="{{topics}}"
+        range-key="title"
+        value="{{selectedIndex}}"
+        bindchange="selectTopic"
+      >
+        <view class="topic-picker row spread">
+          <text class="grow wrap">{{selectedTopicTitle}}</text>
+          <text>切换 ▾</text>
+        </view>
+      </picker>
+      <state-panel
+        wx:if="{{membersError}}"
+        title="成员加载失败"
+        action="重新加载"
+        bind:action="loadMembers"
+      />
+      <skeleton-list wx:elif="{{membersLoading}}" count="1" />
+      <block wx:else>
+        <view wx:for="{{members}}" wx:key="id" class="member-row row">
+          <view class="avatar">{{item.name ? item.name[0] : '?'}}</view>
+          <text class="grow wrap">{{item.name}}</text>
+          <text wx:if="{{item.role === 'admin'}}" class="tag">管理员</text>
+        </view>
+        <view wx:if="{{!members.length}}" class="muted">这个主题暂无成员</view>
+      </block>
+    </view>
+  </block>
+  <view wx:if="{{createOpen}}" class="modal-overlay" catchtap="closeCreate">
+    <view class="create-sheet" catchtap="noop" role="dialog" aria-label="创建主题">
+      <view class="row spread">
+        <text class="section-title">开启新的班级故事</text>
+        <button class="button-plain" bindtap="closeCreate" disabled="{{creating}}">关闭</button>
       </view>
-      <view wx:if="{{members.length === 0}}" style="color: #999; font-size: 13px; text-align: center; padding: 10px;">暂无成员</view>
+      <label for="topic-title" class="field-label">主题名称</label>
+      <input
+        id="topic-title"
+        class="input-field"
+        placeholder="例如：秋日运动会"
+        value="{{newTopicTitle}}"
+        bindinput="onTopicTitleInput"
+        maxlength="80"
+      />
+      <label for="topic-desc" class="field-label">活动说明（选填）</label>
+      <textarea
+        id="topic-desc"
+        class="input-field description-input"
+        placeholder="告诉同学们可以分享什么…"
+        value="{{newTopicDesc}}"
+        bindinput="onTopicDescInput"
+        maxlength="500"
+      />
+      <view wx:if="{{createError}}" class="error">{{createError}}</view>
+      <button
+        class="button-primary"
+        bindtap="createTopic"
+        loading="{{creating}}"
+        disabled="{{creating}}"
+      >
+        {{creating ? '正在创建…' : '创建主题'}}
+      </button>
     </view>
   </view>
 </view>

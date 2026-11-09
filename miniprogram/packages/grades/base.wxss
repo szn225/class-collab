@@ -1,0 +1,72 @@
+/* ============================================================
+ * 全局样式（app.wxss）—— 仅入口装配：Token + 基础排版 + 布局骨架
+ *
+ * 依据：docs/UIUX-v1.md §4.2 / §5 / §9 · docs/SPEC-v1.md §8
+ * 组件级样式见 styles/utilities.wxss（容器/文字/行组）与 styles/controls.wxss（控件）。
+ * 颜色一律引用 design-tokens 变量；禁止硬编码（例外仅 #fff / #000）。
+ * ============================================================ */
+@import "styles/design-tokens.wxss";
+@import "styles/utilities.wxss";
+@import "styles/controls.wxss";
+
+page {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  font-variant-numeric: tabular-nums lining-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+view,
+text,
+button,
+input,
+textarea,
+picker,
+scroll-view,
+navigator {
+  box-sizing: border-box;
+}
+
+/* ---------- 页面骨架与布局 ---------- */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  /* 对齐 375 设计稿 .screen：14/16/18 + gap 14（见 docs/UIUX-v1.md §9 网格例外条款） */
+  padding: 14px 16px 18px;
+}
+.page.safe-bottom {
+  padding-bottom: calc(18px + env(safe-area-inset-bottom));
+}
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.stack-lg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.spread {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.grow {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---------- 底部占位 ---------- */
+.safe-spacer {
+  height: env(safe-area-inset-bottom);
+}
+/* 自定义 TabBar 占位（Tab 页内容不被固定 TabBar 遮挡） */
+.tabbar-spacer {
+  height: calc(56px + env(safe-area-inset-bottom));
+}

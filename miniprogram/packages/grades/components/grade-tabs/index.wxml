@@ -1,0 +1,16 @@
+<!-- 自定义 TabBar：4 项 · 图标 24px（TDesign Icons）· 文字 ≤2 字（SPEC §7） -->
+<!-- token-scope：本组件渲染在 <page> 之外，需显式挂 Token 作用域（见 styles/design-tokens.wxss） -->
+<view class="tabbar token-scope">
+  <view
+    class="tab {{value === index ? 'on' : ''}}"
+    wx:for="{{list}}"
+    wx:key="pagePath"
+    data-index="{{index}}"
+    bindtap="onTap"
+  >
+    <view class="tab-ic">
+      <t-icon name="{{value === index ? item.selectedIcon : item.icon}}" size="24px" />
+    </view>
+    <view class="tab-txt">{{item.text}}</view>
+  </view>
+</view>

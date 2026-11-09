@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { select, del } from '@/lib/supabase'
 import type { ApiResponse, User } from '@/types'
 
+export const dynamic = 'force-dynamic'
+
 // GET /api/members?topicId=xxx
 export async function GET(request: NextRequest) {
   try {

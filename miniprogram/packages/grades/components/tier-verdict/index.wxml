@@ -1,0 +1,17 @@
+<!-- 三档结论区：色点 + 浅底 + 文字（不铺满色块，色盲可读） -->
+<view class="tiers">
+  <view
+    wx:for="{{cards}}"
+    wx:key="key"
+    class="tier {{item.key}}"
+    data-index="{{index}}"
+    bindtap="onTapCard"
+  >
+    <view class="tier-lb">
+      <view class="dot {{item.key}}"></view>
+      <text>{{item.label}}</text>
+    </view>
+    <view class="tier-nm">{{item.tierName}}</view>
+    <view class="tier-ln num">{{item.lineText}}</view>
+  </view>
+</view>

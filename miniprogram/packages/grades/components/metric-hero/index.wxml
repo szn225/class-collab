@@ -1,0 +1,16 @@
+<!-- 大数字指标区（Hero）：结论上浮的第一视觉落点 -->
+<view class="hero">
+  <view class="hero-k">{{label}}</view>
+  <view class="hero-v num">
+    <text>{{value}}</text><text class="hero-u" wx:if="{{unit}}">{{unit}}</text>
+  </view>
+  <view class="hero-chips">
+    <!-- flat（持平/无参照）不显示 chip，避免视觉噪声；方向以「箭头 + 文字」为主通道 -->
+    <view class="chip {{delta.chipClass}}" wx:if="{{delta.dir && delta.dir !== 'flat'}}">
+      <t-icon name="{{delta.icon}}" size="16px" />
+      <text>{{delta.text}}</text>
+    </view>
+    <view class="chip" wx:if="{{chipText}}">{{chipText}}</view>
+  </view>
+  <view class="hero-sub" wx:if="{{sub}}">{{sub}}</view>
+</view>

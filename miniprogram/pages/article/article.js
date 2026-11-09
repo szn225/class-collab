@@ -1,49 +1,73 @@
 import { api } from '../../utils/api'
-
+import { articleBody, formatTime } from '../../utils/presentation'
 Page({
   data: {
     article: null,
     materialCount: 0,
+    countKnown: false,
     loading: true,
+    error: '',
+    displayHtml: '',
+    topicId: '',
+    previewUrl: '',
+    guideOpen: false,
+    copying: false,
+    steps: [
+      '复制预览链接，在浏览器中打开；电脑端操作更方便',
+      '点击网页上的「复制文章正文」',
+      '在微信公众号后台新建图文，粘贴正文',
+      '检查标题、图片与排版后发布',
+    ],
   },
-
   onLoad(options) {
-    this.loadArticle(options.topicId)
+    this.setData({ topicId: options.topicId || '' })
   },
-
-  async loadArticle(topicId) {
-    this.setData({ loading: true })
+  onShow() {
+    if (!getApp().globalData.userInfo) {
+      wx.reLaunch({ url: '/pages/index/index' })
+      return
+    }
+    this.loadArticle()
+  },
+  async loadArticle() {
+    if (this._loading) return
+    this._loading = true
+    this.setData({ loading: true, error: '' })
     try {
+      if (!this.data.topicId) throw new Error('缺少主题编号，请返回主题重新进入')
       const [article, materials] = await Promise.all([
-        api.getArticle(topicId),
-        api.getMaterials(topicId),
+        api.getArticle(this.data.topicId),
+        api.getMaterials(this.data.topicId).catch(() => null),
       ])
       this.setData({
-        article,
-        materialCount: materials.length,
+        article: article ? { ...article, createdAtText: formatTime(article.createdAt) } : null,
+        displayHtml: articleBody(article?.html || ''),
+        materialCount: materials?.length || 0,
+        countKnown: materials !== null,
       })
-    } catch (err) {
-      console.error('Load article failed:', err)
-      this.setData({ article: null })
+    } catch (e) {
+      if (e.statusCode === 404) this.setData({ article: null, displayHtml: '' })
+      else this.setData({ error: e.message || '文章加载失败，请重试' })
     } finally {
+      this._loading = false
       this.setData({ loading: false })
     }
   },
-
-  copyHTML() {
-    if (!this.data.article) return
-
-    wx.setClipboardData({
-      data: this.data.article.html,
-      success: () => {
-        wx.showToast({ title: 'HTML 已复制', icon: 'success' })
-      },
-    })
+  toggleGuide() {
+    this.setData({ guideOpen: !this.data.guideOpen })
   },
-
-  formatTime(t) {
-    if (!t) return ''
-    const d = new Date(t)
-    return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`
+  copyURL() {
+    if (this.data.copying || !this.data.topicId) return
+    const url =
+      getApp().globalData.baseUrl.replace(/\/+$/, '') +
+      '/view/' +
+      encodeURIComponent(this.data.topicId)
+    this.setData({ previewUrl: url, copying: true })
+    wx.setClipboardData({
+      data: url,
+      success: () => wx.showToast({ title: '链接已复制' }),
+      fail: () => wx.showToast({ title: '请长按下方链接复制', icon: 'none' }),
+      complete: () => this.setData({ copying: false }),
+    })
   },
 })

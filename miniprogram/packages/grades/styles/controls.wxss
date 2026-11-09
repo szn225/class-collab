@@ -1,0 +1,310 @@
+/* ============================================================
+ * 全局控件样式 · chip / 状态点 / 按钮 / 表单 / 分段控件 / 引导 / 骨架
+ * 从 app.wxss 拆出（架构 C7 单文件 ≤300 行）。颜色一律走 Token。
+ * 触摸目标一律 ≥44px（UIUX §12）。
+ * ============================================================ */
+
+/* ---------- chip ---------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 26px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  line-height: var(--leading-xs);
+  font-weight: 510;
+  background: var(--surface-2);
+  color: var(--fg-2);
+  flex: none;
+}
+.chip.up {
+  background: var(--trend-up-bg);
+  color: var(--trend-up);
+}
+.chip.down {
+  background: var(--trend-down-bg);
+  color: var(--trend-down);
+}
+.chip.chong {
+  background: var(--tier-chong-bg);
+  color: var(--tier-chong);
+}
+.chip.wen {
+  background: var(--tier-wen-bg);
+  color: var(--tier-wen);
+}
+.chip.bao {
+  background: var(--tier-bao-bg);
+  color: var(--tier-bao);
+}
+
+/* ---------- 状态点（配文字，不单靠颜色） ---------- */
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+.dot.chong {
+  background: var(--tier-chong);
+}
+.dot.wen {
+  background: var(--tier-wen);
+}
+.dot.bao {
+  background: var(--tier-bao);
+}
+.dot.up {
+  background: var(--trend-up);
+}
+.dot.down {
+  background: var(--trend-down);
+}
+.dot.muted {
+  background: var(--muted);
+}
+
+/* ---------- 按钮 ---------- */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--tap-min);
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-base);
+  font-weight: 510;
+  font-family: inherit;
+  line-height: 1;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--fg);
+  transition: background-color var(--motion-fast) var(--ease-standard),
+    color var(--motion-fast) var(--ease-standard);
+}
+.btn::after {
+  border: none;
+}
+.btn.primary {
+  background: var(--accent);
+  color: var(--accent-on);
+  font-weight: 590;
+}
+.btn.primary:active {
+  background: var(--accent-active);
+}
+.btn.ghost {
+  background: transparent;
+  color: var(--accent);
+  border-color: var(--border);
+}
+.btn.ghost:active {
+  background: var(--accent-subtle);
+}
+.btn.wide {
+  width: 100%;
+}
+.btn[disabled],
+.btn.disabled {
+  opacity: 0.4;
+}
+.iconbtn {
+  width: var(--tap-min);
+  height: var(--tap-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--fg-2);
+}
+.iconbtn:active {
+  background: var(--surface-2);
+}
+
+/* ---------- 表单 ---------- */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) 0;
+  border-top: var(--border-width) solid var(--border-soft);
+}
+.field:first-child {
+  border-top: 0;
+}
+.field .lab {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--fg-2);
+}
+.field .lab .req {
+  color: var(--danger);
+  font-size: var(--text-xs);
+}
+.field .lab .opt {
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+.field .lab .reuse {
+  margin-left: auto;
+  font-size: var(--text-xs);
+  color: var(--muted);
+  background: var(--surface-2);
+  border-radius: var(--radius-pill);
+  padding: 2px var(--space-2);
+}
+.input {
+  display: flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  padding: 0 var(--space-3);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: var(--text-base);
+  color: var(--fg);
+}
+.input.err {
+  border-color: var(--danger);
+}
+.input .val {
+  font-family: var(--font-num);
+  font-size: var(--text-lg);
+  font-weight: 510;
+}
+.input .ph,
+.ph {
+  color: var(--muted);
+}
+.input-ic {
+  color: var(--muted);
+  margin-right: var(--space-2);
+  flex: none;
+}
+.input input {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-num);
+  font-size: var(--text-lg);
+  font-weight: 510;
+  color: var(--fg);
+}
+.hint {
+  font-size: var(--text-xs);
+  color: var(--danger);
+}
+.hint.warn {
+  color: var(--warn);
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.chipbtn {
+  min-height: var(--tap-min);
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  border: var(--border-width) solid var(--border);
+  background: var(--surface);
+  color: var(--fg-2);
+  font-size: var(--text-sm);
+  font-family: inherit;
+  line-height: 1;
+  transition: background-color var(--motion-fast) var(--ease-standard),
+    border-color var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard);
+}
+.chipbtn.on {
+  background: var(--accent-subtle);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 590;
+}
+
+/* ---------- 分段控件 ---------- */
+.segment {
+  display: flex;
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+  padding: 3px;
+  gap: 3px;
+}
+.segment .seg-item {
+  flex: 1;
+  min-height: var(--tap-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  color: var(--fg-2);
+  transition: background-color var(--motion-base) var(--ease-standard),
+    color var(--motion-base) var(--ease-standard);
+}
+.segment .seg-item.on {
+  background: var(--surface);
+  color: var(--accent);
+  font-weight: 590;
+  box-shadow: var(--elev-ring);
+}
+
+/* ---------- 区块标题（带图标） ---------- */
+.sec-h {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-base);
+  font-weight: 590;
+  color: var(--fg);
+  letter-spacing: 0.01em;
+}
+
+/* ---------- 引导占位（校内考试分支：非空白、非报错） ---------- */
+.guide {
+  background: var(--accent-subtle);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-lg);
+  /* 对齐 375 设计稿 .guide：padding 14、gap 10 */
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.guide .guide-text {
+  font-size: var(--text-base);
+  /* 已对齐 token 阶梯：--leading-base = 1.6 */
+  line-height: var(--leading-base);
+  color: var(--fg-2);
+}
+
+/* ---------- 骨架屏（AC-34） ---------- */
+/* UIUX §11 禁「持续脉冲」：只在入场时淡入一次，之后静止，避免整页呼吸闪烁 */
+.skeleton {
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  animation: sk-in var(--motion-base) var(--ease-standard) 1 both;
+}
+/* 骨架块尺寸（共享）：页内 sk-* 是页面作用域，别的页用不到；
+   这里给两个通用尺寸，避免每页复制一份。
+   dashboard 的 sk-hero / sk-tier / sk-block 与 exam-detail 的 sk-head / sk-block 后续可收敛到这里。 */
+.sk-line {
+  height: 16px;
+}
+.sk-panel {
+  height: 220px;
+}
+@keyframes sk-in {
+  from {
+    opacity: 0.55;
+  }
+  to {
+    opacity: 1;
+  }
+}

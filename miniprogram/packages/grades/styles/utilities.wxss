@@ -1,0 +1,155 @@
+/* ============================================================
+ * 全局工具样式 · 容器 / 文字层级 / 行组
+ * 从 app.wxss 拆出（架构 C7 单文件 ≤300 行）。颜色一律走 Token。
+ * ============================================================ */
+
+/* ---------- 卡片 ---------- */
+.card {
+  background: var(--surface);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  box-shadow: var(--elev-raised);
+}
+.card.flush {
+  padding: 0;
+  overflow: hidden;
+}
+/* 卡片内头 / 脚：统一「标题 → 内容 → 注释」的节奏
+ * 普通 .card 自带内边距，头/身不再横向加边；.card.flush 无内边距，由下方规则补边。 */
+.card-h {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+.card.flush > .card-h {
+  padding: 14px 14px 4px;
+  margin-bottom: 0;
+}
+.card-b {
+  padding: 0;
+}
+.card.flush > .card-b {
+  padding: 0 14px 14px;
+}
+.card-foot {
+  padding: 2px 14px 14px;
+}
+/* 细线行组放进 flush 卡片时，避免文字贴边 */
+.rows.pad-x {
+  padding: 0 14px;
+}
+/* 卡片头后的第一个字段不再重复画分隔线 */
+.card-h + .field,
+.card-h + .fields > .field:first-child {
+  border-top: 0;
+}
+
+/* ---------- 页级上下文注脚（页面题头文字） ---------- */
+.ph-meta {
+  font-size: var(--text-sm);
+  line-height: var(--leading-sm);
+  color: var(--muted);
+}
+
+/* 表单字段组：卡片内连续字段的去线化 */
+.fields {
+  display: flex;
+  flex-direction: column;
+}
+.fields > .field:first-child {
+  border-top: 0;
+}
+
+/* ---------- 文字层级 ---------- */
+.eyebrow {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  letter-spacing: 0.01em;
+}
+.h2 {
+  font-size: var(--text-lg);
+  font-weight: 510;
+  color: var(--fg);
+  letter-spacing: 0.01em;
+}
+.h3 {
+  font-size: var(--text-base);
+  font-weight: 510;
+  color: var(--fg);
+}
+.sub {
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+.cap {
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+.note {
+  font-size: var(--text-xs);
+  color: var(--muted);
+  line-height: var(--leading-body);
+}
+.strong {
+  color: var(--fg-2);
+  font-weight: 510;
+}
+/* 数字：等宽对齐（高密度数据表的生命线） */
+.num {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.txt-up {
+  color: var(--trend-up);
+}
+.txt-down {
+  color: var(--trend-down);
+}
+.txt-danger {
+  color: var(--danger);
+}
+.txt-warn {
+  color: var(--warn);
+}
+.txt-accent {
+  color: var(--accent);
+}
+.txt-muted {
+  color: var(--muted);
+}
+
+/* ---------- 分隔行组（divide-y 细线，替代独立卡片盒子） ---------- */
+.rows {
+  display: flex;
+  flex-direction: column;
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 48px;
+  padding: var(--space-2) 0;
+  border-top: var(--border-width) solid var(--border-soft);
+}
+.row:first-child {
+  border-top: 0;
+}
+.row .ttl {
+  font-size: var(--text-base);
+  color: var(--fg);
+}
+.row .cap {
+  margin-top: 2px;
+}
+.sch-row .grow {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.hr {
+  height: 1px;
+  background: var(--border-soft);
+}

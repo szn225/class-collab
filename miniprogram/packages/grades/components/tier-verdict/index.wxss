@@ -1,0 +1,54 @@
+.tiers {
+  display: flex;
+  gap: var(--space-2);
+}
+.tier {
+  flex: 1;
+  min-width: 0;
+  min-height: 72px;
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.tier .tier-lb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-sm);
+  line-height: var(--leading-sm);
+  font-weight: 590;
+}
+.tier .tier-nm {
+  font-size: var(--text-sm);
+  color: var(--fg-2);
+  /* 已对齐 token 阶梯：--leading-sm = 1.5 */
+  line-height: var(--leading-sm);
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+.tier .tier-ln {
+  font-size: var(--text-xs);
+  line-height: var(--leading-xs);
+  color: var(--muted);
+}
+.tier.chong {
+  background: var(--tier-chong-bg);
+}
+.tier.chong .tier-lb {
+  color: var(--tier-chong);
+}
+.tier.wen {
+  background: var(--tier-wen-bg);
+}
+.tier.wen .tier-lb {
+  color: var(--tier-wen);
+}
+.tier.bao {
+  background: var(--tier-bao-bg);
+}
+.tier.bao .tier-lb {
+  color: var(--tier-bao);
+}

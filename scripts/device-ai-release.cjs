@@ -1,0 +1,15 @@
+const automator=require('/private/tmp/hui-miniprogram-automation/node_modules/miniprogram-automator'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict')
+const root=path.resolve(__dirname,'..'),ref=JSON.parse(fs.readFileSync(path.join(root,'backend/device-activity.local'),'utf8')),taskFile=path.join(root,'backend/device-ai-task.local')
+async function idle(p){for(let i=0;i<240;i++){if(!await p.data('busy')&&!await p.data('loading')){const error=await p.data('error');if(error)throw Error(error);return}await new Promise(r=>setTimeout(r,200))}throw Error('页面加载超时')}
+async function button(p,text){for(const b of await p.$$('button'))if((await b.text()).trim()===text)return b;throw Error('缺少按钮 '+text)}
+async function main(){const m=await automator.connect({wsEndpoint:'ws://127.0.0.1:9431'});try{const p=await m.reLaunch('/pages/co-create/index');await idle(p);await p.callMethod('openActivity',{currentTarget:{dataset:{id:ref.activityId}}});await idle(p);await p.callMethod('navigate',{currentTarget:{dataset:{screen:'article'}}});await idle(p);
+ if(!await p.data('article')){
+  if(fs.existsSync(taskFile)){const t=JSON.parse(fs.readFileSync(taskFile,'utf8'));await p.setData({task:t});await p.callMethod('taskPage');await idle(p)}else{
+   await(await button(p,'生成草稿')).tap();await idle(p);assert.equal(await p.data('screen'),'generate');await p.setData({focus:'仅使用本活动真实联调资料写一篇功能验证记录，信息不足请简洁表达，不编造线下活动、参与人数、时间地点或引语。',lengthIndex:0});await(await button(p,'确认费用')).tap();await idle(p);assert.equal(await p.data('screen'),'quote');assert.equal((await p.data('quote')).price,5);const before=(await p.data('quote')).balance;await(await button(p,'确认并生成')).tap();await idle(p);assert.equal(await p.data('screen'),'task');const task=await p.data('task');fs.writeFileSync(taskFile,JSON.stringify({...task,balanceBefore:before}),{mode:0o600});console.log('PASS native quote and one authorized 5-point task started')
+  }
+  for(let i=0;i<60;i++){await p.callMethod('checkTask');const task=await p.data('task');if(task.stage==='succeeded')break;if(['failed','review'].includes(task.stage))throw Error('AI任务 '+task.stage+': '+task.error);await new Promise(r=>setTimeout(r,1500))}
+  const task=await p.data('task');assert.equal(task.stage,'succeeded','任务尚未完成，请继续查看原任务，勿重复提交');await m.screenshot({path:path.join(root,'docs/device-test/ai-succeeded.png')});await(await button(p,'查看草稿')).tap();await idle(p)
+ }
+ const article=await p.data('article');assert.ok(article?.title&&article?.body);assert.ok(article.body.length>60);await m.screenshot({path:path.join(root,'docs/device-test/ai-article.png')});await p.callMethod('navigate',{currentTarget:{dataset:{screen:'profile'}}});await idle(p);const user=await p.data('user');if(fs.existsSync(taskFile)){const task=JSON.parse(fs.readFileSync(taskFile,'utf8'));assert.equal(user.balance,task.balanceBefore-5);assert.equal(user.frozen,0)}console.log(JSON.stringify({passed:true,articleSaved:true,articleCharacters:article.body.length,revision:article.revision,balance:user.balance,frozen:user.frozen}));
+ }finally{await m.disconnect()}}
+main().catch(e=>{console.error(e.message);process.exitCode=1})

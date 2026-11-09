@@ -1,0 +1,78 @@
+@import "../../base.wxss";
+/* 复盘清单：动作卡片 + 状态点 + 责任/时限/复检 */
+
+.plan-card {
+  /* 与全局 .card 一致（14px），避免复盘页卡片比其它页宽 2px */
+  padding: 14px;
+}
+.pl-head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+.pl-title {
+  font-size: var(--text-lg);
+  font-weight: 510;
+  color: var(--fg);
+  line-height: var(--leading-lg);
+}
+.pl-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+.pl-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  font-size: var(--text-sm);
+  line-height: var(--leading-sm);
+  padding-top: 2px;
+}
+.pl-status.muted {
+  color: var(--muted);
+}
+.pl-status.doing {
+  color: var(--accent);
+}
+.pl-status.done {
+  color: var(--trend-up);
+}
+.dot.doing {
+  background: var(--accent);
+}
+.dot.done {
+  background: var(--trend-up);
+}
+
+.pl-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: var(--border-width) solid var(--border-soft);
+  font-size: var(--text-sm);
+  line-height: var(--leading-sm);
+  color: var(--fg-2);
+}
+.pl-meta-sep {
+  color: var(--muted);
+}
+.pl-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-2);
+}
+.pl-btn {
+  min-height: var(--tap-min);
+  padding: 0 var(--space-4);
+  font-size: var(--text-sm);
+}
+
+.pl-meta-item {
+  min-width: 0;
+}

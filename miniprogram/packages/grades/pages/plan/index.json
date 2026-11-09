@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "复盘",
+  "usingComponents": {
+    "t-icon": "/packages/grades/miniprogram_npm/tdesign-miniprogram/icon/icon",
+    "nav-bar": "../../components/nav-bar/index",
+    "empty-state": "../../components/empty-state/index",
+    "grade-context": "../../components/grade-context/index",
+    "grade-tabs": "../../components/grade-tabs/index"
+  },
+  "navigationStyle": "custom"
+}

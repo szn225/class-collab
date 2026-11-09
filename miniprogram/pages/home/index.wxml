@@ -1,0 +1,11 @@
+<view class="hub">
+ <view class="hub-heading"><text>慧共创</text><button bindtap="account">我的 ›</button></view>
+ <button class="entry-card collab" bindtap="coCreate" aria-label="进入活动文章共创">
+  <view class="entry-icon paper-icon"><view></view><view></view><view></view></view>
+  <view class="entry-title">活动文章共创</view><view class="entry-note">记录活动 · 共同成文</view><view class="entry-arrow">›</view>
+ </button>
+ <button class="entry-card grades" bindtap="grades" aria-label="进入成绩追踪助手">
+  <view class="entry-icon chart-icon"><view></view><view></view><view></view></view>
+  <view class="entry-title">成绩追踪助手</view><view class="entry-note">录入成绩 · 查看变化</view><view class="entry-arrow">›</view>
+ </button>
+</view>

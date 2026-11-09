@@ -1,73 +1,85 @@
 import { api } from '../../utils/api'
-
+import { presentTopic } from '../../utils/presentation'
 Page({
   data: {
     topics: [],
-    loading: false,
+    visibleTopics: [],
+    loading: true,
+    error: '',
     inviteCode: '',
     joining: false,
+    joinError: '',
+    filter: 'all',
+    userName: '',
+    filters: [
+      { id: 'all', label: '全部' },
+      { id: 'active', label: '进行中' },
+      { id: 'closed', label: '已结束' },
+      { id: 'generated', label: '已出文' },
+    ],
   },
-
   onShow() {
-    this.checkAuth()
+    const user = getApp().globalData.userInfo
+    if (!user) {
+      wx.reLaunch({ url: '/pages/index/index' })
+      return
+    }
+    this.setData({ userName: user.name })
     this.loadTopics()
   },
-
   onPullDownRefresh() {
-    this.loadTopics().then(() => wx.stopPullDownRefresh())
+    this.loadTopics().finally(() => wx.stopPullDownRefresh())
   },
-
-  checkAuth() {
-    const userInfo = getApp().globalData.userInfo
-    if (!userInfo) {
-      wx.reLaunch({ url: '/pages/index/index' })
-    }
-  },
-
   async loadTopics() {
-    const userInfo = getApp().globalData.userInfo
-    if (!userInfo) return
-
-    this.setData({ loading: true })
+    const user = getApp().globalData.userInfo
+    if (!user || this._loading) return
+    this._loading = true
+    this.setData({ loading: true, error: '' })
     try {
-      const topics = await api.getTopics(userInfo.id)
+      const topics = (await api.getTopics(user.id)).map(presentTopic)
       this.setData({ topics })
-    } catch (err) {
-      console.error('Load topics failed:', err)
+      this.applyFilter()
+    } catch (e) {
+      this.setData({ error: '主题加载失败，请重试' })
     } finally {
+      this._loading = false
       this.setData({ loading: false })
     }
   },
-
+  applyFilter() {
+    this.setData({
+      visibleTopics: this.data.topics.filter(
+        (t) => this.data.filter === 'all' || t.status === this.data.filter,
+      ),
+    })
+  },
+  selectFilter(e) {
+    this.setData({ filter: e.currentTarget.dataset.id })
+    this.applyFilter()
+  },
+  onInviteCodeInput(e) {
+    this.setData({ inviteCode: e.detail.value.trim().toUpperCase(), joinError: '' })
+  },
   async handleJoin() {
+    if (this.data.joining) return
     const code = this.data.inviteCode.trim().toUpperCase()
-    if (!code || code.length !== 6) {
-      wx.showToast({ title: '请输入6位邀请码', icon: 'none' })
+    if (!/^[A-Z0-9]{6}$/.test(code)) {
+      this.setData({ joinError: '请输入6位字母或数字邀请码' })
       return
     }
-
-    const userInfo = getApp().globalData.userInfo
-    this.setData({ joining: true })
-
+    this.setData({ joining: true, joinError: '' })
     try {
-      await api.joinTopic(code, userInfo.id)
-      wx.showToast({ title: '加入成功', icon: 'success' })
+      await api.joinTopic(code, getApp().globalData.userInfo.id)
       this.setData({ inviteCode: '' })
-      this.loadTopics()
-    } catch (err) {
-      console.error('Join failed:', err)
+      wx.showToast({ title: '加入成功' })
+      await this.loadTopics()
+    } catch (e) {
+      this.setData({ joinError: e.message || '加入失败，请重试' })
     } finally {
       this.setData({ joining: false })
     }
   },
-
   goToTopic(e) {
-    const { id } = e.currentTarget.dataset
-    wx.navigateTo({ url: `/pages/topic/topic?id=${id}` })
-  },
-
-  statusText(status) {
-    const map = { active: '进行中', closed: '已结束', generated: '已出文' }
-    return map[status] || status
+    wx.navigateTo({ url: `/pages/topic/topic?id=${e.currentTarget.dataset.id}` })
   },
 })

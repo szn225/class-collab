@@ -1,33 +1,63 @@
-.article-page {
-  padding-bottom: 20px;
+.article-paper {
+  background: white;
+  border: 2rpx solid #e8ebef;
+  border-top: 8rpx solid #ffd66b;
+  border-radius: 8rpx 8rpx 24rpx 24rpx;
+  padding: 36rpx 28rpx;
+  margin-top: 32rpx;
 }
-
+.paper-label {
+  font-size: 24rpx;
+  color: #2457d6;
+  font-weight: 600;
+  letter-spacing: 2rpx;
+}
 .article-title {
-  font-size: 20px;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 8px;
-  line-height: 1.4;
+  font-size: 42rpx;
+  font-weight: 700;
+  line-height: 1.5;
+  margin: 24rpx 0 20rpx;
+  word-break: break-all;
 }
-
-.article-meta {
-  font-size: 12px;
-  color: #999;
-  text-align: center;
-  margin-bottom: 4px;
+.article-rich {
+  font-size: 30rpx;
+  line-height: 1.9;
+  overflow-wrap: break-word;
 }
-
-.article-content {
-  line-height: 1.8;
-  overflow-x: hidden;
+.publish-card {
+  margin-top: 32rpx;
 }
-
-.tip {
-  margin-top: 20px;
-  background: #f0faf4;
-  border-radius: 8px;
-  padding: 15px;
-  font-size: 13px;
-  color: #666;
-  line-height: 2;
+.publish-card > .muted {
+  margin: 20rpx 0 28rpx;
+}
+.url-box {
+  display: block;
+  padding: 24rpx;
+  background: #eef3ff;
+  border-radius: 16rpx;
+  color: #2457d6;
+  word-break: break-all;
+  font-size: 24rpx;
+  margin-top: 20rpx;
+}
+.guide-toggle {
+  width: 100%;
+  margin-top: 16rpx;
+}
+.guide-step {
+  align-items: flex-start;
+  font-size: 26rpx;
+  margin: 24rpx 0;
+  color: #59677d;
+}
+.step-number {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 12rpx;
+  background: #ffd66b;
+  color: #614508;
 }

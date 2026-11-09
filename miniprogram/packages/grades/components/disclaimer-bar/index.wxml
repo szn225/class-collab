@@ -1,0 +1,8 @@
+<!-- 免责声明条：凡参照数据页面显著展示（AC-35 / 合规红线） -->
+<view class="disclaim">
+  <view class="disclaim-h">
+    <t-icon name="info-circle" size="16px" />
+    <text>免责声明</text>
+  </view>
+  <view class="disclaim-b">{{text}}</view>
+</view>

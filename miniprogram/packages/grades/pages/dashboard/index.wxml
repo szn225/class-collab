@@ -1,0 +1,137 @@
+<!-- 定位（首页）—— 位次定位仪表盘；L1 结论层首屏不滚动即读完 -->
+<nav-bar title="成绩记录">
+  <view class="iconbtn" bindtap="onRefresh" aria-label="刷新数据" aria-role="button">
+    <t-icon name="refresh" size="24px" />
+  </view>
+  <view class="iconbtn" bindtap="onMore" aria-label="更多操作" aria-role="button">
+    <t-icon name="ellipsis" size="24px" />
+  </view>
+</nav-bar>
+<grade-context />
+
+<view class="page">
+  <view wx:if="{{saved}}" class="saved-confirmation">✓ 成绩已保存</view>
+
+  <!-- 页级上下文（原 page-head，现为内容首行，对应原型 eyebrow） -->
+  <view class="ph-meta" wx:if="{{latestLabel}}">{{latestLabel}}</view>
+  <view class="ph-meta" wx:elif="{{loading}}">正在读取本地数据</view>
+  <view class="ph-meta" wx:else>位次定位 · 结论上浮</view>
+
+  <!-- Loading：骨架屏（避免空白闪烁，AC-34） -->
+  <block wx:if="{{loading}}">
+    <view class="skeleton sk-hero"></view>
+    <view class="sk-tiers">
+      <view class="skeleton sk-tier"></view>
+      <view class="skeleton sk-tier"></view>
+      <view class="skeleton sk-tier"></view>
+    </view>
+    <view class="skeleton sk-block"></view>
+  </block>
+
+  <!-- Error：不吞异常，给重试出口 -->
+  <view class="card stack" wx:elif="{{error}}">
+    <text class="h2">数据加载失败</text>
+    <text class="sub">{{error}}</text>
+    <view class="btn ghost" bindtap="load">重试</view>
+  </view>
+
+  <!-- Empty：具体引导（AC-33） -->
+  <block wx:elif="{{empty}}">
+    <view class="card">
+      <empty-state
+        icon="chart-line"
+        title="还没有考试记录，先录入第一次大考成绩"
+        desc="填一个排名就能算出（约）全市位次与冲/稳/保，游客记录保存在本机，可按需开启账号同步"
+        actionText="录入第一次大考成绩"
+        actionIcon="add"
+        bind:action="goRecord"
+      />
+    </view>
+  </block>
+
+  <block wx:else>
+    <!-- L1 结论层：主指标面板 -->
+    <metric-hero
+      label="{{hero.label}}"
+      value="{{hero.value}}"
+      unit="{{hero.unit}}"
+      delta="{{hero.delta}}"
+      chipText="{{hero.chipText}}"
+      sub="{{hero.subLine}}"
+    />
+
+    <!-- 校内考试口径隔离：不显折算位次与档次，改显引导占位（AC-03） -->
+    <view class="guide" wx:if="{{guide}}">
+      <view class="guide-text">{{guide}}</view>
+      <view class="btn ghost" bindtap="goRecord">
+        <t-icon name="add" size="20px" />
+        <text>去录入集团联考 / 全市统考</text>
+      </view>
+    </view>
+
+    <!-- 冲 / 稳 / 保 三档结论 -->
+    <tier-verdict wx:if="{{verdicts.length}}" cards="{{verdicts}}" bind:cardtap="onTapCard" />
+
+    <!-- AC-35：展示冲/稳/保这类参照结论的页面必须显著展示免责声明 -->
+    <disclaimer-bar text="{{disclaimer}}" />
+
+    <!-- L2 概览层：趋势迷你图（反向 Y 轴 + 跨口径隔离） -->
+    <view class="card">
+      <trend-mini records="{{trendRecords}}" targetRanks="{{targetRanks}}" height="{{120}}" />
+      <!-- 目标校回显 / 无目标校引导：两者互斥，各用独立 wx:if，不依赖 wx:if/wx:elif 的兄弟邻近语义 -->
+      <view class="note target-tip" wx:if="{{targetTip}}">{{targetTip}}</view>
+      <!-- 有记录但没有目标校：原位给可点击引导（SPEC §10 空状态） -->
+      <view
+        class="btn ghost target-tip"
+        wx:if="{{targetGuide && !targetTip}}"
+        bindtap="goReference"
+        aria-role="button"
+        aria-label="去参照页设目标校"
+      >
+        <text>还没设目标校 · 去参照页长按学校设为目标校</text>
+      </view>
+    </view>
+
+    <!-- 本页唯一主 CTA -->
+    <view class="btn primary wide" bindtap="goRecord">
+      <t-icon name="add" size="20px" />
+      <text>录入新考试</text>
+    </view>
+
+    <!-- 考试列表（下钻考试详情） -->
+    <view class="card flush" wx:if="{{examList.length}}">
+      <view class="card-h">
+        <text class="h2">考试记录</text>
+        <text class="cap">共 {{examList.length}} 次</text>
+      </view>
+      <view class="rows pad-x exam-rows">
+        <view
+          class="row"
+          wx:for="{{examList}}"
+          wx:key="id"
+          data-id="{{item.id}}"
+          bindtap="onTapRecord"
+          bindlongpress="onLongPressRecord"
+        >
+          <view class="grow">
+            <view class="ttl">{{item.examName}}</view>
+            <view class="exam-meta">
+              <text class="cap">{{item.dateText}}</text>
+              <view class="chip">{{item.scopeText}}</view>
+              <text class="cap" wx:if="{{item.tierText}}">{{item.tierText}}</text>
+            </view>
+          </view>
+          <view class="row-rank num">{{item.rankText}}</view>
+          <view class="chev"><t-icon name="chevron-right" size="20px" /></view>
+        </view>
+      </view>
+      <view class="card-foot">
+        <text class="note">长按一条记录，可以查看详情或直接去复盘。</text>
+      </view>
+    </view>
+  </block>
+
+  <view class="tabbar-spacer"></view>
+</view>
+
+<grade-tabs value="{{gradeTab}}" />

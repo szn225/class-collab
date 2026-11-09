@@ -1,0 +1,106 @@
+/* 自动生成，勿手改；来源 styles/design-tokens.wxss（与 .token-scope 同一份数值） */
+.token-scope {
+  /* ---------- A1-identity ---------- */
+  /* 表面层 */
+  --bg: #F5F7F7;
+  --surface: #FFFFFF;
+  --surface-2: #EEF1F1;
+  /* 前景层 */
+  --fg: #14181A;
+  --fg-2: #3C464A;
+  --muted: #5F6A6E; /* AA：在 bg 上 5.18:1（原 #6B7679 仅 4.35，临界未达 4.5） */
+  /* --meta #98A2A5 仅作装饰 / ≥18px 大字；小字占位改走 --muted（2.43:1 未达 AA） */
+  --meta: #98A2A5;
+  /* 边框层 */
+  --border: #E2E7E7;
+  --border-soft: #EEF1F1;
+  --border-width: 1px;
+  /* 强调色（沉青，已加深至 AA：白字 4.58:1 / onSurf 4.58:1） */
+  --accent: #0B8478;
+  --accent-hover: #0B7C73;
+  --accent-active: #0A6B63;
+  --accent-subtle: #E6F4F2;
+  --accent-on: #FFFFFF;
+
+  /* 字体 */
+  --font-body: "PingFang SC", "HarmonyOS Sans SC", "MiSans", "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", -apple-system, sans-serif;
+  --font-display: "PingFang SC", "HarmonyOS Sans SC", "MiSans", "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", -apple-system, sans-serif;
+  /* 数字字体：Barlow 子集增强默认关闭（ADR-008），回落系统等宽数字 */
+  --font-num: "DIN Alternate", "SF Pro Display", "Helvetica Neue", "PingFang SC", sans-serif;
+
+  /* 行高：字号配对（UIUX §5.2 八档一一映射） */
+  --leading-xs: 1.4; /* 配 --text-xs  12 */
+  --leading-sm: 1.5; /* 配 --text-sm  14 */
+  --leading-base: 1.6; /* 配 --text-base 16 */
+  --leading-lg: 1.4; /* 配 --text-lg  18 */
+  --leading-xl: 1.3; /* 配 --text-xl  22 */
+  --leading-2xl: 1.2; /* 配 --text-2xl 28 */
+  --leading-3xl: 1.1; /* 配 --text-3xl 34 */
+  --leading-4xl: 1.05; /* 配 --text-4xl 44 */
+  /* 长文阅读（规则要点段落） */
+  --leading-relaxed: 1.7;
+  /* 语义别名：与上方同值档位一一对应，保留供既有引用沿用 */
+  --leading-body: 1.6; /* = --leading-base */
+  --leading-tight: 1.3; /* = --leading-xl */
+  --leading-display: 1.05; /* = --leading-4xl */
+
+  /* ---------- A2-semantic ---------- */
+  /* 冲/稳/保 三档（行业通用心智） */
+  --tier-chong: #9C5800; /* AA：在 chong-bg 上 5.00:1（原 #D97706 仅 2.89，未达 AA） */
+  --tier-chong-bg: #FBF3E4;
+  --tier-wen: #0B8478;
+  --tier-wen-bg: #E6F4F2;
+  --tier-bao: #3F5E8C;
+  --tier-bao-bg: #EAF0F7;
+  /* 趋势方向：教育语义 —— 绿=进步（位次下降）/ 红=退步（位次上升） */
+  --trend-up: #126A32;
+  --trend-up-bg: #E9F5EE;
+  --trend-down: #C0392B;
+  --trend-down-bg: #FBECEA;
+  /* 通用语义 */
+  --success: #126A32;
+  --warn: #B45309;
+  --warn-bg: #FBF3E4;
+  --danger: #B91C1C;
+  /* 图表容纳底（≈ --fg 5% on --bg） */
+  --canvas: #E9EBEB;
+
+  /* 动效 */
+  --motion-fast: 120ms;
+  --motion-base: 150ms;
+  --motion-enter: 250ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  /* ---------- B-slot ---------- */
+  --elev-flat: none;
+  --elev-ring: 0 0 0 1px var(--border);
+  --elev-raised: 0 1px 2px rgba(20, 24, 26, 0.04), 0 4px 10px rgba(20, 24, 26, 0.05);
+  --focus-ring: 0 0 0 3px rgba(11, 132, 120, 0.28);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-pill: 9999px;
+
+  /* 触摸目标（硬性下限 44px） */
+  --tap-min: 44px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 22px;
+  --text-2xl: 28px;
+  --text-3xl: 34px;
+  --text-4xl: 44px;
+}

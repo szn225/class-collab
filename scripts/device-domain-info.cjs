@@ -1,0 +1,3 @@
+const automator=require('/private/tmp/hui-miniprogram-automation/node_modules/miniprogram-automator')
+async function main(){const mini=await automator.connect({wsEndpoint:'ws://127.0.0.1:9431'});try{console.log(await mini.evaluate(()=>({backend:getApp().globalData.baseUrl,environment:wx.getAccountInfoSync().miniProgram.envVersion,appid:wx.getAccountInfoSync().miniProgram.appId})));try{const r=await mini.callWxMethod('request',{url:'https://gongchuang-test.chaohuiwan.com.cn/api/health',method:'GET',timeout:15000});console.log({http:r.statusCode,ok:r.data?.ok})}catch(e){console.log({networkError:e.message})}}finally{await mini.disconnect()}}
+main().catch(e=>{console.error(e.message);process.exitCode=1})

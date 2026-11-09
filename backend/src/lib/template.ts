@@ -11,7 +11,7 @@ export function markdownToWeChatHTML(markdown: string, images: { index: number; 
     // Italic
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
     // Image placeholders
-    .replace(/\[图片：?(\d+)\]/g, (_, idx) => {
+    .replace(/\[图片[：:]\s*(?:素材\s*)?(\d+)\s*\]/g, (_, idx) => {
       const img = images.find(i => i.index === parseInt(idx))
       if (img) {
         return `<img src="${img.url}" style="width:100%;border-radius:4px;margin:10px 0;" />`

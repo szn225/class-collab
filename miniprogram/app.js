@@ -1,25 +1,10 @@
+const endpoints = require('./config/endpoints')
 App({
-  globalData: {
-    userInfo: null,
-    baseUrl: 'http://localhost:3000', // 开发环境，部署后改生产地址
-  },
-
-  onLaunch() {
-    // 启动时尝试恢复登录状态
-    const userInfo = wx.getStorageSync('userInfo')
-    if (userInfo) {
-      this.globalData.userInfo = userInfo
-    }
-  },
-
-  setUserInfo(userInfo) {
-    this.globalData.userInfo = userInfo
-    wx.setStorageSync('userInfo', userInfo)
-  },
-
-  logout() {
-    this.globalData.userInfo = null
-    wx.removeStorageSync('userInfo')
-    wx.reLaunch({ url: '/pages/index/index' })
-  },
+ globalData:{userInfo:null,sessionToken:'',baseUrl:'https://gongchuang.chaohuiwan.com.cn'},
+ onLaunch(){let env='release';try{env=wx.getAccountInfoSync().miniProgram.envVersion||'release'}catch{}this.globalData.baseUrl=endpoints[env]||endpoints.release;this.globalData.environment=env;this.globalData.sessionToken=wx.getStorageSync('hui.session')||'';this.globalData.userInfo=wx.getStorageSync('hui.user')||null;if(wx.onNetworkStatusChange)wx.onNetworkStatusChange(r=>{if(r.isConnected)require('./utils/grades').sync().catch(()=>{})})},
+ notifyIdentity(){for(const page of getCurrentPages()){if(typeof page.onIdentityChanged==='function')page.onIdentityChanged()}},
+ setSession(token,user){this.globalData.sessionToken=token;this.globalData.userInfo=user;wx.setStorageSync('hui.session',token);wx.setStorageSync('hui.user',user);this.notifyIdentity()},
+ setUserInfo(user){this.globalData.userInfo=user;wx.setStorageSync('hui.user',user)},
+ clearSession(){this.globalData.sessionToken='';this.globalData.userInfo=null;wx.removeStorageSync('hui.session');wx.removeStorageSync('hui.user');this.notifyIdentity()},
+ logout(){this.clearSession();wx.reLaunch({url:'/pages/home/index'})},
 })

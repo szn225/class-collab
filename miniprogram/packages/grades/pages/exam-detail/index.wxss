@@ -1,0 +1,178 @@
+@import "../../base.wxss";
+/* 考试详情：结论头 / 分科条 / 失分归因 */
+
+.hd-title {
+  margin-top: var(--space-1);
+  font-size: var(--text-xl);
+  line-height: var(--leading-xl);
+  font-weight: 590;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+}
+.hd-score {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+.hd-total {
+  font-size: var(--text-3xl);
+  line-height: var(--leading-3xl);
+  font-weight: 590;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+}
+.hd-full {
+  font-size: var(--text-sm);
+  line-height: var(--leading-sm);
+  color: var(--muted);
+}
+.hd-chip {
+  margin-left: auto;
+  align-self: center;
+}
+.hd-rank {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  font-size: var(--text-sm);
+  line-height: var(--leading-sm);
+  color: var(--fg-2);
+}
+.input-ic {
+  color: var(--muted);
+  flex: none;
+}
+.hd-rank .input-ic {
+  margin-right: 0;
+}
+.hd-approx {
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+/* 分科条形组：divide-y 细线分组，不用独立卡片盒子（密度=7） */
+.bars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+.barline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 32px;
+}
+/* 「只看这一科」：用底色区分，不加彩色边框 */
+.barline.focused {
+  margin: 0 calc(var(--space-2) * -1);
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--accent-subtle);
+}
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+.barline .sj {
+  width: 108rpx;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--text-sm);
+  line-height: var(--leading-sm);
+  color: var(--fg);
+}
+.sj-done {
+  font-size: var(--text-xs);
+  line-height: var(--leading-xs);
+  color: var(--accent);
+}
+.bar-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.bar {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  overflow: visible;
+}
+.bar-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--accent);
+  border-radius: var(--radius-pill);
+}
+.bar-tick {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  background: var(--muted);
+}
+.bar-diff {
+  font-size: var(--text-xs);
+  line-height: var(--leading-xs);
+  font-weight: 510;
+}
+.barline .rt {
+  width: 88rpx;
+  flex: none;
+  text-align: right;
+  font-size: var(--text-sm);
+  line-height: var(--leading-sm);
+  color: var(--fg-2);
+}
+.bars-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--space-3);
+}
+.legend-line {
+  width: 2px;
+  height: 12px;
+  flex: none;
+  background: var(--muted);
+}
+
+/* 失分归因 */
+.attr-rows .row {
+  min-height: 52px;
+  padding: var(--space-2) 0;
+}
+.attr-note {
+  margin-top: var(--space-2);
+}
+.lost {
+  font-size: var(--text-lg);
+  line-height: var(--leading-lg);
+  font-weight: 590;
+  color: var(--trend-down);
+}
+
+/* 骨架屏 */
+.sk-head {
+  height: 180rpx;
+  border-radius: var(--radius-lg);
+}
+.sk-block {
+  height: 320rpx;
+  border-radius: var(--radius-lg);
+}

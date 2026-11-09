@@ -1,7 +1,22 @@
-const app = getApp()
+// Resolve app state when a request starts, after application initialization.
+export function networkError(error) {
+  const detail = String(error.errMsg || '')
+  let message = '无法连接服务器，请切换网络后重试'
+  if (/domain list|url not in domain|合法域名/i.test(detail)) {
+    message = '服务域名尚未生效，请联系管理员检查域名配置'
+  } else if (/timeout|timed out/i.test(detail)) {
+    message = '连接服务器超时，请切换网络后重试'
+  } else if (/ssl|certificate|cert_/i.test(detail)) {
+    message = '服务器安全连接失败，请联系管理员'
+  }
+  const result = new Error(message)
+  result.diagnostic = detail
+  result.errno = error.errno
+  return result
+}
 
 function request(method, path, data) {
-  const url = app.globalData.baseUrl + path
+  const url = getApp().globalData.baseUrl + path
   return new Promise((resolve, reject) => {
     wx.request({
       url,
@@ -9,16 +24,23 @@ function request(method, path, data) {
       data,
       header: { 'Content-Type': 'application/json' },
       success(res) {
-        if (res.data && res.data.ok) {
+        if (res.statusCode >= 200 && res.statusCode < 300 && res.data && res.data.ok) {
           resolve(res.data.data)
         } else {
-          wx.showToast({ title: res.data?.error || '请求失败', icon: 'none' })
-          reject(new Error(res.data?.error || '请求失败'))
+          const message =
+            typeof res.data?.error === 'string'
+              ? res.data.error
+              : `服务请求失败（HTTP ${res.statusCode}），请稍后重试`
+          wx.showToast({ title: message, icon: 'none' })
+          const error = new Error(message)
+          error.statusCode = res.statusCode
+          reject(error)
         }
       },
       fail(err) {
-        wx.showToast({ title: '网络错误，请检查连接', icon: 'none' })
-        reject(err)
+        const error = networkError(err)
+        wx.showToast({ title: error.message, icon: 'none' })
+        reject(error)
       },
     })
   })
@@ -34,8 +56,7 @@ export const api = {
     request('POST', '/api/topics', { title, description, userId }),
   getTopic: (id) => request('GET', `/api/topics/${id}`),
   updateTopic: (id, data) => request('PATCH', `/api/topics/${id}`, data),
-  joinTopic: (inviteCode, userId) =>
-    request('POST', '/api/topics/join', { inviteCode, userId }),
+  joinTopic: (inviteCode, userId) => request('POST', '/api/topics/join', { inviteCode, userId }),
 
   // Materials
   getMaterials: (topicId) => request('GET', `/api/materials?topicId=${topicId}`),
@@ -46,7 +67,7 @@ export const api = {
   uploadImage: (filePath, userId) => {
     return new Promise((resolve, reject) => {
       wx.uploadFile({
-        url: app.globalData.baseUrl + '/api/upload',
+        url: getApp().globalData.baseUrl + '/api/upload',
         filePath,
         name: 'file',
         formData: { userId },
@@ -65,14 +86,12 @@ export const api = {
   },
 
   // Generate
-  generateArticle: (topicId, userId) =>
-    request('POST', '/api/generate', { topicId, userId }),
+  generateArticle: (topicId, userId) => request('POST', '/api/generate', { topicId, userId }),
 
   // Article
   getArticle: (topicId) => request('GET', `/api/article?topicId=${topicId}`),
 
   // Members
   getMembers: (topicId) => request('GET', `/api/members?topicId=${topicId}`),
-  removeMember: (topicId, userId) =>
-    request('DELETE', '/api/members', { topicId, userId }),
+  removeMember: (topicId, userId) => request('DELETE', '/api/members', { topicId, userId }),
 }

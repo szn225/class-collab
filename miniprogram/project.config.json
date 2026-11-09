@@ -1,7 +1,24 @@
 {
-  "description": "班级共创公众号文章",
+  "description": "慧共创活动资料与文章",
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      {
+        "type": "suffix",
+        "value": ".test.ts"
+      },
+      {
+        "type": "folder",
+        "value": "node_modules"
+      },
+      {
+        "type": "file",
+        "value": "tsconfig.json"
+      },
+      {
+        "type": "folder",
+        "value": "typings"
+      }
+    ],
     "include": []
   },
   "setting": {
@@ -35,7 +52,9 @@
     "minifyWXML": true,
     "localPlugins": false,
     "disableUseStrict": false,
-    "useCompilerPlugins": false,
+    "useCompilerPlugins": [
+      "typescript"
+    ],
     "condition": false,
     "swc": false,
     "disableSWC": true,
@@ -43,11 +62,12 @@
       "ignore": [],
       "disablePlugins": [],
       "outputPath": ""
-    }
+    },
+    "__usePrivacy__": true
   },
   "appid": "wxfd53c8b15bc8fa51",
-  "projectname": "班级共创",
-  "libVersion": "3.3.4",
+  "projectname": "慧共创",
+  "libVersion": "2.33.0",
   "condition": {},
   "editorSetting": {
     "tabIndent": "insertSpaces",

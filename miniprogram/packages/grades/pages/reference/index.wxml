@@ -1,0 +1,280 @@
+<!-- 参照库 —— 录取线 / 指标生对照 / 规则要点（SPEC §7 页5 · UIUX §9.5–9.7） -->
+<nav-bar title="参照"></nav-bar>
+<grade-context />
+
+<view class="page">
+
+  <view class="ph-meta">长沙 2026 口径 · 数据仅供参考</view>
+
+  <view class="segment">
+    <view
+      class="seg-item {{segment === item.value ? 'on' : ''}}"
+      wx:for="{{segments}}"
+      wx:key="value"
+      data-value="{{item.value}}"
+      bindtap="onPickSegment"
+    >{{item.label}}</view>
+  </view>
+
+  <!-- Loading：骨架屏（AC-34）—— 复用全局 .skeleton + .sk-line / .sk-panel（styles/controls.wxss） -->
+  <block wx:if="{{loading}}">
+    <view class="skeleton sk-line"></view>
+    <view class="skeleton sk-panel"></view>
+  </block>
+
+  <view class="card stack" wx:elif="{{error}}">
+    <text class="h2">参照数据读取失败</text>
+    <text class="sub">{{error}}</text>
+    <view class="btn ghost" bindtap="loadActive">重试</view>
+  </view>
+
+  <!-- ============ 子区一：高中录取线（57 校） ============ -->
+  <block wx:elif="{{segment === 'admission'}}">
+    <view class="sec-h">
+      <t-icon name="book" size="20px" />
+      <text>高中录取线 · {{admission.rankedCount}} 所</text>
+    </view>
+
+    <!-- 数据联动：直接告诉家长冲/稳/保是怎么来的 -->
+    <view class="info-bar" wx:if="{{admission.hasRank}}">
+      <t-icon class="info-ic" name="chart-bar" size="16px" />
+      <text>按你的折算位次（约）<text class="strong num">{{admission.myRankText}}</text> 自动标注冲 / 稳 / 保</text>
+    </view>
+
+    <!-- 目标校：位次回流首页趋势图目标虚线（UIUX §9.6-5） -->
+    <view class="target-bar" wx:if="{{target}}">
+      <text class="target-k">目标校</text>
+      <text class="grow target-v">{{target.counterpart}}</text>
+      <text class="cap num">{{target.rankText}}</text>
+      <view class="target-x" bindtap="onClearTarget">取消</view>
+    </view>
+
+    <view class="input search">
+      <t-icon name="search" size="20px" />
+      <input
+        class="search-field"
+        value="{{keyword}}"
+        placeholder="搜索学校"
+        placeholder-class="ph"
+        bindinput="onSearchInput"
+        confirm-type="search"
+      />
+    </view>
+
+    <view class="chips">
+      <view
+        class="chipbtn {{batch === item ? 'on' : ''}}"
+        wx:for="{{batches}}"
+        wx:key="*this"
+        data-batch="{{item}}"
+        bindtap="onPickBatch"
+      >{{item}}</view>
+      <view class="chipbtn {{onlyChong ? 'on' : ''}}" bindtap="onToggleChong">只看我能冲的</view>
+    </view>
+
+    <!-- 排序控件：按位次 / 按录取线（UIUX §9.5） -->
+    <view class="chips sort-row">
+      <text class="sort-k">排序</text>
+      <view
+        class="chipbtn {{sort === item.key ? 'on' : ''}}"
+        wx:for="{{sorts}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="onPickSort"
+      >{{item.label}}</view>
+    </view>
+
+    <view class="card flush" wx:if="{{admission.rows.length}}">
+      <view class="rows pad-x">
+        <view
+          class="row sch-row"
+          wx:for="{{admission.rows}}"
+          wx:key="seq"
+          data-school="{{item.school}}"
+          bindlongpress="onLongPressSchool"
+        >
+          <view class="grow">
+            <view class="school-name">{{item.school}}</view>
+            <view class="school-meta">
+              <text class="num">{{item.cutoffText}}</text>
+              <text class="cap">{{item.rankText}}</text>
+              <text class="cap" wx:if="{{item.batch}}">{{item.batch}}</text>
+              <view class="chip target" wx:if="{{item.isTarget}}">目标校</view>
+            </view>
+          </view>
+          <view class="school-side">
+            <view class="chip {{item.verdict}}" wx:if="{{item.verdictLabel}}">{{item.verdictLabel}}</view>
+            <view class="gap num {{item.gapDir === 'p' ? 'txt-up' : item.gapDir === 'n' ? 'txt-down' : ''}}" wx:if="{{item.gapText}}">
+              {{item.gapText}}
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="card-foot"><text class="note">{{admission.note}}</text></view>
+    </view>
+
+    <view class="card" wx:else>
+      <empty-state icon="search" title="没有匹配的学校" desc="换个关键词，或点「全部批次」看看" />
+    </view>
+  </block>
+
+  <!-- ============ 子区二：指标生对照（150 校） ============ -->
+  <block wx:elif="{{segment === 'indicator'}}">
+    <view class="sec-h">
+      <t-icon name="root-list" size="20px" />
+      <text>指标生对照 · 本校</text>
+    </view>
+
+    <view class="card">
+      <view class="spread">
+        <text class="h3">本校</text>
+        <text class="sub">{{mySchool || '未设置'}}</text>
+      </view>
+      <view class="chips tier-chips">
+        <view
+          class="chipbtn {{tierKey === item.key ? 'on' : ''}}"
+          wx:for="{{tierOptions}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="onPickIndicatorTier"
+        >{{item.label}}</view>
+      </view>
+      <view class="note" wx:if="{{!mySchool}}">还没设置本校。到「设置 → 本校」选择初中校名后，这里会显示本校对口高中的名额与实录线。</view>
+    </view>
+
+    <view class="input search">
+      <t-icon name="search" size="20px" />
+      <input
+        class="search-field"
+        value="{{indicatorKeyword}}"
+        placeholder="搜索初中校名"
+        placeholder-class="ph"
+        bindinput="onIndicatorSearchInput"
+        confirm-type="search"
+      />
+    </view>
+
+    <view class="card flush" wx:if="{{indicatorRows.length}}">
+      <view class="rows pad-x">
+        <view
+          class="row sch-row"
+          wx:for="{{indicatorRows}}"
+          wx:key="seq"
+          data-school="{{item.school}}"
+          bindtap="onTapIndicator"
+        >
+          <view class="grow">
+            <view class="school-name">{{item.school}}</view>
+            <view class="school-meta">
+              <text class="cap">{{item.group}}集团</text>
+              <text class="cap" wx:if="{{item.district}}">{{item.district}}</text>
+              <text class="cap">毕业生 {{item.graduatesText}}</text>
+            </view>
+            <view class="school-meta" wx:if="{{item.topTierLabel}}">
+              <view class="chip">{{item.topTierLabel}}</view>
+              <text class="cap">{{item.topCounterpart}}</text>
+              <text class="cap">名额 {{item.topPlanText}}</text>
+              <text class="cap">填报比 {{item.topRatioText}}</text>
+            </view>
+          </view>
+          <view class="chev"><t-icon name="chevron-right" size="20px" /></view>
+        </view>
+      </view>
+    </view>
+
+    <view class="card" wx:else>
+      <empty-state icon="search" title="无匹配学校，换个筛选" desc="也可以直接搜索初中校名" />
+    </view>
+
+    <!-- 单校下钻：三层降维的 L3（键值对，不用横向滚动表） -->
+    <view class="card detail" wx:if="{{indicatorDetail && !indicatorDetail.empty}}">
+      <view class="detail-head">
+        <view class="grow">
+          <view class="h2">{{indicatorDetail.school.school}}</view>
+          <view class="cap detail-sub">
+            {{indicatorDetail.school.group}}集团 · 毕业生 {{indicatorDetail.school.graduates}} · 指标生合计 {{indicatorDetail.school.indicatorTotal}}
+          </view>
+        </view>
+        <view class="iconbtn" bindtap="onCloseDetail" aria-label="收起">
+          <t-icon name="close" size="20px" />
+        </view>
+      </view>
+
+      <view class="chips">
+        <view
+          class="chipbtn {{indicatorDetail.activeTier === item.key ? 'on' : ''}}"
+          wx:for="{{indicatorDetail.tiers}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="onPickDetailTier"
+        >{{item.label}}</view>
+      </view>
+
+      <!-- 一键标记为目标校 → 位次回流首页趋势目标虚线（UIUX §9.6-5） -->
+      <view class="detail-actions">
+        <view class="chipbtn" bindtap="onSetTargetFromDetail">
+          {{target && target.counterpart === indicatorDetail.competitionTarget ? '已设为目标校' : '设为目标校'}}
+        </view>
+        <text class="cap">目标校位次会画到首页趋势图的虚线上</text>
+      </view>
+
+      <!-- AC-26：校内竞争位，显著标注「不是全市排名」 -->
+      <view class="compete">
+        <view class="compete-k">校内竞争位 · {{indicatorDetail.competitionTarget}}</view>
+        <view class="compete-v num">{{indicatorDetail.competitionRankText}}</view>
+        <view class="compete-note">{{indicatorDetail.competitionNote}}</view>
+        <view class="compete-cap">该对口指标名额：{{indicatorDetail.competitionPlanText}}</view>
+      </view>
+
+      <!-- AC-27：硬门槛校验 -->
+      <view class="gate {{indicatorDetail.gate.passed ? 'ok' : 'warn'}}" wx:if="{{indicatorDetail.gate.checked}}">
+        <view class="gate-h">
+          <t-icon name="{{indicatorDetail.gate.passed ? 'check-circle' : 'error-circle'}}" size="20px" />
+          <text>{{indicatorDetail.gate.passed ? '硬门槛已达标' : '指标生硬门槛未达标'}}</text>
+        </view>
+        <view class="gate-b">考查科目：{{indicatorDetail.gate.bioGeoText}} · 综合素质评价：{{indicatorDetail.gate.qualityText}}</view>
+        <view class="gate-b" wx:for="{{indicatorDetail.gate.messages}}" wx:key="*this">{{item}}</view>
+      </view>
+
+      <kv-list title="四类对口明细" items="{{indicatorKv}}" />
+
+      <view class="note">{{indicatorDetail.tieNote}}。每生只能填其中一所，指标生是校内竞争，看的是本校填同一所高中这批人里排第几。</view>
+    </view>
+  </block>
+
+  <!-- ============ 子区三：规则要点（8 条） ============ -->
+  <block wx:else>
+    <view class="sec-h">
+      <t-icon name="info-circle" size="20px" />
+      <text>指标生规则要点 · 容易吃亏的 {{rules.length}} 条</text>
+    </view>
+    <view class="card">
+      <view class="rows">
+        <view
+          class="row rule-row"
+          wx:for="{{rules}}"
+          wx:key="index"
+          data-index="{{index}}"
+          bindtap="onToggleRule"
+        >
+          <text class="rule-no num">{{item.no}}</text>
+          <view class="grow">
+            <view class="ttl">{{item.title}}</view>
+            <view class="rule-detail" wx:if="{{item.expanded}}">{{item.detail}}</view>
+          </view>
+          <view class="chev">
+            <t-icon name="{{item.expanded ? 'chevron-down' : 'chevron-right'}}" size="20px" />
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="note">点开每一条看细则；这些都是「容易吃亏」的地方，不是官方条文。</view>
+  </block>
+
+  <!-- AC-35：参照数据页显著展示免责声明 -->
+  <disclaimer-bar text="{{disclaimer}}" />
+
+  <view class="tabbar-spacer"></view>
+</view>
+
+<grade-tabs value="{{gradeTab}}" />

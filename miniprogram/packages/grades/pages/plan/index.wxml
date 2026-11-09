@@ -1,0 +1,77 @@
+<!-- 复盘 —— 失分点 → 改进动作 → 责任时限 → 复检结果（SPEC §7 页4 / UIUX §9.4） -->
+<nav-bar title="复盘">
+  <view class="chip" wx:if="{{items.length}}">{{items.length}} 项</view>
+</nav-bar>
+<grade-context />
+
+<view class="page">
+
+  <view class="ph-meta">失分点 → 动作 → 时限 → 复检</view>
+
+  <view class="segment">
+    <view
+      class="seg-item {{filter === item.value ? 'on' : ''}}"
+      wx:for="{{filters}}"
+      wx:key="value"
+      data-value="{{item.value}}"
+      bindtap="onPickFilter"
+    >{{item.label}}</view>
+  </view>
+
+  <!-- Loading：骨架屏（AC-34）—— 复用全局 .skeleton + .sk-panel（styles/controls.wxss） -->
+  <block wx:if="{{loading}}">
+    <view class="skeleton sk-panel"></view>
+    <view class="skeleton sk-panel"></view>
+    <view class="skeleton sk-panel"></view>
+  </block>
+
+  <empty-state
+    wx:elif="{{!items.length}}"
+    icon="task"
+    title="{{emptyTitle}}"
+    desc="从考试详情的失分点一键生成复盘项，孩子知道下一步做什么"
+    actionText="去录入一次考试"
+    actionIcon="add"
+    bind:action="goRecord"
+  />
+
+  <block wx:else>
+    <view class="card plan-card" wx:for="{{items}}" wx:key="id">
+      <view class="pl-head" data-id="{{item.id}}" bindlongpress="onLongPress">
+        <view class="grow">
+          <view class="pl-title">{{item.title}}</view>
+          <view class="pl-tags">
+            <view class="chip" wx:if="{{item.subject}}">{{item.subject}}</view>
+            <view class="chip" wx:if="{{item.knowledge}}">{{item.knowledge}}</view>
+          </view>
+        </view>
+        <view class="pl-status {{item.statusClass}}">
+          <view class="dot {{item.statusClass}}"></view>
+          <text>{{item.statusText}}</text>
+        </view>
+      </view>
+
+      <view class="pl-meta">
+        <text class="pl-meta-item">责任人 · {{item.owner}}</text>
+        <text class="pl-meta-sep">·</text>
+        <text class="pl-meta-item {{item.overdue ? 'txt-down' : item.dueSoon ? 'txt-warn' : ''}}">
+          时限 {{item.dueShort}}{{item.dueLabel}}{{item.overdue ? ' · 已超期' : ''}}
+        </text>
+        <text class="pl-meta-item txt-up" wx:if="{{item.result}}">复检 {{item.result}}</text>
+      </view>
+
+      <view class="pl-actions">
+        <view class="btn ghost pl-btn" data-id="{{item.id}}" bindtap="onToggleDone">
+          <t-icon name="{{item.status === 'done' ? 'rollback' : 'check-circle'}}" size="20px" />
+          <text>{{item.status === 'done' ? '改回待办' : '标记已复检'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="note" wx:if="{{items.length}}">长按卡片可删除该复盘项。</view>
+  </block>
+
+  <view class="tabbar-spacer"></view>
+</view>
+
+<grade-tabs value="{{gradeTab}}" />

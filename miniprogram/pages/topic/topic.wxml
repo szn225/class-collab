@@ -1,62 +1,176 @@
-<view class="page">
-  <!-- Topic Header -->
-  <view class="topic-header-card">
-    <view class="topic-title">{{topic.title}}</view>
-    <view class="topic-desc" wx:if="{{topic.description}}">{{topic.description}}</view>
-    <view class="topic-info">
-      <text>邀请码: <text class="invite-code">{{topic.inviteCode}}</text></text>
-      <text class="status-tag status-{{topic.status}}">{{statusText(topic.status)}}</text>
+<view
+  class="page detail-page {{topic.status === 'active' ? 'has-composer' : ''}}"
+>
+  <view class="card topic-summary">
+    <view class="row spread">
+      <text class="eyebrow">班级故事收集站</text>
+      <status-badge status="{{topic.status}}" label="{{topic.statusLabel}}" />
+    </view>
+    <view class="page-title">{{topic.title || '主题详情'}}</view>
+    <view wx:if="{{topic.description}}" class="muted wrap">
+      {{topic.description}}
+    </view>
+    <view class="line"></view>
+    <view class="row spread">
+      <view>
+        <view class="small">邀请同学一起记录</view>
+        <text class="invite-code" selectable="true">{{topic.inviteCode}}</text>
+      </view>
+      <button
+        class="button-outline"
+        bindtap="copyInvite"
+        disabled="{{!topic.inviteCode}}"
+      >
+        复制邀请码
+      </button>
     </view>
   </view>
-
-  <!-- Generated article entry -->
-  <view wx:if="{{topic.status === 'generated'}}" class="card article-entry" bindtap="goToArticle">
-    <text>📄 查看生成的文章</text>
-    <text style="color: #999;">›</text>
+  <button
+    wx:if="{{topic.status === 'generated'}}"
+    class="article-entry button-primary"
+    bindtap="goToArticle"
+  >
+    故事已成文，去看看 →
+  </button>
+  <view wx:if="{{topic.status === 'closed'}}" class="closed-note">
+    素材收集已结束，感谢每一份分享。
   </view>
-
-  <!-- Materials Timeline -->
-  <view class="timeline" wx:if="{{materials.length > 0}}">
-    <view wx:for="{{materials}}" wx:key="id" class="material-item">
-      <view class="material-avatar">{{item.userName ? item.userName[0] : '?'}}</view>
-      <view class="material-body">
-        <view class="material-header">
-          <text class="material-user">{{item.userName}}</text>
-          <text class="material-time">{{formatTime(item.createdAt)}}</text>
-        </view>
-
-        <view wx:if="{{item.type === 'text'}}" class="material-text">{{item.content}}</view>
-        <view wx:if="{{item.type === 'voice'}}" class="material-voice">
-          <text>🎤 {{item.content}}</text>
-        </view>
-        <view wx:if="{{item.type === 'image'}}" class="material-image">
-          <image src="{{item.imageUrl}}" mode="widthFix" style="width:100%;border-radius:6px;" bindtap="previewImage" data-url="{{item.imageUrl}}" />
-        </view>
+  <view wx:if="{{topic.status === 'generated'}}" class="closed-note">
+    素材收集已结束，班级故事已生成。
+  </view>
+  <view class="row spread section-heading">
+    <text class="section-title">素材动态</text>
+    <text class="small">{{materials.length}} 条记录</text>
+  </view>
+  <state-panel
+    wx:if="{{error}}"
+    title="暂时无法加载"
+    description="{{error}}"
+    action="重新加载"
+    bind:action="loadData"
+  />
+  <skeleton-list wx:if="{{loading && !materials.length}}" />
+  <view wx:for="{{materials}}" wx:key="id" class="card material-card">
+    <view class="row">
+      <view class="avatar">{{item.initial}}</view>
+      <view class="grow">
+        <view class="author">{{item.userName || '班级成员'}}</view>
+        <view class="small">{{item.createdAtText}}</view>
       </view>
     </view>
-  </view>
-
-  <view wx:if="{{materials.length === 0 && !loading}}" class="empty-state">
-    <view style="font-size: 40px; margin-bottom: 10px;">💬</view>
-    <view>暂无素材</view>
-    <view style="font-size: 12px; margin-top: 5px;">在下方提交第一条素材吧</view>
-  </view>
-
-  <view wx:if="{{loading}}" class="loading">加载中...</view>
-
-  <!-- Bottom Input Bar -->
-  <view class="bottom-bar" wx:if="{{topic.status !== 'closed' && topic.status !== 'generated'}}">
-    <view class="input-wrapper">
-      <input class="text-input" placeholder="输入文字..." model:value="{{inputText}}" maxlength="500" />
-      <button class="send-btn" bindtap="sendText" disabled="{{!inputText.trim()}}">发送</button>
+    <view wx:if="{{item.type === 'text'}}" class="material-text">
+      {{item.content}}
     </view>
-    <view class="action-row">
-      <button class="action-btn" bindtap="chooseImage">📷 图片</button>
-      <button class="action-btn" bindtap="startRecording" wx:if="{{!recording}}">🎤 录音</button>
-      <button class="action-btn recording" bindtap="stopRecording" wx:if="{{recording}}">⏹ 停止</button>
+    <view wx:if="{{item.type === 'voice'}}" class="legacy-voice">
+      历史语音记录，暂无可播放音频
+    </view>
+    <view wx:if="{{item.type === 'image'}}" class="image-frame">
+      <image
+        wx:if="{{!item.imageFailed}}"
+        class="material-img"
+        src="{{item.imageUrl}}"
+        mode="aspectFill"
+        lazy-load
+        binderror="onImageError"
+        data-index="{{index}}"
+        bindtap="previewImage"
+        data-url="{{item.imageUrl}}"
+      />
+      <view wx:else class="image-fallback">图片加载失败</view>
     </view>
   </view>
-
-  <!-- Placeholder for bottom bar -->
-  <view class="bottom-placeholder" wx:if="{{topic.status !== 'closed' && topic.status !== 'generated'}}"></view>
+  <state-panel
+    wx:if="{{!loading && !error && !materials.length}}"
+    title="第一份素材，等你分享"
+    description="{{topic.status === 'active' ? '写下一个瞬间，或上传一张活动照片' : '这个主题尚未收集到素材'}}"
+  />
+  <view
+    wx:if="{{topic.status === 'active'}}"
+    class="composer-spacer {{expanded ? 'expanded' : ''}}"
+    style="padding-bottom:{{keyboardHeight}}px"
+  >
+    <view
+      wx:if="{{imageDrafts.length || imageError || submitError}}"
+      class="draft-spacer"
+    ></view>
+  </view>
+  <view
+    wx:if="{{topic.status === 'active'}}"
+    class="composer {{keyboardHeight ? 'keyboard-open' : ''}}"
+    style="bottom:{{keyboardHeight}}px"
+  >
+    <view wx:if="{{imageDrafts.length}}" class="image-drafts">
+      <view class="row spread draft-heading">
+        <text class="small">
+          {{imageProgress || ('待提交 ' + imageDrafts.length + '/6 张')}}
+        </text>
+        <button
+          wx:if="{{imageCanRetry && !imageBusy}}"
+          class="retry-images"
+          bindtap="sendImage"
+        >
+          重试未成功图片
+        </button>
+      </view>
+      <scroll-view class="draft-scroll" scroll-y>
+        <view class="draft-grid">
+          <view wx:for="{{imageDrafts}}" wx:key="id" class="draft-tile">
+            <image class="draft-thumb" src="{{item.path}}" mode="aspectFill" />
+            <text
+              class="draft-status {{item.status === 'failed' ? 'draft-status--failed' : ''}}"
+            >
+              {{item.statusLabel}}
+            </text>
+            <text wx:if="{{item.error}}" class="draft-error">
+              {{item.error}}
+            </text>
+            <button
+              class="remove-image"
+              bindtap="clearImage"
+              data-id="{{item.id}}"
+              disabled="{{imageBusy}}"
+              aria-label="移除第{{index + 1}}张待提交图片"
+            >
+              移除
+            </button>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+    <view wx:if="{{imageError}}" class="error">{{imageError}}</view>
+    <view wx:if="{{submitError}}" class="error">{{submitError}}</view>
+    <textarea
+      aria-label="分享活动素材，最多500字"
+      class="composer-input {{expanded ? 'expanded' : ''}}"
+      value="{{inputText}}"
+      bindinput="onInput"
+      placeholder="今天有什么值得记录的瞬间？"
+      maxlength="500"
+      adjust-position="{{false}}"
+      bindkeyboardheightchange="onKeyboardHeight"
+      show-confirm-bar="{{false}}"
+    />
+    <view class="row spread">
+      <button
+        class="button-plain"
+        bindtap="chooseImage"
+        disabled="{{imageBusy}}"
+      >
+        <image class="icon" src="/images/campus/photo.png" />
+        图片（最多6张）
+      </button>
+      <button class="button-plain expand-btn" bindtap="toggleExpanded">
+        {{expanded ? '收起' : '展开'}}
+      </button>
+      <text class="small">{{inputText.length}}/500</text>
+      <button
+        class="button-primary"
+        bindtap="sendText"
+        loading="{{sending}}"
+        disabled="{{sending || !inputText}}"
+      >
+        发送
+      </button>
+    </view>
+  </view>
 </view>

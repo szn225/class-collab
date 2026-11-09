@@ -1,0 +1,8 @@
+{
+  "component": true,
+  "styleIsolation": "apply-shared",
+  "usingComponents": {
+    "t-icon": "/packages/grades/miniprogram_npm/tdesign-miniprogram/icon/icon",
+    "empty-state": "../empty-state/index"
+  }
+}

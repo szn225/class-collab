@@ -1,0 +1,117 @@
+<!-- 考试详情 —— 分科体检（SPEC §7 页3 / UIUX §9.3） -->
+<nav-bar title="考试详情" show-back="{{true}}"></nav-bar>
+<grade-context />
+
+<view class="page safe-bottom">
+
+  <block wx:if="{{loading}}">
+    <view class="skeleton sk-head"></view>
+    <view class="skeleton sk-block"></view>
+    <view class="skeleton sk-block"></view>
+  </block>
+
+  <view class="card stack" wx:elif="{{error}}">
+    <text class="h2">打不开这次考试</text>
+    <text class="sub">{{error}}</text>
+    <view class="btn ghost" bindtap="goBack">返回定位</view>
+  </view>
+
+  <block wx:elif="{{detail}}">
+    <!-- 结论层：这次考试是谁 + 总分 + 位次 + 进退步 -->
+    <view class="card">
+      <view class="eyebrow">{{detail.metaText}}</view>
+      <view class="hd-title">{{detail.title}}</view>
+      <view class="hd-score">
+        <text class="hd-total num">{{detail.totalText}}</text>
+        <text class="hd-full" wx:if="{{detail.totalFullText}}">{{detail.totalFullText}}</text>
+        <view class="chip {{detail.delta.chipClass}} hd-chip" wx:if="{{detail.delta.dir !== 'flat'}}">
+          <t-icon name="{{detail.delta.icon}}" size="16px" />
+          <text>{{detail.delta.text}}</text>
+        </view>
+      </view>
+      <view class="hd-rank">
+        <t-icon name="chart-bar" size="16px" class="input-ic" />
+        <text>{{detail.rankText}}</text>
+        <text class="hd-approx" wx:if="{{detail.isApprox}}">（约）</text>
+      </view>
+    </view>
+
+    <!-- 分科体检：得分率横条 + 校均刻度 + 差值 -->
+    <view class="card">
+      <view class="card-h">
+        <text class="h2">分科体检</text>
+        <text class="cap">得分率 · 校均位置</text>
+      </view>
+
+      <block wx:if="{{detail.hasSubjects}}">
+        <!-- 只看这一科：长按科目行触发，轻底提示条可一键放开 -->
+        <view class="filter-bar" wx:if="{{onlySubject}}">
+          <text class="sub">只看 {{onlySubject}}</text>
+          <view class="chipbtn" bindtap="onShowAllSubjects">看全部</view>
+        </view>
+
+        <view class="bars">
+          <view
+            class="barline {{onlySubject === item.subject ? 'focused' : ''}}"
+            wx:for="{{visibleRows}}"
+            wx:key="subject"
+            data-subject="{{item.subject}}"
+            bindlongpress="onLongPressSubject"
+          >
+            <view class="sj">
+              <text>{{item.subject}}</text>
+              <text class="sj-done" wx:if="{{item.analyzed}}">已分析</text>
+            </view>
+            <view class="bar-col">
+              <view class="bar">
+                <view class="bar-fill" style="width:{{item.barPct}}%"></view>
+                <view class="bar-tick" wx:if="{{item.hasTick}}" style="left:{{item.tickPct}}%"></view>
+              </view>
+              <view class="bar-diff {{item.diffDir === 'p' ? 'txt-up' : 'txt-down'}}" wx:if="{{item.diffText}}">
+                较校均 {{item.diffText}}
+              </view>
+            </view>
+            <text class="rt num">{{item.rateText}}</text>
+          </view>
+        </view>
+        <view class="bars-note">
+          <view class="legend-line"></view>
+          <text class="note">得分率 = 该科得分 ÷ 该科满分；竖线 = 校均位置（未录校均时不显示）。长按科目行可只看这一科或标记已分析。</text>
+        </view>
+      </block>
+
+      <empty-state
+        wx:else
+        icon="chart-bar"
+        title="本次未录分科，只展示位次与档次"
+        desc="补录各科分数后，这里能看出是哪一科拖了后腿"
+      />
+    </view>
+
+    <!-- 失分归因 -->
+    <view class="card">
+      <view class="card-h">
+        <text class="h2">失分归因</text>
+        <text class="cap">五选一</text>
+      </view>
+      <block wx:if="{{detail.attributionRows.length}}">
+        <view class="rows attr-rows">
+          <view class="row" wx:for="{{detail.attributionRows}}" wx:key="name">
+            <view class="dot down"></view>
+            <view class="grow ttl">{{item.name}}</view>
+            <text class="num lost" wx:if="{{item.lostText}}">{{item.lostText}}</text>
+          </view>
+        </view>
+      </block>
+      <view class="note attr-note" wx:else>
+        本次还没有标注失分归因。归因可选：{{detail.attributionHint}}。
+      </view>
+    </view>
+
+    <view class="btn ghost wide" bindtap="goPlan">
+      <t-icon name="task" size="20px" />
+      <text>去复盘 · 把失分变成下一步动作</text>
+    </view>
+    <view class="safe-spacer"></view>
+  </block>
+</view>

@@ -1,18 +1,42 @@
-<view class="login-container">
-  <view class="login-box">
-    <view class="logo">📝</view>
-    <view class="title">班级共创</view>
-    <view class="subtitle">一起记录我们的班级故事</view>
-
-    <view class="form">
-      <input class="input" placeholder="请输入你的姓名" model:value="{{name}}" maxlength="10" />
-      <button class="btn-primary" bindtap="handleLogin" loading="{{loading}}">
-        {{loading ? '登录中...' : '进入'}}
-      </button>
+<view class="page login-page">
+  <view class="login-art">
+    <view class="art-paper">
+      <image class="notebook" src="/images/campus/notebook.png" />
+      <view class="art-line"></view>
+      <view class="art-line short"></view>
+      <text class="art-caption">我们的班级故事</text>
     </view>
-
-    <view class="hint">
-      首次使用自动注册，第一位用户默认为管理员
-    </view>
+    <image class="art-star" src="/images/campus/star.png" />
+    <view class="art-sticker">一起，留下闪光时刻</view>
   </view>
+  <view class="eyebrow">CLASSROOM STORIES</view>
+  <view class="page-title">
+    每个瞬间，
+    <view>都值得一起记录。</view>
+  </view>
+  <view class="muted">收集活动点滴，共创班级好文章。</view>
+  <view class="card login-card">
+    <label class="field-label" for="name">你的姓名</label>
+    <input
+      id="name"
+      class="input-field"
+      value="{{name}}"
+      bindinput="onInput"
+      placeholder="例如：小云"
+      maxlength="10"
+      confirm-type="done"
+      bindconfirm="handleLogin"
+    />
+    <view class="small">请使用真实姓名，方便同学认出你</view>
+    <view wx:if="{{error}}" class="error">{{error}}</view>
+    <button
+      class="button-primary"
+      bindtap="handleLogin"
+      loading="{{loading}}"
+      disabled="{{loading}}"
+    >
+      {{loading ? '正在进入…' : '开始记录'}}
+    </button>
+  </view>
+  <view class="small">加入主题 · 分享素材 · 留住班级回忆</view>
 </view>

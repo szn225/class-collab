@@ -1,0 +1,61 @@
+@import "../../base.wxss";
+/* 定位首页：页级操作 / 记录列表 / 骨架屏 */
+
+.exam-rows .row {
+  min-height: 66px;
+  padding: var(--space-2) 0;
+}
+.exam-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: var(--space-1);
+}
+.exam-meta .chip {
+  min-height: 22px;
+  padding: 0 6px;
+}
+.exam-meta .cap {
+  margin-top: 0;
+}
+.row-rank {
+  flex: none;
+  max-width: 240rpx;
+  text-align: right;
+  font-size: var(--text-sm);
+  line-height: var(--leading-sm);
+  color: var(--fg-2);
+}
+.chev {
+  color: var(--muted);
+  margin-left: var(--space-1);
+  flex: none;
+  line-height: 0;
+}
+
+/* 目标校回显：一行低干扰说明，不做第二个卡片 */
+.target-tip {
+  margin-top: var(--space-2);
+}
+
+/* 骨架屏 */
+.sk-hero {
+  height: 164px;
+  border-radius: var(--radius-lg);
+}
+.sk-tiers {
+  display: flex;
+  gap: var(--space-2);
+}
+.sk-tier {
+  flex: 1;
+  height: 72px;
+  border-radius: var(--radius-md);
+}
+.sk-block {
+  height: 220px;
+  border-radius: var(--radius-lg);
+}
+
+.saved-confirmation{padding:14px 16px;background:#e1efe4;color:#285b4b;border-radius:12px;font-weight:600;font-size:16px}

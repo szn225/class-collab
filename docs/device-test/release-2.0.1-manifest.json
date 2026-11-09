@@ -1,0 +1,17 @@
+{
+  "version": "2.0.1",
+  "appid": "wxfd53c8b15bc8fa51",
+  "files": {
+    "app.js": "a1da1033d044d1411618e74b96cc69740eae801fd38d61758e3437ccec89ace7",
+    "app.json": "5e0005347d30bfe62accebbd64ec8ab2cfdcc628f283ea96eb02bfdacce99891",
+    "app.wxss": "ccaf3002e9c93cdfd640546838af90c7d0c3e76480d96089edac3d88a85d68a3",
+    "sitemap.json": "c46af48bc7b21441f5ca9e2d813b269eeb8a7d8bdfe9771a715652a38e426e32",
+    "project.config.json": "181c4eaf4ff44fa6c42d9db9d548aec3becee674f5f0bf5c215a7a73635395ae",
+    "config/endpoints.js": "03fa660d94623052080d755db63ac91bb88053229d496df2f62ed507446f0a10",
+    "utils/v2.js": "805c5b1cb58bd7682254c7024c01b6618331e75dfe04719c40c4f04f59fddae0",
+    "pages/co-create/index.js": "353a59b0baa6c1eba1fff07a29548fe1944ff88d105bae0f2e69e8c8d2147752",
+    "pages/co-create/index.json": "b34772324d044509b4849b858912986c5e845efb1b42169e67ca3a0094d68d13",
+    "pages/co-create/index.wxml": "5ec3bbabfd728511909e0873cf6503e836243009a4c2fa93135c867cb96aca3b",
+    "pages/co-create/index.wxss": "54f8f183af7d9c3328fc5b785ac1453f6eec502eab3879008a7c3c4d647c85cd"
+  }
+}

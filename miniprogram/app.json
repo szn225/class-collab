@@ -1,37 +1,30 @@
 {
   "pages": [
-    "pages/index/index",
-    "pages/topics/topics",
-    "pages/topic/topic",
-    "pages/article/article",
-    "pages/admin/admin"
+    "pages/home/index",
+    "pages/account/index",
+    "pages/co-create/index",
+    "pages/login/index"
   ],
   "window": {
-    "navigationBarBackgroundColor": "#07c160",
-    "navigationBarTitleText": "班级共创",
-    "navigationBarTextStyle": "white"
+    "navigationBarBackgroundColor": "#F6F7F5",
+    "navigationBarTitleText": "慧共创",
+    "navigationBarTextStyle": "black"
   },
-  "tabBar": {
-    "color": "#999",
-    "selectedColor": "#07c160",
-    "backgroundColor": "#fff",
-    "borderStyle": "black",
-    "list": [
-      {
-        "pagePath": "pages/topics/topics",
-        "text": "主题",
-        "iconPath": "images/topics.png",
-        "selectedIconPath": "images/topics-active.png"
-      },
-      {
-        "pagePath": "pages/admin/admin",
-        "text": "管理",
-        "iconPath": "images/admin.png",
-        "selectedIconPath": "images/admin-active.png"
-      }
-    ]
-  },
-  "requiredBackgroundModes": ["audio"],
   "style": "v2",
-  "sitemapLocation": "sitemap.json"
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "usingComponents": {},
+  "subPackages": [
+    {
+      "root": "packages/grades",
+      "pages": [
+        "pages/dashboard/index",
+        "pages/record/index",
+        "pages/plan/index",
+        "pages/reference/index",
+        "pages/exam-detail/index",
+        "pages/profile/index"
+      ]
+    }
+  ]
 }

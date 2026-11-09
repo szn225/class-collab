@@ -1,0 +1,1 @@
+<view class="context"><button bindtap="home">‹ 首页</button><button bindtap="account">{{name}}　设置 ›</button></view>

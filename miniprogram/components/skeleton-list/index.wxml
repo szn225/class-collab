@@ -1,0 +1,7 @@
+<view aria-hidden="true">
+  <view class="skeleton-card" wx:for="{{count}}" wx:key="index">
+    <view class="skeleton short"></view>
+    <view class="skeleton"></view>
+    <view class="skeleton medium"></view>
+  </view>
+</view>

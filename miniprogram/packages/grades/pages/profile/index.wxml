@@ -1,0 +1,101 @@
+<!-- 设置 —— 备份导出/导入 · 数据版本 · 免责声明（SPEC §7 页6 / §9.7 F11） -->
+<nav-bar title="设置" show-back="{{true}}">
+  <view class="chip">自用版</view>
+</nav-bar>
+<grade-context />
+
+<view class="page safe-bottom">
+
+  <view class="ph-meta">备份资料 · 换手机前确认同步或导出</view>
+
+  <!-- 备份 -->
+  <view class="card">
+    <view class="card-h">
+      <view class="title-row">
+        <t-icon class="title-ic" name="download" size="20px" />
+        <text class="h2">数据备份</text>
+      </view>
+    </view>
+    <view class="card-b">
+      <view class="note">未开启同步的资料仅保存在本机。换手机或清理数据前，请确认同步完成或导出 JSON 备份。</view>
+      <view class="btn-row">
+        <view class="btn primary grow {{exporting ? 'disabled' : ''}}" bindtap="onExport">
+          <t-icon name="download" size="20px" />
+          <text>{{exporting ? '导出中…' : '导出备份'}}</text>
+        </view>
+        <view class="btn ghost grow {{importing ? 'disabled' : ''}}" bindtap="onImport">
+          <t-icon name="upload" size="20px" />
+          <text>{{importing ? '导入中…' : '导入备份'}}</text>
+        </view>
+      </view>
+      <view class="note note-gap">导入采用整包校验：文件不合法会拒绝导入，现有数据原样保留。</view>
+    </view>
+  </view>
+
+  <!-- 本校设置（指标生对照的「本校」） -->
+  <view class="card">
+    <view class="card-h">
+      <view class="title-row">
+        <t-icon class="title-ic" name="location" size="20px" />
+        <text class="h2">本校</text>
+      </view>
+      <text class="cap">指标生对照用</text>
+    </view>
+    <view class="card-b">
+      <picker range="{{schoolNames}}" value="{{schoolIndex}}" bindchange="onPickSchool">
+        <view class="input">
+          <text class="val body">{{mySchool || '请选择初中校名'}}</text>
+          <view class="chev"><t-icon name="chevron-right" size="20px" /></view>
+        </view>
+      </picker>
+      <view class="note note-gap">用于「参照 → 指标生对照」定位本校的对口高中与名额。</view>
+    </view>
+  </view>
+
+  <!-- 数据版本 -->
+  <view class="card" wx:if="{{meta}}">
+    <view class="card-h">
+      <view class="title-row">
+        <t-icon class="title-ic" name="info-circle" size="20px" />
+        <text class="h2">数据版本</text>
+      </view>
+    </view>
+    <view class="card-b">
+      <kv-list items="{{metaKv}}" />
+      <view class="note note-gap">{{meta.note}}</view>
+    </view>
+  </view>
+
+  <!-- 年度口径热切换 -->
+  <view class="card">
+    <view class="card-h">
+      <view class="title-row">
+        <t-icon class="title-ic" name="refresh" size="20px" />
+        <text class="h2">切换年度口径</text>
+      </view>
+    </view>
+    <view class="card-b">
+      <view class="note">拿到新一年的数据文件后，这里可以直接导入切换，不用等版本更新。历史记录仍按当时的旧口径保留。</view>
+      <view class="btn ghost wide note-gap" bindtap="onImportDataset">
+        <t-icon name="refresh" size="20px" />
+        <text>导入数据集 JSON</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 免责声明 -->
+  <view class="card">
+    <view class="card-h">
+      <view class="title-row">
+        <t-icon class="title-ic" name="file-paste" size="20px" />
+        <text class="h2">免责声明</text>
+      </view>
+    </view>
+    <view class="card-b">
+      <disclaimer-bar text="{{disclaimer}}" />
+      <view class="note note-gap" wx:if="{{meta}}">数据来源：{{meta.sourceNote}}</view>
+    </view>
+  </view>
+
+  <view class="note center">游客资料保存在本机；登录并主动开启同步后，资料保存到个人账号。</view>
+</view>

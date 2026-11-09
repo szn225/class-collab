@@ -1,0 +1,12 @@
+<!-- 空态：具体引导，不写空洞占位 -->
+<view class="empty">
+  <view class="empty-ic">
+    <t-icon name="{{icon}}" size="32px" />
+  </view>
+  <view class="empty-t">{{title}}</view>
+  <view class="empty-d" wx:if="{{desc}}">{{desc}}</view>
+  <view class="btn ghost empty-a" wx:if="{{actionText}}" bindtap="onAction">
+    <t-icon wx:if="{{actionIcon}}" name="{{actionIcon}}" size="20px" />
+    <text>{{actionText}}</text>
+  </view>
+</view>

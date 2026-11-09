@@ -1,0 +1,61 @@
+.trend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.trend-head {
+  margin-bottom: var(--space-1);
+}
+.trend-cv {
+  display: block;
+}
+.legend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+.lg-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: none;
+}
+.lg-solid {
+  background: var(--accent);
+}
+.lg-hollow {
+  border: 2px solid var(--muted);
+  margin-left: var(--space-2);
+}
+.lg-hint {
+  margin-left: auto;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+.semantic {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: var(--text-xs);
+  color: var(--fg-2);
+  line-height: var(--leading-body);
+}
+.semantic-ic {
+  color: var(--trend-up);
+  margin-top: 1px;
+}
+.tip {
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

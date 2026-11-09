@@ -1,0 +1,21 @@
+.kv-title {
+  font-size: var(--text-sm);
+  font-weight: 590;
+  color: var(--fg-2);
+  margin-bottom: var(--space-1);
+}
+.kv-v {
+  font-size: var(--text-base);
+  color: var(--fg);
+  flex: none;
+  text-align: right;
+}
+.kv-v.strong {
+  font-weight: 590;
+  font-size: var(--text-lg);
+}
+.kv {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
