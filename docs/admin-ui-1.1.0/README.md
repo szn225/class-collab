@@ -25,4 +25,6 @@
 
 `prepare-admin-release.cjs` 冻结仅运行代码、public 资产、依赖锁和构建配置，共 46 个文件。不会带入本机 .env、凭据、测试、数据库迁移或 backend 中指向旧项目的 .vercel 关联。当前基线部署 dpl_HKz2Fdd4YUKBz78KwyradmSecMdU 作为回退点。
 
-不执行数据库迁移，不修改 AI 开关、计价或运营配置。生产环境变量复用目标项目已有配置。具体发布结果见 deployment.json（发布完成后生成）。
+不执行数据库迁移，不修改 AI 开关、计价或运营配置。生产环境变量复用目标项目已有配置。具体发布结果见 deployment.json。
+
+已部署并提升为生产版本，部署状态 READY，线上入口 https://gongchuang-test.chaohuiwan.com.cn/manage 。已在真实域名验证后台版本为 admin-ui-1.1.0、数据库连接正常、登录页加载正常、未登录用户查询返回 401。发布后观察窗口未发现本部署 error/fatal 日志。生产管理员登录后的业务写操作未执行，完整交互验证使用上述隔离环境。

@@ -1,0 +1,27 @@
+{
+  "version": "admin-ui-1.1.0",
+  "releasedAt": "2026-11-10T08:54:00Z",
+  "sourceCommit": "2d3ba4a",
+  "projectId": "prj_AuicRy7kDGszYbTu7Anco6vGyi36",
+  "teamId": "team_AcOQuXI4QJQohewxNNOsbrNz",
+  "deploymentId": "dpl_BjpGmh97GTCAZwPFVHhqEMWBHd7m",
+  "deploymentUrl": "https://class-collab-v2-test-dqwqptxvy-anns-projects-14c3a4b1.vercel.app",
+  "adminUrl": "https://gongchuang-test.chaohuiwan.com.cn/manage",
+  "state": "READY",
+  "promotion": "Production deployment built with --skip-domain, verified, then promoted; custom domain resolved to this deployment.",
+  "rollbackDeploymentId": "dpl_HKz2Fdd4YUKBz78KwyradmSecMdU",
+  "checks": {
+    "stagedVersion": "admin-ui-1.1.0",
+    "stagedHealth": { "ok": true, "database": "connected", "version": 2 },
+    "liveVersion": "admin-ui-1.1.0",
+    "liveHealth": { "ok": true, "database": "connected", "version": 2 },
+    "liveLoginPage": "Verified visible in browser; screenshot live-login.png",
+    "liveUnauthenticatedAdminUsersStatus": 401,
+    "runtimeErrorLogs": "No error/fatal logs found for this deployment in 15-minute window ending 2026-11-10T08:53:43Z."
+  },
+  "limits": [
+    "Authenticated business workflows tested using isolated in-memory fixtures, not production administrator credentials.",
+    "No production points, AI settings or configuration were changed for verification.",
+    "No database migration or supplier generation call was run."
+  ]
+}
