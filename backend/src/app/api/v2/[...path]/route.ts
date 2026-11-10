@@ -1,3 +1,4 @@
+import { ADMIN_READ_COMMANDS } from '@/lib/v2/admin'
 import { NextRequest, NextResponse } from 'next/server'
 import { executeGrades } from '@/lib/v2/grades'
 import { execute, authenticate } from '@/lib/v2/domain'
@@ -50,7 +51,7 @@ async function handle(request:NextRequest,{params}:{params:{path:string[]}}){
   if(command==='upload.complete'){
    const s=await readState(),u=authenticate(s,c),f=s.uploads.find(x=>x.id===b.uploadId&&x.userId===u.id&&x.activityId===b.activityId&&!x.deleted);ensure(f,'文件不存在',404);await verifyUpload(f.path,f.size,f.mime)
   }
-  const reads=new Set(['me','activities.list','activity.get','members.list','materials.list','articles.list','article.get','tasks.get','points.list','admin.overview','admin.users','admin.tasks','admin.audit','admin.config','admin.activities']);
+  const reads=new Set(['me','activities.list','activity.get','members.list','materials.list','articles.list','article.get','tasks.get','points.list',...ADMIN_READ_COMMANDS]);
   const data=reads.has(command)?execute(await readState(),command,b,c):await transaction(s=>execute(s,command,b,c))
   if(command==='upload.prepare')return response({ok:true,data:{...data,url:await uploadUrl(data.path)}})
   if(command==='materials.list')await Promise.all(data.items.map(async(item:any)=>{if(item.images)item.images=await Promise.all(item.images.map(async(img:any)=>({...img,url:await signedImage(img.path)})))}))

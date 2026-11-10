@@ -1,0 +1,8 @@
+// Freeze only reviewed runtime sources; never copy credentials, local data or the stale legacy Vercel link.
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto')
+const root=path.resolve(__dirname,'..'),source=path.join(root,'backend'),target=fs.mkdtempSync('/private/tmp/hui-admin-ui-1.1.0-'),files={}
+function copy(rel){const from=path.join(source,rel);if(fs.statSync(from).isDirectory()){for(const e of fs.readdirSync(from)){if(e==='.DS_Store'||e.endsWith('.local'))continue;copy(path.join(rel,e))}}else{const bytes=fs.readFileSync(from);fs.mkdirSync(path.dirname(path.join(target,rel)),{recursive:true});fs.writeFileSync(path.join(target,rel),bytes);files[rel]=crypto.createHash('sha256').update(bytes).digest('hex')}}
+for(const f of ['src','public','package.json','package-lock.json','tsconfig.json','next.config.js','next-env.d.ts','vercel.json','.vercelignore'])copy(f)
+fs.mkdirSync(path.join(target,'.vercel'));fs.writeFileSync(path.join(target,'.vercel/project.json'),JSON.stringify({projectId:'prj_AuicRy7kDGszYbTu7Anco6vGyi36',orgId:'team_AcOQuXI4QJQohewxNNOsbrNz',projectName:'class-collab-v2-test'}))
+const out=path.join(root,'docs/admin-ui-1.1.0');fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,'manifest.json'),JSON.stringify({version:'admin-ui-1.1.0',target,projectId:'prj_AuicRy7kDGszYbTu7Anco6vGyi36',teamId:'team_AcOQuXI4QJQohewxNNOsbrNz',previousProduction:'dpl_HKz2Fdd4YUKBz78KwyradmSecMdU',files},null,2)+'\n')
+console.log(JSON.stringify({target,files:Object.keys(files).length,project:'class-collab-v2-test',previousProduction:'dpl_HKz2Fdd4YUKBz78KwyradmSecMdU'}))

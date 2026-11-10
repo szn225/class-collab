@@ -1,0 +1,23 @@
+export const $=s=>document.querySelector(s)
+export const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
+export const icon=(name,size=20)=>`<svg class="icon" width="${size}" height="${size}" aria-hidden="true" focusable="false"><use href="/admin/icons.svg#${esc(name)}"/></svg>`
+export const money=c=>'¥'+(Number(c||0)/100).toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2})
+export const count=n=>Number(n||0).toLocaleString('zh-CN')
+export const time=n=>n&&Number.isFinite(new Date(n).getTime())?new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(n)):'—'
+export const stages={queued:'排队中',vision:'识图中',writing:'生成中',review:'待核实',succeeded:'已完成',failed:'未交付'}
+export const activityStates={collecting:'收集中',paused:'暂停收集',archived:'已归档'}
+export const kinds={gift:'赠点',freeze:'任务冻结',settle:'任务结算',refund:'退还冻结',adjust:'人工调整'}
+export const actions={'login':'管理员登录','admin.points':'调整点数','admin.user':'修改用户状态','admin.activity':'修改活动 AI','admin.configure':'变更规则','admin.resolve':'核实任务','legacy.bind':'历史账号绑定','member.update':'变更成员权限','invite.reset':'重置邀请'}
+export const badge=(text,tone='')=>`<span class="status ${tone}">${esc(text)}</span>`
+export const taskBadge=s=>badge(stages[s]||s,s==='review'?'warn':s==='succeeded'?'good':s==='failed'?'bad':'blue')
+export const btn=(label,action,id='',className='')=>`<button type="button" class="${className}" data-action="${action}" data-id="${esc(id)}">${label}</button>`
+export const copy=id=>`${esc(id)}${btn(icon('copy',16),'copy',id,'tiny-button')} `
+export const idLine=id=>`<div class="subline"><span title="${esc(id)}">${esc(id)}</span><button type="button" class="tiny-button" data-action="copy" data-id="${esc(id)}" aria-label="复制 ID">${icon('copy',16)}</button></div>`
+export const kv=rows=>`<dl class="kv">${rows.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${v??'—'}</dd>`).join('')}</dl>`
+export const empty=(title='暂无记录',description='')=>`<div class="empty">${icon('search',32)}<h3>${esc(title)}</h3>${description?`<p>${esc(description)}</p>`:''}</div>`
+export const option=(value,label,chosen)=>`<option value="${esc(value)}" ${String(value)===String(chosen??'')?'selected':''}>${esc(label)}</option>`
+export const heading=(title,sub='',action='')=>`<div class="page-heading"><div><h1>${esc(title)}</h1>${sub?`<p class="muted">${sub}</p>`:''}</div>${action}</div>`
+// label, conversion from stored units, UI step. Keys mirror the server's supported config.
+export const fields={confirmed:['计价与限额已确认'],enabled:['允许新的 AI 调用'],gift:['新用户一次性赠点'],writing:['每篇写作点数'],perImage:['每图识别点数'],visionEnabled:['允许图片识别'],dailyPoints:['发起人每日点数上限'],dailyTasks:['发起人每日任务上限'],dailyBudget:['每日预算（元）',100,.01],monthlyBudget:['每月预算（元，0 为不限）',100,.01],taskReserveCents:['单任务预占上限（元）',100,.01],maxPlatformConcurrent:['平台并发上限'],maxUserConcurrent:['发起人并发上限'],maxActivities:['每用户活动数'],maxMaterials:['每活动资料数'],maxImages:['单次图片数（最多 6）'],maxImageBytes:['单张图片上限（MB）',1048576,.01],maxText:['单份文字字数'],maxInput:['生成输入字数上限'],maxOutput:['输出 token 上限'],maxTaskImages:['单任务图片数上限'],maxStorageBytes:['每活动存储上限（MB）',1048576,.01],maxUserStorageBytes:['每用户存储上限（MB）',1048576,.01],maxPlatformStorageBytes:['平台存储上限（MB）',1048576,.01],writingInputCentsPerMillion:['写作输入单价（元 / 百万 token）',100,.01],writingOutputCentsPerMillion:['写作输出单价（元 / 百万 token）',100,.01],visionInputCentsPerMillion:['识图输入单价（元 / 百万 token）',100,.01],visionOutputCentsPerMillion:['识图输出单价（元 / 百万 token）',100,.01],visionImageMaxCents:['每图成本上限（元）',100,.01]}
+export const groups=[['service','AI 开关与计价',['enabled','confirmed','gift','writing','perImage']],['budget','预算与并发',['dailyBudget','monthlyBudget','taskReserveCents','dailyPoints','dailyTasks','maxPlatformConcurrent','maxUserConcurrent']],['input','输入与资料限额',['maxActivities','maxMaterials','maxImages','maxImageBytes','maxText','maxInput','maxOutput','maxTaskImages']],['storage','图片存储',['maxStorageBytes','maxUserStorageBytes','maxPlatformStorageBytes']],['prices','模型用量单价',['writingInputCentsPerMillion','writingOutputCentsPerMillion']],['vision','图片识别（高级）',['visionEnabled','visionInputCentsPerMillion','visionOutputCentsPerMillion','visionImageMaxCents']]]
+export const fieldValue=(k,v)=>typeof v==='boolean'?(v?'开启':'关闭'):(fields[k]?.[1]===100?money(v):count(Number(v)/(fields[k]?.[1]||1)))

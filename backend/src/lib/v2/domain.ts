@@ -1,3 +1,4 @@
+import { ADMIN_READ_COMMANDS, adminRead } from './admin'
 import { State, Row, id, token, hash, ensure, text, userView, activeTask, audit, rate, record, member, manage, writable, activityView, articleChanged, AppError } from './model'
 export interface Context { now:number; sessionHash?:string; identity?:string; sessionToken?:string; adminLogin?:boolean; source?:string }
 export function authenticate(s:State,c:Context,admin=false) {
@@ -25,7 +26,7 @@ export function execute(s:State,command:string,b:Row,c:Context):any {
  if(command==='auth.logout'||command==='admin.logout'){s.sessions=s.sessions.filter(x=>x.hash!==c.sessionHash);return {loggedOut:true}}
  if(command==='me')return userView(u)
  // Mutating requests are deduplicated in the same transaction as their effect.
- const readOnly=['me','activities.list','activity.get','invite.preview','members.list','materials.list','articles.list','article.get','tasks.get','points.list','admin.overview','admin.users','admin.tasks','admin.audit','admin.config','admin.activities']
+ const readOnly=['me','activities.list','activity.get','invite.preview','members.list','materials.list','articles.list','article.get','tasks.get','points.list',...ADMIN_READ_COMMANDS]
  const mutation=!readOnly.includes(command)
  let requestKey=''
  if(mutation){ensure(typeof b.requestId==='string'&&/^[a-zA-Z0-9_-]{12,100}$/.test(b.requestId),'缺少有效操作标识');requestKey=u.id+':'+command+':'+b.requestId;const old=s.requests.find(x=>x.key===requestKey);if(old){ensure(old.bodyHash===hash(JSON.stringify(b)),'重复请求参数不同',409);return old.result}}
@@ -138,12 +139,7 @@ function aiPermission(s:State,a:Row,u:Row){ensure(s.users.some(x=>x.id===a.owner
 export function taskView(t:Row){return {id:t.id,activityId:t.activityId,stage:t.stage,price:t.price,createdAt:t.createdAt,error:t.error,usedIds:t.usedIds,omitted:t.omitted}}
 function adminCommand(s:State,command:string,b:Row,c:Context,u:Row):any {
  const now=c.now,reason=()=>text(b.reason,1000,true)
- if(command==='admin.overview')return {users:s.users.length,activities:s.activities.length,tasks:s.tasks.map(taskView),config:s.config,balances:s.users.reduce((n,u)=>n+u.balance,0),frozen:s.users.reduce((n,u)=>n+u.frozen,0),costCents:s.tasks.reduce((n,t)=>n+(t.costCents||0),0),reservedCents:s.tasks.filter(activeTask).reduce((n,t)=>n+t.reserveCents,0)}
- if(command==='admin.users')return s.users.filter(x=>!b.search||x.name.includes(b.search)||x.id.includes(b.search)).map(x=>({...userView(x),createdAt:x.createdAt,ledger:s.ledger.filter(l=>l.userId===x.id),giftClaimed:x.giftClaimed}))
- if(command==='admin.tasks')return s.tasks.map(({snapshot,input,results,lease,focus,uncached,...t})=>t).reverse()
- if(command==='admin.activities')return s.activities.map(a=>({id:a.id,name:a.name,ownerId:a.ownerId,status:a.status,aiPaused:a.aiPaused,members:a.members.length,materials:a.materials.length}))
- if(command==='admin.audit')return s.audit.slice().reverse().slice(0,500)
- if(command==='admin.config')return {current:s.config,history:s.configHistory}
+ if(ADMIN_READ_COMMANDS.includes(command))return adminRead(s,command,b,now,prefix=>budgetUsage(s,prefix),day(now))
  if(command==='admin.points'){
   const target=s.users.find(x=>x.id===b.userId);ensure(target,'用户不存在',404);ensure(Number.isSafeInteger(b.delta)&&b.delta!==0,'点数须为非零整数');ensure(target.balance===b.expectedBalance,'余额已变化，请重新核对',409);const why=reason();record(s,target,b.delta,0,'adjust',b.requestId,now,why);audit(s,u.id,command,target.id,why,now);return userView(target)
  }
