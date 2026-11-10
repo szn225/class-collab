@@ -1,7 +1,7 @@
-// Runtime counterpart of design-tokens.json; keep source and generated values aligned.
+// Runtime counterpart of design-tokens.json.
 const data = {
   "meta": {
-    "source": "慧共创 Figma 2.3 产品核对与视觉精修",
+    "source": "docs/UI规范-2.3.1-可读性.md",
     "spec": "docs/SPEC-v1.md §8",
     "theme": "light",
     "note": "前端落地副本，与 miniprogram/styles/design-tokens.wxss **全量对齐**（wxss 的每个 CSS 变量在此都有对应项，命名 kebab 转 camel）；设计师若调整，先改此文件再同步 wxss。"
@@ -64,7 +64,7 @@ const data = {
       "type": "color"
     },
     "tierChong": {
-      "value": "#946B42",
+      "value": "#855C35",
       "type": "color"
     },
     "tierChongBg": {
@@ -80,7 +80,7 @@ const data = {
       "type": "color"
     },
     "tierBao": {
-      "value": "#55758D",
+      "value": "#4D6B82",
       "type": "color"
     },
     "tierBaoBg": {
@@ -139,23 +139,23 @@ const data = {
     },
     "size": {
       "xs": {
-        "value": "12px",
+        "value": "15px",
         "type": "dimension"
       },
       "sm": {
-        "value": "14px",
+        "value": "15px",
         "type": "dimension"
       },
       "base": {
-        "value": "16px",
+        "value": "17px",
         "type": "dimension"
       },
       "lg": {
-        "value": "18px",
+        "value": "20px",
         "type": "dimension"
       },
       "xl": {
-        "value": "22px",
+        "value": "24px",
         "type": "dimension"
       },
       "2xl": {
@@ -167,13 +167,13 @@ const data = {
         "type": "dimension"
       },
       "4xl": {
-        "value": "44px",
+        "value": "40px",
         "type": "dimension"
       }
     },
     "leading": {
       "xs": {
-        "value": 1.4,
+        "value": 1.5,
         "type": "number"
       },
       "sm": {
@@ -181,7 +181,7 @@ const data = {
         "type": "number"
       },
       "base": {
-        "value": 1.6,
+        "value": 1.55,
         "type": "number"
       },
       "lg": {
@@ -189,7 +189,7 @@ const data = {
         "type": "number"
       },
       "xl": {
-        "value": 1.3,
+        "value": 1.35,
         "type": "number"
       },
       "2xl": {
@@ -201,7 +201,7 @@ const data = {
         "type": "number"
       },
       "4xl": {
-        "value": 1.05,
+        "value": 1.2,
         "type": "number"
       },
       "relaxed": {
@@ -209,15 +209,15 @@ const data = {
         "type": "number"
       },
       "body": {
-        "value": 1.6,
+        "value": 1.55,
         "type": "number"
       },
       "tight": {
-        "value": 1.3,
+        "value": 1.35,
         "type": "number"
       },
       "display": {
-        "value": 1.05,
+        "value": 1.2,
         "type": "number"
       }
     }
@@ -230,7 +230,7 @@ const data = {
   },
   "tap": {
     "min": {
-      "value": "44px",
+      "value": "48px",
       "type": "dimension"
     }
   },
@@ -292,7 +292,7 @@ const data = {
   },
   "chart": {
     "lineColor": {
-      "value": "#55758D",
+      "value": "#4D6B82",
       "type": "color"
     },
     "lineWidth": {
@@ -356,5 +356,4 @@ const data = {
     }
   }
 };
-
 export default data;

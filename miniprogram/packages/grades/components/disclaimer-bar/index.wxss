@@ -19,5 +19,8 @@
   line-height: var(--leading-body);
 }
 
-.disclaim{border-top:0;padding:4px 0}.disclaim-h{width:100%;padding:8px 0;margin:0;background:transparent;border:0;text-align:left;font-size:11px;font-weight:400;line-height:1.6;color:var(--muted)}.disclaim-h::after{border:0}.disclaim-more{margin-left:auto;white-space:nowrap}.disclaim-b{padding:8px 0 12px;font-size:12px}
+.disclaim{border-top:0;padding:4px 0}.disclaim-h{width:100%;padding:8px 0;margin:0;background:transparent;border:0;text-align:left;font-size:15px;font-weight:400;line-height:1.6;color:var(--muted)}.disclaim-h::after{border:0}.disclaim-more{margin-left:auto;white-space:nowrap}.disclaim-b{padding:8px 0 12px;font-size:15px}
 .disclaim > button.disclaim-h{width:100%;max-width:none;display:flex;font-weight:400}
+
+/* 2.3.1 — readable type hierarchy; keep layout flexible. */
+.disclaim-h{font-size:15px;line-height:1.5;align-items:flex-start;gap:8px;min-height:44px;white-space:normal}.disclaim-h>text{min-width:0}.disclaim-more{flex:none}.disclaim-b{font-size:15px;line-height:1.6}

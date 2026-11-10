@@ -188,10 +188,10 @@ Component({
       });
       ctx.restore();
       ctx.fillStyle = COLOR.muted;
-      ctx.font = '10px sans-serif';
+      ctx.font = '13px sans-serif';
       ctx.textAlign = 'right';
       ctx.textBaseline = 'bottom';
-      model.targets.forEach((t) => {if (!model.latest || Math.abs(t.y-model.latest.y)>22) ctx.fillText(t.label, right, t.y - 3);});
+      model.targets.forEach((t) => {if (!model.latest || Math.abs(t.y-model.latest.y)>28) ctx.fillText(t.label, right, t.y - 3);});
 
       // ③ Y 轴方向提示（反向指标三重保险之①：轴倒置）
       ctx.textAlign = 'right';
@@ -229,7 +229,7 @@ Component({
 
       // ⑥ X 轴（按考试日期）标签
       ctx.fillStyle = COLOR.muted;
-      ctx.font = '10px sans-serif';
+      ctx.font = '13px sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
       model.xLabels.forEach((l) => ctx.fillText(l.text, l.x, baseline + 6));
@@ -241,7 +241,7 @@ Component({
         ctx.fillStyle = COLOR.accent;
         ctx.fill();
         ctx.fillStyle = COLOR.fg;
-        ctx.font = '600 11px sans-serif';
+        ctx.font = '600 15px sans-serif';
         ctx.textAlign = 'right';
         ctx.textBaseline = 'bottom';
         ctx.fillText(model.latest.text, right, model.latest.y - 8);

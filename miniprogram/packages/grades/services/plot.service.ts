@@ -96,7 +96,7 @@ export function buildTrendModel(
   size: TrendSize,
 ): TrendModel {
   const series = buildTrend(records || []);
-  const pad = { left: 46, right: 12, top: 18, bottom: 26 };
+  const pad = { left: 52, right: 20, top: 22, bottom: 30 };
   const plotW = Math.max(1, size.width - pad.left - pad.right);
   const plotH = Math.max(1, size.height - pad.top - pad.bottom);
   const baselineY = pad.top + plotH;

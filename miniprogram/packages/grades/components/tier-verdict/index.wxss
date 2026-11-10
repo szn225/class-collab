@@ -53,4 +53,7 @@
   color: var(--tier-bao);
 }
 
-.tier{border:0;border-radius:12px;padding:12px;gap:6px}.tier .tier-lb{font-size:12px;font-weight:500}.tier .tier-nm{font-size:14px}.tier .tier-ln{font-size:12px}
+.tier{border:0;border-radius:12px;padding:12px;gap:6px}.tier .tier-lb{font-size:15px;font-weight:500}.tier .tier-nm{font-size:15px}.tier .tier-ln{font-size:15px}
+
+/* 2.3.1 — readable type hierarchy; keep layout flexible. */
+.tiers{gap:10px;align-items:stretch}.tier{padding:12px 10px;gap:8px}.tier .tier-lb{font-size:15px;line-height:1.5}.tier .tier-nm{font-size:17px;line-height:1.5;font-weight:500;word-break:normal}.tier .tier-ln{font-size:15px;line-height:1.5;overflow-wrap:anywhere}@media (max-width:360px){.tiers{flex-direction:column}.tier{display:grid;grid-template-columns:40px minmax(0,1fr) auto;align-items:center;gap:10px}.tier .tier-ln{text-align:right}}

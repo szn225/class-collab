@@ -177,8 +177,11 @@
   border-radius: var(--radius-lg);
 }
 
-.detail-help{display:block;width:100%;max-width:none;margin:12px 0 0;background:transparent;font-size:12px;font-weight:400;color:#75886c;line-height:36px;text-align:left;padding:0}.detail-help::after{border:0}.hd-title{font-size:22px}.hd-score:empty{display:none}
+.detail-help{display:block;width:100%;max-width:none;margin:12px 0 0;background:transparent;font-size:15px;font-weight:400;color:#65736b;line-height:36px;text-align:left;padding:0}.detail-help::after{border:0}.hd-title{font-size:22px}.hd-score:empty{display:none}
 
 .card{box-shadow:none;border-radius:16px}.subject-row{border-color:#e2e8e2}
 
-.subject-result{display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:48px}.subject-score{font-size:15px;color:#263b37}.subject-result .rt{font-size:12px;color:#65736b}.bar-fill{background:#55758d}
+.subject-result{display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:48px}.subject-score{font-size:15px;color:#263b37}.subject-result .rt{font-size:15px;color:#65736b}.bar-fill{background:#4d6b82}
+
+/* 2.3.1 — readable type hierarchy; keep layout flexible. */
+.hd-title{font-size:24px;line-height:1.35;font-weight:600}.barline{min-height:60px;gap:12px}.barline .sj{font-size:17px;line-height:1.5;width:88px}.subject-score{font-size:20px;line-height:1.3}.subject-result{min-width:64px;gap:4px}.subject-result .rt{font-size:15px;line-height:1.5}.bar-diff{font-size:15px;line-height:1.5}.detail-help{font-size:15px;line-height:1.5;min-height:48px;white-space:normal;color:#465d56}.hd-rank{font-size:17px;line-height:1.5;white-space:normal}.bars{gap:8px}@media(max-width:360px){.barline{flex-wrap:wrap}.barline .sj{width:calc(100% - 88px);order:0}.subject-result{order:1;margin-left:auto}.bar-col{order:2;flex-basis:100%;margin-top:4px}.barline{padding:8px 0}.bar{height:8px}}

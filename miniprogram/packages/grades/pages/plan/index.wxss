@@ -79,4 +79,7 @@
 
 .action-card{border-color:#e2e8e2}.filter.on,.seg-item.on,.chip.on{background:#f0edf5;color:#756683}.card{box-shadow:none}.page>.card{border-radius:16px}
 
-.segment{background:#f0edf5;border:0}.segment .seg-item.on{background:#fff;color:#756683;box-shadow:none}.pl-status.doing{color:#756683}.dot.doing{background:#756683}.pl-title{font-size:16px}.pl-meta{font-size:12px}
+.segment{background:#f0edf5;border:0}.segment .seg-item.on{background:#fff;color:#756683;box-shadow:none}.pl-status.doing{color:#756683}.dot.doing{background:#756683}.pl-title{font-size:16px}.pl-meta{font-size:15px}
+
+/* 2.3.1 — readable type hierarchy; keep layout flexible. */
+.pl-title{font-size:17px;line-height:1.55;font-weight:600}.pl-meta{font-size:15px;line-height:1.5}.pl-status{font-size:15px;line-height:1.5}.pl-head{flex-wrap:wrap;gap:12px}.pl-head .grow{flex-basis:60%}.pl-actions{flex-wrap:wrap}.pl-btn{font-size:17px;min-height:48px;line-height:1.5}.plan-card{padding:20px}
