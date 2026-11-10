@@ -192,7 +192,7 @@ class PositionService {
       };
     }
 
-    const label = `最近更新 · ${latest.examDate}　${latest.examName}（${scopeLabel(latest.scope)}）`;
+    const label = latest.examName;
     const rank = rankOf(latest);
     const schoolPct = latest.derivedSnapshot ? latest.derivedSnapshot.schoolPositionPct : null;
     const groupPct = latest.derivedSnapshot ? latest.derivedSnapshot.groupPositionPct : null;

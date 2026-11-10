@@ -245,7 +245,12 @@
 
 .seg,.tabs{background:#edf2f7}.seg-item.on,.tab.on{color:#4d6b82}.card{box-shadow:none}.school-rank,.rank{color:#4d6b82}
 
-.segment{background:#edf2f7;border:0;padding:4px}.segment .seg-item.on{background:white;color:#4d6b82;box-shadow:none}.filter-toggle{display:flex;align-items:center;justify-content:space-between;min-height:44px;font-size:15px;color:#4d6b82}.card.flush{border:0;border-radius:0;background:transparent}.rows.pad-x{padding:0}.sch-row{padding:20px 0;border-color:#e2e8e2}.school-name{font-weight:500}.school-meta{gap:8px}.ph-meta{font-size:15px;color:#65736b}.school-side .chip{border:0}.card-foot{padding:12px 0}
+.segment{background:#edf2f7;border:0;padding:4px}.segment .seg-item.on{background:white;color:#4d6b82;box-shadow:none}.filter-toggle{display:flex;align-items:center;justify-content:space-between;min-height:44px;font-size:15px;color:#4d6b82}.card.flush{border:0;border-radius:0;background:transparent}.rows.pad-x{padding:0}.sch-row{padding:20px 0;border-color:#e6e9ed}.school-name{font-weight:500}.school-meta{gap:8px}.ph-meta{font-size:15px;color:#65736b}.school-side .chip{border:0}.card-foot{padding:12px 0}
 
 /* 2.3.1 — readable type hierarchy; keep layout flexible. */
 .school-name{font-size:17px;line-height:1.5;font-weight:600}.school-meta,.gap,.ph-meta{font-size:15px;line-height:1.5}.filter-toggle{font-size:17px;line-height:1.5;min-height:48px}.search .search-field{font-size:18px}.school-meta{row-gap:4px}.school-side{max-width:32%;gap:8px}.sch-row{gap:12px}.rule-no{font-size:17px;line-height:1.5;width:32px}.rule-detail{font-size:17px;line-height:1.7}.compete-k,.compete-note{font-size:17px;line-height:1.55}.compete-cap{font-size:15px;line-height:1.5}.target-bar{flex-wrap:wrap;min-height:48px;padding:8px 12px}.target-v{white-space:normal}.sort-row{row-gap:8px}
+
+/* 2.3.2: targeted UI refinements. */
+.search-tools{display:flex;align-items:center;gap:12px}.search-tools>.search{flex:1;min-width:0}.search-tools>button.filter-toggle{display:flex;align-items:center;justify-content:center;flex:none;width:44px;max-width:none;height:44px;min-height:44px;padding:0;margin:0;background:transparent;border:0;color:#65736b;border-radius:10px}.filter-toggle::after{border:0}.search-tools>button.filter-toggle.active{background:#edf2f7;color:#4d6b82}
+
+.filter-icon{display:block;width:22px;height:22px}

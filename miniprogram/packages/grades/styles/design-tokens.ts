@@ -8,7 +8,7 @@ const data = {
   },
   "color": {
     "bg": {
-      "value": "#FAFAF7",
+      "value": "#FFFFFF",
       "type": "color"
     },
     "surface": {
@@ -16,7 +16,7 @@ const data = {
       "type": "color"
     },
     "surface2": {
-      "value": "#EFF2EC",
+      "value": "#F5F6F8",
       "type": "color"
     },
     "fg": {
@@ -36,7 +36,7 @@ const data = {
       "type": "color"
     },
     "border": {
-      "value": "#E2E8E2",
+      "value": "#E6E9ED",
       "type": "color"
     },
     "borderSoft": {

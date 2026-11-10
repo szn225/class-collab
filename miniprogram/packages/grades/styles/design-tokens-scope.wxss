@@ -1,10 +1,10 @@
-/* Generated from design-tokens.wxss; excludes page selector for component use. */
+/* Generated from design-tokens.wxss. */
 .token-scope {
   /* ---------- A1-identity ---------- */
   /* 表面层 */
-  --bg: #FAFAF7;
+  --bg: #FFFFFF;
   --surface: #FFFFFF;
-  --surface-2: #EFF2EC;
+  --surface-2: #F5F6F8;
   /* 前景层 */
   --fg: #263B37;
   --fg-2: #465D56;
@@ -12,7 +12,7 @@
   /* --meta #98A2A5 仅作装饰 / ≥18px 大字；小字占位改走 --muted（2.43:1 未达 AA） */
   --meta: #98A2A5;
   /* 边框层 */
-  --border: #E2E8E2;
+  --border: #E6E9ED;
   --border-soft: #EDF0EB;
   --border-width: 1px;
   /* 强调色（沉青，已加深至 AA：白字 4.58:1 / onSurf 4.58:1） */

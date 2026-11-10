@@ -6,7 +6,7 @@
     "pages/login/index"
   ],
   "window": {
-    "navigationBarBackgroundColor": "#FAFAF7",
+    "navigationBarBackgroundColor": "#FFFFFF",
     "navigationBarTitleText": "慧共创",
     "navigationBarTextStyle": "black"
   },

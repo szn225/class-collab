@@ -62,7 +62,10 @@
 
 .saved-confirmation{background:#edf4e8;border:1px solid #dce9d4;border-radius:12px;font-size:15px;padding:12px 16px;font-weight:500}.ph-meta{font-size:15px;line-height:1.7;color:#65736b;padding:0 4px}.exam-rows .ttl{font-size:15px;font-weight:500}.exam-rows .row{min-height:76px}.card-h .h2{font-size:17px}.row-rank{font-size:15px;color:#355b43}
 
-.dashboard-context{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:32px}.ph-meta{font-size:15px;color:#65736b;padding:0;flex:1}.manage-link{font-size:15px;color:#245d50;padding:8px 0 8px 12px;min-height:44px}.card.flush{border:0;background:transparent;border-radius:0}.card-h{padding:8px 0}.exam-rows.pad-x{padding:0}.exam-rows .row{border-color:#e2e8e2}.row-rank{color:#4d6b82}
+.dashboard-context{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:32px}.ph-meta{font-size:15px;color:#65736b;padding:0;flex:1}.manage-link{font-size:15px;color:#245d50;padding:8px 0 8px 12px;min-height:44px}.card.flush{border:0;background:transparent;border-radius:0}.card-h{padding:8px 0}.exam-rows.pad-x{padding:0}.exam-rows .row{border-color:#e6e9ed}.row-rank{color:#4d6b82}
 
 /* 2.3.1 — readable type hierarchy; keep layout flexible. */
 .dashboard-context{align-items:flex-start;gap:16px}.ph-meta{font-size:15px;line-height:1.55}.manage-link{font-size:17px;line-height:1.5;min-height:48px;flex:none}.saved-confirmation{font-size:17px;line-height:1.5}.exam-rows .ttl{font-size:17px;line-height:1.5;font-weight:500}.row-rank{font-size:17px;line-height:1.5;max-width:42%;overflow-wrap:anywhere}.exam-meta .cap{font-size:15px}.exam-rows .row{min-height:84px;align-items:flex-start;padding:16px 0}.card-h .h2{font-size:20px}.exam-meta{gap:8px}
+
+/* 2.3.2: targeted UI refinements. */
+.dashboard-context{align-items:center;min-height:44px;gap:12px}.exam-context-name{font-size:17px;line-height:1.5;font-weight:500;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;flex:1;min-width:0}.dashboard-context>button.icon-action{width:44px;max-width:none;height:44px;min-height:44px;display:flex;align-items:center;justify-content:center;flex:none;background:transparent;padding:0;margin:0;border:0;color:#65736b}.icon-action::after{border:0}.saved-confirmation{font-size:15px;padding:8px 12px}

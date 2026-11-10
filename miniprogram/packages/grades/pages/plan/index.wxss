@@ -77,7 +77,7 @@
   min-width: 0;
 }
 
-.action-card{border-color:#e2e8e2}.filter.on,.seg-item.on,.chip.on{background:#f0edf5;color:#756683}.card{box-shadow:none}.page>.card{border-radius:16px}
+.action-card{border-color:#e6e9ed}.filter.on,.seg-item.on,.chip.on{background:#f0edf5;color:#756683}.card{box-shadow:none}.page>.card{border-radius:16px}
 
 .segment{background:#f0edf5;border:0}.segment .seg-item.on{background:#fff;color:#756683;box-shadow:none}.pl-status.doing{color:#756683}.dot.doing{background:#756683}.pl-title{font-size:16px}.pl-meta{font-size:15px}
 

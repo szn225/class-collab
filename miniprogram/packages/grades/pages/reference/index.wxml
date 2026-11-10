@@ -46,7 +46,7 @@
       <view class="target-x" bindtap="onClearTarget">取消</view>
     </view>
 
-    <view class="input search">
+    <view class="search-tools"><view class="input search">
       <t-icon name="search" size="20px" />
       <input
         class="search-field"
@@ -58,7 +58,7 @@
       />
     </view>
 
-    <view class="filter-toggle" bindtap="onToggleFilters" aria-role="button" aria-expanded="{{showFilters}}"><text>筛选与排序</text><t-icon name="{{showFilters ? 'chevron-up' : 'chevron-down'}}" size="16px"/></view>
+    <button class="filter-toggle {{showFilters ? 'active' : ''}}" bindtap="onToggleFilters" aria-label="筛选与排序" aria-expanded="{{showFilters}}"><image class="filter-icon" src="/assets/ui/filter.svg"/></button></view>
     <view wx:if="{{showFilters}}" class="chips">
       <view
         class="chipbtn {{batch === item ? 'on' : ''}}"

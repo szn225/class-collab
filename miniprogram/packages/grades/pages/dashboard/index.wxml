@@ -6,7 +6,7 @@
   <view wx:if="{{saved}}" class="saved-confirmation">✓ 成绩已保存</view>
 
   <!-- 页级上下文（原 page-head，现为内容首行，对应原型 eyebrow） -->
-  <view class="dashboard-context"><text class="ph-meta">{{latestLabel}}</text><view class="manage-link" bindtap="onMore" aria-role="button">管理</view></view>
+  <view class="dashboard-context"><text class="exam-context-name">{{latestLabel || '成绩记录'}}</text><button class="icon-action" bindtap="onMore" aria-label="成绩设置与更多操作"><t-icon name="setting" size="22px"/></button></view>
   <view class="ph-meta" wx:if="{{loading && !latestLabel}}">正在读取本地数据</view>
 
 
@@ -71,18 +71,6 @@
     <!-- L2 概览层：趋势迷你图（反向 Y 轴 + 跨口径隔离） -->
     <view class="card" wx:if="{{trendRecords.length > 1}}">
       <trend-mini records="{{trendRecords}}" targetRanks="{{targetRanks}}" height="{{120}}" />
-      <!-- 目标校回显 / 无目标校引导：两者互斥，各用独立 wx:if，不依赖 wx:if/wx:elif 的兄弟邻近语义 -->
-      <view class="note target-tip" wx:if="{{targetTip}}">{{targetTip}}</view>
-      <!-- 有记录但没有目标校：原位给可点击引导（SPEC §10 空状态） -->
-      <view
-        class="btn ghost target-tip"
-        wx:if="{{targetGuide && !targetTip}}"
-        bindtap="goReference"
-        aria-role="button"
-        aria-label="去参照页设目标校"
-      >
-        <text>设置目标学校　›</text>
-      </view>
     </view>
 
 

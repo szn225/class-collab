@@ -40,7 +40,7 @@
     <view class="card">
       <view class="card-h">
         <text class="h2">各科成绩</text>
-        <text class="cap">得分率</text>
+        <button class="help-icon" bindtap="chartHelp" aria-label="查看得分率说明"><t-icon name="info-circle" size="20px"/></button>
       </view>
 
       <block wx:if="{{detail.hasSubjects}}">
@@ -74,7 +74,7 @@
             <view class="subject-result"><text class="subject-score num" wx:if="{{item.scoreText !== ''}}">{{item.scoreText}} 分</text><text class="rt num">{{item.rateText}}</text></view>
           </view>
         </view>
-        <button class="detail-help" bindtap="chartHelp">如何阅读分科表现　ⓘ</button>
+
       </block>
 
       <empty-state
@@ -89,7 +89,7 @@
     <view class="card">
       <view class="card-h" bindtap="toggleAttribution">
         <text class="h2">失分归因</text>
-        <text class="cap">{{showAttribution ? '收起 −' : '展开 ＋'}}</text>
+        <image class="disclosure-icon" src="{{showAttribution ? '/assets/ui/chevron-up.svg' : '/assets/ui/chevron-down.svg'}}" style="width:20px;height:20px;flex:none"/>
       </view>
       <block wx:if="{{showAttribution}}">      <block wx:if="{{detail.attributionRows.length}}">
         <view class="rows attr-rows">

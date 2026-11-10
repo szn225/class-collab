@@ -75,3 +75,6 @@ navigator {
 
 /* 2.3.1 — readable type hierarchy; keep layout flexible. */
 .page{padding:20px;gap:20px}.tabbar-spacer{height:calc(72px + env(safe-area-inset-bottom))}
+
+/* 2.3.2: targeted UI refinements. */
+.tabbar-spacer{height:calc(52px + min(20px, env(safe-area-inset-bottom)))}

@@ -9,7 +9,7 @@
     bindtap="onTap"
   >
     <view class="tab-ic">
-      <t-icon name="{{value === index ? item.selectedIcon : item.icon}}" size="24px" />
+      <t-icon name="{{value === index ? item.selectedIcon : item.icon}}" size="22px" />
     </view>
     <view class="tab-txt">{{item.text}}</view>
   </view>

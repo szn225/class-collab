@@ -7,7 +7,7 @@
   },
   "color": {
     "bg": {
-      "value": "#FAFAF7",
+      "value": "#FFFFFF",
       "type": "color"
     },
     "surface": {
@@ -15,7 +15,7 @@
       "type": "color"
     },
     "surface2": {
-      "value": "#EFF2EC",
+      "value": "#F5F6F8",
       "type": "color"
     },
     "fg": {
@@ -35,7 +35,7 @@
       "type": "color"
     },
     "border": {
-      "value": "#E2E8E2",
+      "value": "#E6E9ED",
       "type": "color"
     },
     "borderSoft": {

@@ -50,14 +50,14 @@ export function formatRankDelta(delta: number | null | undefined): DeltaView {
   if (delta < 0) {
     return {
       dir: 'up',
-      icon: 'arrow-down',
+      icon: 'arrow-up',
       text: `进步 ${formatRank(Math.abs(delta))} 位`,
       chipClass: 'up',
     };
   }
   return {
     dir: 'down',
-    icon: 'arrow-up',
+    icon: 'arrow-down',
     text: `退步 ${formatRank(delta)} 位`,
     chipClass: 'down',
   };
