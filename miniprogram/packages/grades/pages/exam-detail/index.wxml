@@ -25,12 +25,12 @@
         <text wx:if="{{detail.totalText !== '—'}}" class="hd-total num">{{detail.totalText}}</text>
         <text class="hd-full" wx:if="{{detail.totalFullText}}">{{detail.totalFullText}}</text>
         <view class="chip {{detail.delta.chipClass}} hd-chip" wx:if="{{detail.delta.dir !== 'flat'}}">
-          <t-icon name="{{detail.delta.icon}}" size="16px" />
+          <ui-icon name="{{detail.delta.icon}}" size="18px" tone="{{detail.delta.dir === 'up' ? 'positive' : 'negative'}}" />
           <text>{{detail.delta.text}}</text>
         </view>
       </view>
       <view class="hd-rank">
-        <t-icon name="chart-bar" size="16px" class="input-ic" />
+        <ui-icon name="chart-bar" size="16px" class="input-ic" />
         <text>{{detail.rankText}}</text>
         <text class="hd-approx" wx:if="{{detail.isApprox}}">（约）</text>
       </view>
@@ -40,7 +40,7 @@
     <view class="card">
       <view class="card-h">
         <text class="h2">各科成绩</text>
-        <button class="help-icon" bindtap="chartHelp" aria-label="查看得分率说明"><t-icon name="info-circle" size="20px"/></button>
+        <button class="help-icon" bindtap="chartHelp" aria-label="查看得分率说明"><ui-icon name="info-circle" size="20px"/></button>
       </view>
 
       <block wx:if="{{detail.hasSubjects}}">
@@ -89,7 +89,7 @@
     <view class="card">
       <view class="card-h" bindtap="toggleAttribution">
         <text class="h2">失分归因</text>
-        <image class="disclosure-icon" src="{{showAttribution ? '/assets/ui/chevron-up.svg' : '/assets/ui/chevron-down.svg'}}" style="width:20px;height:20px;flex:none"/>
+        <ui-icon class="disclosure-icon" name="{{showAttribution ? '/assets/ui/chevron-up.svg' : '/assets/ui/chevron-down.svg'}}" size="20px"/>
       </view>
       <block wx:if="{{showAttribution}}">      <block wx:if="{{detail.attributionRows.length}}">
         <view class="rows attr-rows">
@@ -106,7 +106,7 @@
     </view>
 
     <view class="btn ghost wide" bindtap="goPlan">
-      <t-icon name="task" size="20px" />
+      <ui-icon name="task" size="20px" />
       <text>开始复盘</text>
     </view>
     <view class="safe-spacer"></view>

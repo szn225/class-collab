@@ -7,7 +7,7 @@
   <view class="hero-chips">
     <!-- flat（持平/无参照）不显示 chip，避免视觉噪声；方向以「箭头 + 文字」为主通道 -->
     <view class="chip {{delta.chipClass}}" wx:if="{{delta.dir && delta.dir !== 'flat'}}">
-      <t-icon name="{{delta.icon}}" size="16px" />
+      <ui-icon name="{{delta.icon}}" size="18px" tone="{{delta.dir === 'up' ? 'positive' : 'negative'}}" />
       <text>{{delta.text}}</text>
     </view>
     <view class="chip" wx:if="{{chipText}}">{{chipText}}</view>

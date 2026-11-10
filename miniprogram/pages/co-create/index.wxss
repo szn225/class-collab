@@ -16,3 +16,8 @@
 .page>button.disclosure-row{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:none;min-height:48px;padding:12px 0;margin:0 0 16px;border:0;border-bottom:1px solid #e6e9ed;border-radius:0;background:transparent;font-size:17px;color:#263b37;font-weight:400;text-align:left}.disclosure-chevron{display:block;width:24px;text-align:center;color:#65736b}.page .profile-card{background:#fff;border:1px solid #e6e9ed}
 
 .disclosure-chevron{width:9px;height:9px;flex:none;border-right:1.6px solid #65736b;border-bottom:1.6px solid #65736b;transform:rotate(45deg);margin-right:5px;margin-top:-4px}.disclosure-chevron.open{transform:rotate(225deg);margin-top:4px}
+
+/* 2.3.3 icon and input alignment. */
+.page button{gap:8px;align-items:center;justify-content:center;text-align:center}.page .link.icon-label{display:flex;align-items:center;gap:8px}.page .disclosure-row{justify-content:space-between;text-align:left}.page .collab-symbol{display:flex;align-items:center;justify-content:center;padding:0}.page .setting-row{justify-content:space-between;text-align:left}.input-placeholder{font-size:15px;font-weight:400;color:#65736b}.page .select-row{justify-content:space-between;gap:12px}
+
+.card-action{display:flex;align-items:center;gap:6px}.page .home-heading button{gap:6px}.page .card-footer{align-items:center}

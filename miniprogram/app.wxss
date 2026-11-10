@@ -5,3 +5,6 @@ button[disabled] { opacity:.45; }
 
 /* 2.3.1 — readable type hierarchy; keep layout flexible. */
 page{font-size:17px;line-height:1.55;color:#263b37}button,input,textarea{font-family:inherit}button{font-weight:500}
+
+/* 2.3.3 icon and input alignment. */
+.input-placeholder{font-size:15px;font-weight:400;color:#65736b}button{display:flex;align-items:center;justify-content:center;gap:8px;line-height:1.5;white-space:normal}input,textarea{font-weight:400}

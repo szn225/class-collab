@@ -1,1 +1,1 @@
-<view class="context"><button bindtap="home">‹ 慧共创</button><button bindtap="account"><text class="status-dot"></text>{{name}}<text class="context-label">{{label}}</text> ›</button></view>
+<view class="context"><button bindtap="home"><ui-icon name="home" size="18px"/><text>慧共创</text></button><button bindtap="account"><text class="status-dot"></text>{{name}}<text class="context-label">{{label}}</text><ui-icon name="chevron-right" size="18px"/></button></view>

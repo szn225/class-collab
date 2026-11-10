@@ -78,3 +78,6 @@ navigator {
 
 /* 2.3.2: targeted UI refinements. */
 .tabbar-spacer{height:calc(52px + min(20px, env(safe-area-inset-bottom)))}
+
+/* 2.3.3 icon and input alignment. */
+.input-placeholder{font-size:15px;font-weight:400;color:#65736b}input,textarea{font-weight:400}

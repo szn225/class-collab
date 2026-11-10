@@ -3,10 +3,10 @@
 
 
 <view class="page">
-  <view wx:if="{{saved}}" class="saved-confirmation">✓ 成绩已保存</view>
+  <view wx:if="{{saved}}" class="saved-confirmation"><ui-icon name="check-circle" tone="accent" size="18px"/><text>成绩已保存</text></view>
 
   <!-- 页级上下文（原 page-head，现为内容首行，对应原型 eyebrow） -->
-  <view class="dashboard-context"><text class="exam-context-name">{{latestLabel || '成绩记录'}}</text><button class="icon-action" bindtap="onMore" aria-label="成绩设置与更多操作"><t-icon name="setting" size="22px"/></button></view>
+  <view class="dashboard-context"><text class="exam-context-name">{{latestLabel || '成绩记录'}}</text><button class="icon-action" bindtap="onMore" aria-label="成绩设置与更多操作"><ui-icon name="setting" size="22px"/></button></view>
   <view class="ph-meta" wx:if="{{loading && !latestLabel}}">正在读取本地数据</view>
 
 
@@ -57,7 +57,7 @@
     <view class="guide" wx:if="{{guide}}">
       <view class="guide-text">{{guide}}</view>
       <view class="btn ghost" bindtap="goRecord">
-        <t-icon name="add" size="20px" />
+        <ui-icon name="add" size="20px" />
         <text>去录入集团联考 / 全市统考</text>
       </view>
     </view>
@@ -99,7 +99,7 @@
             </view>
           </view>
           <view class="row-rank num">{{item.rankText}}</view>
-          <view class="chev"><t-icon name="chevron-right" size="20px" /></view>
+          <view class="chev"><ui-icon name="chevron-right" size="20px" /></view>
         </view>
       </view>
 

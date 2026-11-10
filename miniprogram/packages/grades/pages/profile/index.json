@@ -1,11 +1,11 @@
 {
   "navigationBarTitleText": "设置",
   "usingComponents": {
-    "t-icon": "/packages/grades/miniprogram_npm/tdesign-miniprogram/icon/icon",
     "nav-bar": "../../components/nav-bar/index",
     "kv-list": "../../components/kv-list/index",
     "disclaimer-bar": "../../components/disclaimer-bar/index",
-    "grade-context": "../../components/grade-context/index"
+    "grade-context": "../../components/grade-context/index",
+    "ui-icon": "/components/ui-icon/index"
   },
   "navigationStyle": "custom"
 }

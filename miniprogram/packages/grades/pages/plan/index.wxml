@@ -62,7 +62,7 @@
 
       <view class="pl-actions">
         <view class="btn ghost pl-btn" data-id="{{item.id}}" bindtap="onToggleDone">
-          <t-icon name="{{item.status === 'done' ? 'rollback' : 'check-circle'}}" size="20px" />
+          <ui-icon name="{{item.status === 'done' ? 'rollback' : 'check-circle'}}" size="20px" />
           <text>{{item.status === 'done' ? '改回待办' : '标记已复检'}}</text>
         </view>
       </view>

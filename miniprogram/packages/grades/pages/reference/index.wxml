@@ -34,7 +34,7 @@
 
     <!-- 数据联动：直接告诉家长冲/稳/保是怎么来的 -->
     <view class="info-bar" wx:if="{{admission.hasRank && showFilters}}">
-      <t-icon class="info-ic" name="chart-bar" size="16px" />
+      <ui-icon class="info-ic" name="chart-bar" size="16px" />
       <text>按你的折算位次（约）<text class="strong num">{{admission.myRankText}}</text> 自动标注冲 / 稳 / 保</text>
     </view>
 
@@ -47,18 +47,17 @@
     </view>
 
     <view class="search-tools"><view class="input search">
-      <t-icon name="search" size="20px" />
+      <ui-icon name="search" size="20px" />
       <input
         class="search-field"
         value="{{keyword}}"
         placeholder="搜索学校"
-        placeholder-class="ph"
         bindinput="onSearchInput"
         confirm-type="search"
-      />
+       placeholder-class="input-placeholder" placeholder-style="font-size:15px;font-weight:400;color:#65736B"/>
     </view>
 
-    <button class="filter-toggle {{showFilters ? 'active' : ''}}" bindtap="onToggleFilters" aria-label="筛选与排序" aria-expanded="{{showFilters}}"><image class="filter-icon" src="/assets/ui/filter.svg"/></button></view>
+    <button class="filter-toggle {{showFilters ? 'active' : ''}}" bindtap="onToggleFilters" aria-label="筛选与排序" aria-expanded="{{showFilters}}"><ui-icon name="filter" size="22px"/></button></view>
     <view wx:if="{{showFilters}}" class="chips">
       <view
         class="chipbtn {{batch === item ? 'on' : ''}}"
@@ -119,7 +118,7 @@
   <!-- ============ 子区二：指标生对照（150 校） ============ -->
   <block wx:elif="{{segment === 'indicator'}}">
     <view class="sec-h">
-      <t-icon name="root-list" size="20px" />
+      <ui-icon name="root-list" size="20px" />
       <text>指标生对照 · 本校</text>
     </view>
 
@@ -141,15 +140,14 @@
     </view>
 
     <view class="input search">
-      <t-icon name="search" size="20px" />
+      <ui-icon name="search" size="20px" />
       <input
         class="search-field"
         value="{{indicatorKeyword}}"
         placeholder="搜索初中校名"
-        placeholder-class="ph"
         bindinput="onIndicatorSearchInput"
         confirm-type="search"
-      />
+       placeholder-class="input-placeholder" placeholder-style="font-size:15px;font-weight:400;color:#65736B"/>
     </view>
 
     <view class="card flush" wx:if="{{indicatorRows.length}}">
@@ -175,7 +173,7 @@
               <text class="cap">填报比 {{item.topRatioText}}</text>
             </view>
           </view>
-          <view class="chev"><t-icon name="chevron-right" size="20px" /></view>
+          <view class="chev"><ui-icon name="chevron-right" size="20px" /></view>
         </view>
       </view>
     </view>
@@ -194,7 +192,7 @@
           </view>
         </view>
         <view class="iconbtn" bindtap="onCloseDetail" aria-label="收起">
-          <t-icon name="close" size="20px" />
+          <ui-icon name="close" size="20px" />
         </view>
       </view>
 
@@ -227,7 +225,7 @@
       <!-- AC-27：硬门槛校验 -->
       <view class="gate {{indicatorDetail.gate.passed ? 'ok' : 'warn'}}" wx:if="{{indicatorDetail.gate.checked}}">
         <view class="gate-h">
-          <t-icon name="{{indicatorDetail.gate.passed ? 'check-circle' : 'error-circle'}}" size="20px" />
+          <ui-icon name="{{indicatorDetail.gate.passed ? 'check-circle' : 'error-circle'}}" size="20px" />
           <text>{{indicatorDetail.gate.passed ? '硬门槛已达标' : '指标生硬门槛未达标'}}</text>
         </view>
         <view class="gate-b">考查科目：{{indicatorDetail.gate.bioGeoText}} · 综合素质评价：{{indicatorDetail.gate.qualityText}}</view>
@@ -243,7 +241,7 @@
   <!-- ============ 子区三：规则要点（8 条） ============ -->
   <block wx:else>
     <view class="sec-h">
-      <t-icon name="info-circle" size="20px" />
+      <ui-icon name="info-circle" size="20px" />
       <text>指标生规则要点 · 容易吃亏的 {{rules.length}} 条</text>
     </view>
     <view class="card">
@@ -261,7 +259,7 @@
             <view class="rule-detail" wx:if="{{item.expanded}}">{{item.detail}}</view>
           </view>
           <view class="chev">
-            <t-icon name="{{item.expanded ? 'chevron-down' : 'chevron-right'}}" size="20px" />
+            <ui-icon name="{{item.expanded ? 'chevron-down' : 'chevron-right'}}" size="20px" />
           </view>
         </view>
       </view>

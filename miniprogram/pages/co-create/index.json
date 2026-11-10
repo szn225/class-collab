@@ -2,7 +2,8 @@
   "navigationBarTitleText": "慧共创",
   "enablePullDownRefresh": true,
   "usingComponents": {
-    "app-nav": "/components/app-nav/index"
+    "app-nav": "/components/app-nav/index",
+    "ui-icon": "/components/ui-icon/index"
   },
   "navigationStyle": "custom"
 }

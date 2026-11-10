@@ -89,6 +89,8 @@ interface RecordCtx {
   _prevRank: number | null;
   _previewTimer?: number;
   _draftTimer?: number;
+  _draftDirty?: boolean;
+  _saveComplete?: boolean;
 }
 
 let seq = 0;
@@ -107,6 +109,7 @@ gradePage({
     saving: false,
     saveError: '',
     showMore: false,
+    showSubjects: false,
     scopeIndex: 0,
     attempted: false,
     draftNotice: '',
@@ -246,6 +249,9 @@ gradePage({
   },
 
   storageInfo() { wx.showModal({title:'本机保存',content:'成绩保存在当前设备。清理小程序数据可能导致丢失，可在“我的”中登录并主动开启云端同步。',showCancel:false}); },
+  onToggleSubjects() { this.setData({showSubjects:!this.data.showSubjects}); },
+  onHide() { this.flushDraft(); },
+  onUnload() { this.flushDraft(); },
   onToggleMore() {
     this.setData({ showMore: !this.data.showMore });
   },
@@ -312,10 +318,17 @@ gradePage({
     });
   },
 
+  flushDraft() {
+    const ctx = this as unknown as RecordCtx;
+    if (!ctx._draftDirty || ctx._saveComplete || (this as unknown as {gradeScope:string}).gradeScope !== scopeKey()) return;
+    if (ctx._draftTimer) clearTimeout(ctx._draftTimer);
+    try { recordService.saveDraft(this.data.form);ctx._draftDirty=false; } catch { this.setData({draftNotice:'草稿暂未保存，请保留页面后重试'}); }
+  },
   scheduleDraft() {
     const ctx = this as unknown as RecordCtx;
+    ctx._draftDirty=true;
     if (ctx._draftTimer) clearTimeout(ctx._draftTimer);
-    ctx._draftTimer = scopeTimeout(() => recordService.saveDraft(this.data.form), 500) as unknown as number;
+    ctx._draftTimer = scopeTimeout(() => this.flushDraft(), 500) as unknown as number;
   },
 
   onClearDraft() {
@@ -332,7 +345,7 @@ gradePage({
     const ctx = this as unknown as RecordCtx, dataset = ctx._dataset;
     if (!dataset) { this.setData({saveError:'页面还在加载，请稍后再试'}); return; }
     const validation = validateForm(this.data.form, dataset);
-    this.setData({attempted:true,errors:validation.errorMap,subjectError:validation.subjectError});
+    this.setData({attempted:true,errors:validation.errorMap,subjectError:validation.subjectError,showSubjects:validation.subjectError ? true : this.data.showSubjects,showMore:this.data.showMore || (this.data.form.scope === 'group' && Boolean(validation.errorMap.schoolRank || validation.errorMap.schoolSize || validation.errorMap.groupSize))});
     if (!validation.ok) {
       const hint = validation.missingLabels.length ? '请填写'+validation.missingLabels[0] : '请检查标红的内容';
       this.setData({saveError:hint});
@@ -356,6 +369,8 @@ gradePage({
       if(ctx._previewTimer)clearTimeout(ctx._previewTimer);
       auth.finishGradeSave(pending.id);
       ctx._saveRequest=undefined;
+      ctx._saveComplete=true;
+      ctx._draftDirty=false;
       recordService.clearDraft();
       trackEvent('record_saved',{scope:this.data.form.scope});
       wx.redirectTo({url:'/packages/grades/pages/dashboard/index?saved=1'});

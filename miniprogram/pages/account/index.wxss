@@ -7,3 +7,6 @@ page{background:#ffffff;color:#263b37}.account{padding:36rpx 36rpx 80rpx}.accoun
 
 /* 2.3.1 — readable type hierarchy; keep layout flexible. */
 .account{padding:24px 20px 48px}.identity-name{font-size:22px;line-height:1.4;font-weight:600}.identity-card{gap:16px;flex-wrap:wrap}.identity-copy{min-width:120px}.sub,.section-label,.row-meta,.reveal-title{font-size:15px;line-height:1.55}.h2{font-size:20px;line-height:1.4}.account button{font-size:17px;line-height:1.5;min-height:48px;padding:12px 16px;white-space:normal}.account .menu-row{min-height:60px;padding:14px 0;gap:16px}.menu-row .row-meta{font-size:15px;text-align:right}.account .small-link{font-size:17px;padding:12px 0 12px 12px}.student-summary{gap:16px;align-items:flex-start}.account .login-pill{font-size:17px;min-height:48px}.account input{font-size:18px;min-height:52px;height:auto;padding:12px 16px}.student-option{text-align:left;gap:12px}.identity-name{overflow-wrap:break-word}.reveal{padding:12px 16px 20px}
+
+/* 2.3.3 icon and input alignment. */
+.row-state{display:flex;align-items:center;gap:8px;flex:none}.account button{display:flex;align-items:center;justify-content:center;gap:8px}.account .menu-row,.account .student-option{justify-content:space-between}.account .small-link{width:auto}.input-placeholder{font-size:15px;font-weight:400;color:#65736b}

@@ -6,3 +6,6 @@ page{background:#ffffff;color:#243a31}.login-page{padding:100rpx 48rpx}.login-sy
 
 /* 2.3.1 — readable type hierarchy; keep layout flexible. */
 .login-page{padding:40px 20px}.login-title{font-size:24px;line-height:1.35}.login-note,.privacy-copy{font-size:17px;line-height:1.65;color:#465d56}.login-primary{font-size:17px;height:52px;line-height:52px}.consent-row,.privacy-link{font-size:15px;line-height:1.5;min-height:44px}.privacy-link{display:flex;align-items:center}.login-page checkbox-group{flex-wrap:wrap;justify-content:flex-start;gap:4px}.cancel{font-size:17px;line-height:1.5;min-height:48px;padding:12px}.login-error{font-size:17px;line-height:1.5}
+
+/* 2.3.3 icon and input alignment. */
+.login-page>button.login-primary{display:flex;align-items:center;justify-content:center;line-height:26px;padding:13px 16px;height:auto;min-height:52px}.input-placeholder{font-size:15px;font-weight:400;color:#65736b}

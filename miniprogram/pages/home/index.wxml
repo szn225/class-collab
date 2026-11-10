@@ -1,10 +1,10 @@
 <app-nav title="慧共创" show-home="{{false}}"/>
 <view class="hub">
  <view class="account-summary">
-  <button class="identity-entry" bindtap="account" aria-label="查看个人账号"><view class="account-avatar"><image src="/assets/ui/person.svg"/></view><view class="identity-copy"><view class="account-name">{{user ? (user.name || '微信用户') : '访客'}}</view><view class="account-status">{{user ? '已登录' : '未登录'}}</view></view></button>
-  <button wx:if="{{!user}}" class="signin-link" bindtap="signIn">登录<image class="chevron-icon" src="/assets/ui/chevron.svg"/></button>
-  <button wx:else class="account-settings" bindtap="account" aria-label="账号设置"><image src="/assets/ui/settings.svg"/></button>
+  <button class="identity-entry" bindtap="account" aria-label="查看个人账号"><view class="account-avatar"><ui-icon name="person" size="24px"/></view><view class="identity-copy"><view class="account-name">{{user ? (user.name || '微信用户') : '访客'}}</view><view class="account-status">{{user ? '已登录' : '未登录'}}</view></view></button>
+  <button wx:if="{{!user}}" class="signin-link" bindtap="signIn">登录<ui-icon class="chevron-icon" name="chevron" size="18px"/></button>
+  <button wx:else class="account-settings" bindtap="account" aria-label="账号设置"><ui-icon name="settings" size="22px"/></button>
  </view>
- <button class="entry-card collab" bindtap="coCreate" aria-label="进入活动文章共创"><view class="tool-icon collab-icon"><image src="/assets/ui/paper.svg"/></view><view class="tool-copy"><view class="entry-title">活动文章共创</view><view class="entry-note">收集资料，整理文章</view></view><image class="chevron-icon" src="/assets/ui/chevron.svg"/></button>
- <button class="entry-card grades" bindtap="grades" aria-label="进入成绩追踪助手"><view class="tool-icon grades-icon"><image src="/assets/ui/chart.svg"/></view><view class="tool-copy"><view class="entry-title">成绩追踪助手</view><view class="entry-note">成绩记录、位次与复盘</view></view><image class="chevron-icon" src="/assets/ui/chevron.svg"/></button>
+ <button class="entry-card collab" bindtap="coCreate" aria-label="进入活动文章共创"><view class="tool-icon collab-icon"><ui-icon name="paper" size="26px"/></view><view class="tool-copy"><view class="entry-title">活动文章共创</view><view class="entry-note">收集资料，整理文章</view></view><ui-icon class="chevron-icon" name="chevron" size="18px"/></button>
+ <button class="entry-card grades" bindtap="grades" aria-label="进入成绩追踪助手"><view class="tool-icon grades-icon"><ui-icon name="chart" size="26px"/></view><view class="tool-copy"><view class="entry-title">成绩追踪助手</view><view class="entry-note">成绩记录、位次与复盘</view></view><ui-icon class="chevron-icon" name="chevron" size="18px"/></button>
 </view>

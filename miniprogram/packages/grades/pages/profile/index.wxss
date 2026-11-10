@@ -48,3 +48,5 @@
 
 /* 2.3.1 — readable type hierarchy; keep layout flexible. */
 .settings-group>button.settings-row{font-size:17px;line-height:1.55;min-height:60px;padding:14px 18px;gap:16px;white-space:normal;text-align:left}.settings-row text{font-size:15px;line-height:1.5;max-width:50%;text-align:right;color:#65736b}.settings-content button{font-size:17px;line-height:1.5;min-height:48px;white-space:normal;padding:12px}.settings-content{padding:20px}.btn-row{flex-wrap:wrap}
+
+.settings-value{display:flex;align-items:center;gap:8px;max-width:55%}.settings-value text{max-width:none}.settings-row ui-icon{flex:none}

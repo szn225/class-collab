@@ -1,0 +1,1 @@
+<view class="icon" style="width:{{dimension}};height:{{dimension}}" bindtap="tap" aria-hidden="true"><image wx:if="{{src}}" class="icon-image" src="{{src}}" mode="aspectFit"/></view>

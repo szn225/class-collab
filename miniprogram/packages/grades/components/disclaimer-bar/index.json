@@ -2,6 +2,6 @@
   "component": true,
   "styleIsolation": "apply-shared",
   "usingComponents": {
-    "t-icon": "/packages/grades/miniprogram_npm/tdesign-miniprogram/icon/icon"
+    "ui-icon": "/components/ui-icon/index"
   }
 }

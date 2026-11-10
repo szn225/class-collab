@@ -27,7 +27,7 @@ function copy(relative) {
  assert.ok(!relative.endsWith('.test.ts') && !relative.endsWith('.local'))
  fs.mkdirSync(path.dirname(to), { recursive: true }); fs.copyFileSync(from, to)
 }
-for (const name of ['app.js', 'app.json', 'app.wxss', 'sitemap.json', 'project.config.json', 'components/app-nav', 'assets/ui', 'config', 'utils/v2.js', 'utils/grades.js', 'utils/auth.js']) copy(name)
+for (const name of ['app.js', 'app.json', 'app.wxss', 'sitemap.json', 'project.config.json', 'components/app-nav', 'components/ui-icon', 'assets/ui', 'config', 'utils/v2.js', 'utils/grades.js', 'utils/auth.js']) copy(name)
 for (const page of app.pages) copy(path.dirname(page))
 for (const pack of app.subPackages) copy(pack.root)
 const configFile = path.join(target, 'project.config.json')
