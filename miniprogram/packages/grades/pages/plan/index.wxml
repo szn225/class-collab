@@ -29,7 +29,7 @@
     wx:elif="{{!items.length}}"
     icon="task"
     title="{{emptyTitle}}"
-    desc="从一次考试开始，找到下一步的方向"
+    desc=""
     actionText="去录入一次考试"
     actionIcon="add"
     bind:action="goRecord"

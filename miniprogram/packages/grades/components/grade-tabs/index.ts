@@ -15,8 +15,8 @@ interface TabItem {
 }
 
 const LIST: TabItem[] = [
-  { pagePath: '/packages/grades/pages/dashboard/index', text: '成绩', icon: 'location', selectedIcon: 'location-filled' },
-  { pagePath: '/packages/grades/pages/record/index', text: '录入', icon: 'edit', selectedIcon: 'edit-1' },
+  { pagePath: '/packages/grades/pages/dashboard/index', text: '成绩', icon: 'chart-line', selectedIcon: 'chart-line' },
+  { pagePath: '/packages/grades/pages/record/index', text: '录入', icon: 'add', selectedIcon: 'add' },
   { pagePath: '/packages/grades/pages/plan/index', text: '复盘', icon: 'task', selectedIcon: 'task-checked' },
   { pagePath: '/packages/grades/pages/reference/index', text: '参照', icon: 'book', selectedIcon: 'book-filled' },
 ];

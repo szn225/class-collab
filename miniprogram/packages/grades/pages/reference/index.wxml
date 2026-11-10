@@ -30,13 +30,10 @@
 
   <!-- ============ 子区一：高中录取线（57 校） ============ -->
   <block wx:elif="{{segment === 'admission'}}">
-    <view class="sec-h">
-      <t-icon name="book" size="20px" />
-      <text>高中录取线 · {{admission.rankedCount}} 所</text>
-    </view>
+
 
     <!-- 数据联动：直接告诉家长冲/稳/保是怎么来的 -->
-    <view class="info-bar" wx:if="{{admission.hasRank}}">
+    <view class="info-bar" wx:if="{{admission.hasRank && showFilters}}">
       <t-icon class="info-ic" name="chart-bar" size="16px" />
       <text>按你的折算位次（约）<text class="strong num">{{admission.myRankText}}</text> 自动标注冲 / 稳 / 保</text>
     </view>
@@ -61,7 +58,8 @@
       />
     </view>
 
-    <view class="chips">
+    <view class="filter-toggle" bindtap="onToggleFilters" aria-role="button" aria-expanded="{{showFilters}}"><text>筛选与排序</text><t-icon name="{{showFilters ? 'chevron-up' : 'chevron-down'}}" size="16px"/></view>
+    <view wx:if="{{showFilters}}" class="chips">
       <view
         class="chipbtn {{batch === item ? 'on' : ''}}"
         wx:for="{{batches}}"
@@ -73,7 +71,7 @@
     </view>
 
     <!-- 排序控件：按位次 / 按录取线（UIUX §9.5） -->
-    <view class="chips sort-row">
+    <view wx:if="{{showFilters}}" class="chips sort-row">
       <text class="sort-k">排序</text>
       <view
         class="chipbtn {{sort === item.key ? 'on' : ''}}"

@@ -1,4 +1,4 @@
-page { background:#f6f7f5; color:#243a32; font-family:-apple-system,'PingFang SC',sans-serif; font-size:28rpx; line-height:1.6; }
+page { background:#fafaf7; color:#263b37; font-family:-apple-system,'PingFang SC',sans-serif; font-size:28rpx; line-height:1.6; }
 view,button,input,textarea,image,scroll-view { box-sizing:border-box; }
 button::after { border:0; }
 button[disabled] { opacity:.45; }

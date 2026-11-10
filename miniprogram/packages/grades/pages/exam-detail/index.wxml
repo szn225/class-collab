@@ -39,8 +39,8 @@
     <!-- 分科体检：得分率横条 + 校均刻度 + 差值 -->
     <view class="card">
       <view class="card-h">
-        <text class="h2">分科体检</text>
-        <text class="cap">得分率 · 校均位置</text>
+        <text class="h2">各科成绩</text>
+        <text class="cap">得分率</text>
       </view>
 
       <block wx:if="{{detail.hasSubjects}}">
@@ -71,7 +71,7 @@
                 较校均 {{item.diffText}}
               </view>
             </view>
-            <text class="rt num">{{item.rateText}}</text>
+            <view class="subject-result"><text class="subject-score num" wx:if="{{item.scoreText !== ''}}">{{item.scoreText}} 分</text><text class="rt num">{{item.rateText}}</text></view>
           </view>
         </view>
         <button class="detail-help" bindtap="chartHelp">如何阅读分科表现　ⓘ</button>

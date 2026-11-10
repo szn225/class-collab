@@ -70,3 +70,5 @@ navigator {
 .tabbar-spacer {
   height: calc(56px + env(safe-area-inset-bottom));
 }
+
+.page{padding:20px 24px;gap:16px}.card{box-shadow:none;border-color:var(--border)}

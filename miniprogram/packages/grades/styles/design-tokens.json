@@ -1,13 +1,13 @@
 {
   "meta": {
-    "source": "docs/UIUX-v1.md §4.2 四层 Token（A1/A2/B-slot）",
+    "source": "慧共创 Figma 2.3 产品核对与视觉精修",
     "spec": "docs/SPEC-v1.md §8",
     "theme": "light",
     "note": "前端落地副本，与 miniprogram/styles/design-tokens.wxss **全量对齐**（wxss 的每个 CSS 变量在此都有对应项，命名 kebab 转 camel）；设计师若调整，先改此文件再同步 wxss。"
   },
   "color": {
     "bg": {
-      "value": "#F5F7F7",
+      "value": "#FAFAF7",
       "type": "color"
     },
     "surface": {
@@ -15,19 +15,19 @@
       "type": "color"
     },
     "surface2": {
-      "value": "#EEF1F1",
+      "value": "#EFF2EC",
       "type": "color"
     },
     "fg": {
-      "value": "#14181A",
+      "value": "#263B37",
       "type": "color"
     },
     "fg2": {
-      "value": "#3C464A",
+      "value": "#465D56",
       "type": "color"
     },
     "muted": {
-      "value": "#5F6A6E",
+      "value": "#65736B",
       "type": "color"
     },
     "meta": {
@@ -35,27 +35,27 @@
       "type": "color"
     },
     "border": {
-      "value": "#E2E7E7",
+      "value": "#E2E8E2",
       "type": "color"
     },
     "borderSoft": {
-      "value": "#EEF1F1",
+      "value": "#EDF0EB",
       "type": "color"
     },
     "accent": {
-      "value": "#0B8478",
+      "value": "#245D50",
       "type": "color"
     },
     "accentHover": {
-      "value": "#0B7C73",
+      "value": "#244E40",
       "type": "color"
     },
     "accentActive": {
-      "value": "#0A6B63",
+      "value": "#1C4334",
       "type": "color"
     },
     "accentSubtle": {
-      "value": "#E6F4F2",
+      "value": "#EDF3EE",
       "type": "color"
     },
     "accentOn": {
@@ -63,27 +63,27 @@
       "type": "color"
     },
     "tierChong": {
-      "value": "#9C5800",
+      "value": "#946B42",
       "type": "color"
     },
     "tierChongBg": {
-      "value": "#FBF3E4",
+      "value": "#F7F0E6",
       "type": "color"
     },
     "tierWen": {
-      "value": "#0B8478",
+      "value": "#245D50",
       "type": "color"
     },
     "tierWenBg": {
-      "value": "#E6F4F2",
+      "value": "#EDF3EE",
       "type": "color"
     },
     "tierBao": {
-      "value": "#3F5E8C",
+      "value": "#55758D",
       "type": "color"
     },
     "tierBaoBg": {
-      "value": "#EAF0F7",
+      "value": "#EDF2F7",
       "type": "color"
     },
     "trendUp": {
@@ -291,7 +291,7 @@
   },
   "chart": {
     "lineColor": {
-      "value": "#0B8478",
+      "value": "#55758D",
       "type": "color"
     },
     "lineWidth": {
@@ -303,7 +303,7 @@
       "type": "number"
     },
     "hollowStroke": {
-      "value": "#5F6A6E",
+      "value": "#65736B",
       "type": "color"
     },
     "targetDash": {

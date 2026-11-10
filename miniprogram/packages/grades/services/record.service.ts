@@ -225,6 +225,7 @@ class RecordService {
     const analyses: SubjectAnalysis[] = snap ? snap.subjectAnalysis : [];
     const subjectRows: SubjectRowView[] = analyses.map((a) => ({
       subject: a.subject,
+      scoreText: (() => { const score = (record.input.subjectScores || []).find(s => s.subject === a.subject); return score && Number.isFinite(score.score) ? String(score.score) : ''; })(),
       rate: a.rate,
       rateText: formatScoreRate(a.rate),
       barPct: Math.max(0, Math.min(100, Math.round(a.rate * 100))),
@@ -262,6 +263,7 @@ class RecordService {
 
 export interface SubjectRowView {
   subject: string;
+  scoreText: string;
   /** 得分率（0~1），用于「最低得分率科目」判定 */
   rate: number;
   rateText: string;

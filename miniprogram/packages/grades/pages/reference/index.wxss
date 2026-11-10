@@ -242,3 +242,7 @@
   /* 规则要点为长文阅读场景，用 relaxed 而非 sm 档行高 */
   line-height: var(--leading-relaxed);
 }
+
+.seg,.tabs{background:#edf2f7}.seg-item.on,.tab.on{color:#55758d}.card{box-shadow:none}.school-rank,.rank{color:#55758d}
+
+.segment{background:#edf2f7;border:0;padding:4px}.segment .seg-item.on{background:white;color:#55758d;box-shadow:none}.filter-toggle{display:flex;align-items:center;justify-content:space-between;min-height:44px;font-size:13px;color:#55758d}.card.flush{border:0;border-radius:0;background:transparent}.rows.pad-x{padding:0}.sch-row{padding:20px 0;border-color:#e2e8e2}.school-name{font-weight:500}.school-meta{gap:8px}.ph-meta{font-size:12px;color:#65736b}.school-side .chip{border:0}.card-foot{padding:12px 0}

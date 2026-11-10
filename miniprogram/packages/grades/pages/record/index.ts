@@ -107,6 +107,8 @@ gradePage({
     saving: false,
     saveError: '',
     showMore: false,
+    scopeIndex: 0,
+    attempted: false,
     draftNotice: '',
     groups: [] as string[],
     groupIndex: 0,
@@ -155,6 +157,7 @@ gradePage({
 
       this.setData({
         form,
+        scopeIndex: Math.max(0, SCOPE_OPTIONS.findIndex(o => o.value === form.scope)),
         groups,
         groupIndex: Math.max(0, groups.indexOf(form.groupName)),
         surveySubjects: dataset.surveySubjects || [],
@@ -197,9 +200,16 @@ gradePage({
     this.setData({ 'form.examDate': String(e.detail.value) }, () => this.scheduleDraft());
   },
 
+  onScopeChange(e: WechatMiniprogram.PickerChange) {
+    const index = Number(e.detail.value);
+    if (!SCOPE_OPTIONS[index]) return;
+    this.setData({scopeIndex:index});
+    this.onPickScope({currentTarget:{dataset:{scope:SCOPE_OPTIONS[index].value}}} as unknown as WechatMiniprogram.BaseEvent);
+  },
+
   onPickScope(e: WechatMiniprogram.BaseEvent) {
     const scope = String(e.currentTarget.dataset.scope) as ExamScope;
-    this.setData({ 'form.scope': scope, saveError: '' }, () => {
+    this.setData({ 'form.scope': scope, scopeIndex:Math.max(0, SCOPE_OPTIONS.findIndex(o => o.value === scope)), saveError: '' }, () => {
       this.scheduleDraft();
       this.schedulePreview();
     });
@@ -296,7 +306,7 @@ gradePage({
     const preview = recordService.buildPreview(form, dataset, ctx._prevRank);
     this.setData({
       preview,
-      errors: v.errorMap,
+      errors: this.data.attempted ? v.errorMap : Object.fromEntries(Object.entries(v.errorMap).filter(([key]) => Boolean((form as unknown as Record<string, unknown>)[key]))),
       subjectError: v.subjectError,
       canSave: v.ok,
     });
@@ -322,7 +332,7 @@ gradePage({
     const ctx = this as unknown as RecordCtx, dataset = ctx._dataset;
     if (!dataset) { this.setData({saveError:'页面还在加载，请稍后再试'}); return; }
     const validation = validateForm(this.data.form, dataset);
-    this.setData({errors:validation.errorMap,subjectError:validation.subjectError});
+    this.setData({attempted:true,errors:validation.errorMap,subjectError:validation.subjectError});
     if (!validation.ok) {
       const hint = validation.missingLabels.length ? '请填写'+validation.missingLabels[0] : '请检查标红的内容';
       this.setData({saveError:hint});

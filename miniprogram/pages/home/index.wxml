@@ -1,13 +1,13 @@
-<app-nav title="慧共创" show-home="{{false}}"><view class="nav-account" bindtap="account">我的</view></app-nav>
+<app-nav title="慧共创" show-home="{{false}}"/>
 <view class="hub">
-
- <view class="hub-intro"><view class="hub-title">今天，想记录什么？</view></view>
+ <view class="section-label">工具</view>
  <button class="entry-card collab" bindtap="coCreate" aria-label="进入活动文章共创">
-  <view class="entry-icon paper-icon"><view></view><view></view><view></view></view>
-  <view class="entry-title">活动文章共创</view><view class="entry-note">把活动里的精彩，写成共同的记忆</view><view class="entry-action">开始共创 <text>↗</text></view>
+  <image class="entry-art" src="/assets/ui/records-decoration.png" mode="aspectFit"/>
+  <view class="entry-title">活动文章共创</view><view class="entry-note">收集文字照片，整理活动文章</view><view class="entry-action">进入共创 <text>›</text></view>
  </button>
  <button class="entry-card grades" bindtap="grades" aria-label="进入成绩追踪助手">
-  <view class="entry-icon chart-icon"><view></view><view></view><view></view></view>
-  <view class="entry-title">成绩追踪助手</view><view class="entry-note">{{hasRecords ? '接着上次的记录，看见新的变化' : '从一次考试开始，看见成长的轨迹'}}</view><view class="entry-action">{{hasRecords ? '查看我的成绩' : '记录第一场考试'}} <text>↗</text></view>
+  <image class="entry-symbol" src="/assets/ui/chart.svg"/>
+  <view class="entry-title">成绩追踪助手</view><view class="entry-note">成绩记录、位次参照与复盘</view><view class="entry-action">{{hasRecords ? '查看成绩' : '录入成绩'}} <text>›</text></view>
  </button>
+ <button class="account-entry" bindtap="account"><image src="/assets/ui/person.svg"/><text>我的账号</text><text class="chevron">›</text></button>
 </view>

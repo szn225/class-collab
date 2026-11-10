@@ -43,3 +43,5 @@
 }
 
 .settings-group{border:1px solid #e3e9dd;background:#fff;border-radius:16px;overflow:hidden}.settings-group>button.settings-row{width:100%;max-width:none;display:flex;justify-content:space-between;align-items:center;margin:0;padding:0 18px;min-height:58px;background:#fff;color:#304c37;border-radius:0;border-bottom:1px solid #eef2e9;font-size:14px}.settings-row::after{border:0}.settings-row text{font-size:12px;color:#819176}.settings-content{padding:18px;background:#fafbf8}.settings-content button{font-size:13px;color:#3f644a;background:#e9f0e4;border:0;border-radius:10px}.settings-content .note+.note{margin-top:12px}
+
+.card{box-shadow:none;border-radius:16px}.section-title{color:#65736b}

@@ -17,26 +17,30 @@ page,
 .token-scope {
   /* ---------- A1-identity ---------- */
   /* 表面层 */
-  --bg: #F6F7F4;
+  --bg: #FAFAF7;
   --surface: #FFFFFF;
   --surface-2: #EFF2EC;
   /* 前景层 */
-  --fg: #243C30;
-  --fg-2: #4A6050;
-  --muted: #627461; /* AA：在 bg 上 5.18:1（原 #6B7679 仅 4.35，临界未达 4.5） */
+  --fg: #263B37;
+  --fg-2: #465D56;
+  --muted: #65736B; /* AA：在 bg 上 5.18:1（原 #6B7679 仅 4.35，临界未达 4.5） */
   /* --meta #98A2A5 仅作装饰 / ≥18px 大字；小字占位改走 --muted（2.43:1 未达 AA） */
   --meta: #98A2A5;
   /* 边框层 */
-  --border: #E2E8DE;
-  --border-soft: #EFF2EC;
+  --border: #E2E8E2;
+  --border-soft: #EDF0EB;
   --border-width: 1px;
   /* 强调色（沉青，已加深至 AA：白字 4.58:1 / onSurf 4.58:1） */
-  --accent: #285B4B;
+  --accent: #245D50;
   --accent-hover: #244E40;
   --accent-active: #1C4334;
-  --accent-subtle: #E8F0E6;
+  --accent-subtle: #EDF3EE;
   --accent-on: #FFFFFF;
 
+  --data: #55758D;
+  --data-subtle: #EDF2F7;
+  --review: #756683;
+  --review-subtle: #F0EDF5;
   /* 字体 */
   --font-body: "PingFang SC", "HarmonyOS Sans SC", "MiSans", "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", -apple-system, sans-serif;
   --font-display: "PingFang SC", "HarmonyOS Sans SC", "MiSans", "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", -apple-system, sans-serif;
@@ -61,12 +65,12 @@ page,
 
   /* ---------- A2-semantic ---------- */
   /* 冲/稳/保 三档（行业通用心智） */
-  --tier-chong: #9C5800; /* AA：在 chong-bg 上 5.00:1（原 #D97706 仅 2.89，未达 AA） */
-  --tier-chong-bg: #FBF3E4;
-  --tier-wen: #285B4B;
-  --tier-wen-bg: #E8F0E6;
-  --tier-bao: #3F5E8C;
-  --tier-bao-bg: #EAF0F7;
+  --tier-chong: #946B42; /* AA：在 chong-bg 上 5.00:1（原 #D97706 仅 2.89，未达 AA） */
+  --tier-chong-bg: #F7F0E6;
+  --tier-wen: #245D50;
+  --tier-wen-bg: #EDF3EE;
+  --tier-bao: #55758D;
+  --tier-bao-bg: #EDF2F7;
   /* 趋势方向：教育语义 —— 绿=进步（位次下降）/ 红=退步（位次上升） */
   --trend-up: #126A32;
   --trend-up-bg: #E9F5EE;
@@ -94,7 +98,7 @@ page,
 
   --radius-sm: 6px;
   --radius-md: 10px;
-  --radius-lg: 14px;
+  --radius-lg: 16px;
   --radius-pill: 9999px;
 
   /* 触摸目标（硬性下限 44px） */

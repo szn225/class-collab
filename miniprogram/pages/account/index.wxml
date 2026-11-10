@@ -1,7 +1,7 @@
 <app-nav title="我的" show-back="{{true}}"/>
 <view class="account">
 
- <view class="identity-card"><view class="avatar">{{user ? (user.name || '我') : '访'}}</view><view class="identity-copy"><view class="identity-name">{{user ? (user.name || '微信用户') : '你好，欢迎来记录'}}</view><view class="sub">{{user ? '共创与成绩，一个账号' : '现在就可以开始，无需登录'}}</view></view><button wx:if="{{!user}}" class="login-pill" bindtap="signIn">登录</button></view>
+ <view class="identity-card"><view class="avatar">{{user ? (user.name || '我') : '访'}}</view><view class="identity-copy"><view class="identity-name">{{user ? (user.name || '微信用户') : '访客'}}</view><view class="sub">{{user ? '账号已登录' : '本机记录'}}</view></view><button wx:if="{{!user}}" class="login-pill" bindtap="signIn">登录</button></view>
  <view wx:if="{{error}}" class="error">{{error}}</view>
  <view class="section-label">成绩空间</view>
  <view class="card"><view class="student-summary"><view><view class="h2" wx:for="{{students}}" wx:key="id" wx:if="{{active === item.id}}">{{item.name}}</view><view class="sub">{{sync.count}} 次考试 · {{sync.enabled ? (sync.conflict ? '需要处理冲突' : sync.dirty || sync.pending ? '待同步' : '已同步') : '本机保存'}}</view></view><button class="small-link" data-section="students" bindtap="toggle">管理 ›</button></view><button class="primary" bindtap="grades">查看成绩</button>

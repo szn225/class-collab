@@ -178,3 +178,7 @@
 }
 
 .detail-help{display:block;width:100%;max-width:none;margin:12px 0 0;background:transparent;font-size:12px;font-weight:400;color:#75886c;line-height:36px;text-align:left;padding:0}.detail-help::after{border:0}.hd-title{font-size:22px}.hd-score:empty{display:none}
+
+.card{box-shadow:none;border-radius:16px}.subject-row{border-color:#e2e8e2}
+
+.subject-result{display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:48px}.subject-score{font-size:15px;color:#263b37}.subject-result .rt{font-size:12px;color:#65736b}.bar-fill{background:#55758d}

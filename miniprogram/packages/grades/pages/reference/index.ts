@@ -65,6 +65,7 @@ interface RefCtx {
 gradePage({
   data: {
     segments: SEGMENTS,
+    showFilters: false,
     segment: 'admission' as 'admission' | 'indicator' | 'rules',
 
     loading: true,
@@ -161,6 +162,8 @@ gradePage({
   },
 
   /* ------------------------- 子区切换 ------------------------- */
+
+  onToggleFilters() { this.setData({showFilters:!this.data.showFilters}); },
 
   onPickSegment(e: WechatMiniprogram.BaseEvent) {
     const segment = String(e.currentTarget.dataset.value) as 'admission' | 'indicator' | 'rules';

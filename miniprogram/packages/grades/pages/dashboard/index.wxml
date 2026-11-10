@@ -1,13 +1,13 @@
 <!-- 定位（首页）—— 位次定位仪表盘；L1 结论层首屏不滚动即读完 -->
-<nav-bar title="成绩"><view class="nav-more" bindtap="onMore" aria-label="更多操作">•••</view></nav-bar>
+<nav-bar title="成绩"/>
 
 
 <view class="page">
   <view wx:if="{{saved}}" class="saved-confirmation">✓ 成绩已保存</view>
 
   <!-- 页级上下文（原 page-head，现为内容首行，对应原型 eyebrow） -->
-  <view class="ph-meta" wx:if="{{latestLabel}}">{{latestLabel}}</view>
-  <view class="ph-meta" wx:elif="{{loading}}">正在读取本地数据</view>
+  <view class="dashboard-context"><text class="ph-meta">{{latestLabel}}</text><view class="manage-link" bindtap="onMore" aria-role="button">管理</view></view>
+  <view class="ph-meta" wx:if="{{loading && !latestLabel}}">正在读取本地数据</view>
 
 
   <!-- Loading：骨架屏（避免空白闪烁，AC-34） -->
@@ -33,8 +33,8 @@
     <view class="card">
       <empty-state
         icon="chart-line"
-        title="从第一场考试开始"
-        desc="记录成绩，看见每一次变化"
+        title="暂无成绩记录"
+        desc=""
         actionText="记录第一场考试"
         actionIcon="add"
         bind:action="goRecord"
@@ -85,11 +85,7 @@
       </view>
     </view>
 
-    <!-- 本页唯一主 CTA -->
-    <view class="btn primary wide" bindtap="goRecord">
-      <t-icon name="add" size="20px" />
-      <text>录入新考试</text>
-    </view>
+
 
     <!-- 考试列表（下钻考试详情） -->
     <view class="card flush" wx:if="{{examList.length}}">
