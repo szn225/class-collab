@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-10",
+  "adminVersion": "admin-ui-1.1.0",
+  "sourceCommit": "2d3ba4a",
+  "domain": "gongchuang.chaohuiwan.com.cn",
+  "adminUrl": "https://gongchuang.chaohuiwan.com.cn/manage",
+  "teamId": "team_AcOQuXI4QJQohewxNNOsbrNz",
+  "previousProjectId": "prj_4Qscf5gVh1oq7MnZ3Hjg2ujP47jn",
+  "previousDeploymentId": "dpl_4viUx74vjPV9bBMZXD13F7ATDt6H",
+  "projectId": "prj_AuicRy7kDGszYbTu7Anco6vGyi36",
+  "deploymentId": "dpl_BjpGmh97GTCAZwPFVHhqEMWBHd7m",
+  "verified": true,
+  "state": "READY",
+  "retainedClientDomain": "gongchuang-test.chaohuiwan.com.cn",
+  "checks": {
+    "formalDomainResolvesToNewDeployment": true,
+    "versionHttpStatus": 200,
+    "version": "admin-ui-1.1.0",
+    "healthHttpStatus": 200,
+    "health": { "ok": true, "database": "connected", "version": 2 },
+    "manageHttpStatus": 200,
+    "manageLoginMarkupAndVersionedAsset": true,
+    "client211LocalIntegrationChecksPassed": 17,
+    "client233LocalIntegrationChecksPassed": 17,
+    "coCreateApiCallExpressionsUnchanged": 44
+  },
+  "changes": "Project domain move only; no rebuild, DNS zone replacement, environment variable change or database migration.",
+  "rollback": "Move this domain from projectId back to previousProjectId using POST /v1/projects/{idOrName}/domains/{domain}/move with body {projectId: previousProjectId}, then verify the domain maps to previousDeploymentId. Existing v2 client domain remains attached to the v2 project."
+}

@@ -2,6 +2,8 @@
 
 日期：2026-11-10。目标项目为 class-collab-v2-test，域名 gongchuang-test.chaohuiwan.com.cn；旧版 class-collab 项目和 gongchuang.chaohuiwan.com.cn 不在本次发布范围。后台版本独立于小程序 v2.3.3。
 
+后续正式域名发布：已确认线上小程序为 2.1.1，并完成对应上传包与当前后端的兼容性核验。正式域名已迁移至本项目，后台入口为 https://gongchuang.chaohuiwan.com.cn/manage 。原 gongchuang-test 域名保留供已发布小程序继续访问。见 client-compatibility.md、formal-domain.json；上段为最初后台部署范围的历史记录。
+
 ## 完成内容
 
 - 六个导航模块：运行概览、用户与点数、活动、AI 任务、规则与预算、审计。历史认领移到用户次级入口。
