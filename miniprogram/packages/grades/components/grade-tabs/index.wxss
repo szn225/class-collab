@@ -50,3 +50,5 @@
   /* 已对齐 token 阶梯：--leading-xs = 1.4（原 1.2 为刻意收紧，现统一系统） */
   line-height: var(--leading-xs);
 }
+
+.tabbar{background:#fff;border-top:1px solid #e6ebdf;min-height:calc(58px + env(safe-area-inset-bottom))}.tab{min-height:58px;gap:3px}.tab-ic{height:22px}.tab-txt{font-size:11px}.tab.on .tab-ic{background:#e9f0e3;border-radius:9px;min-width:36px;text-align:center;padding:1px 3px;height:26px}.tab.on{color:#285b4b}

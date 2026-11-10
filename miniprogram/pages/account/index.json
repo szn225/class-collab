@@ -1,1 +1,7 @@
-{"navigationBarTitleText":"我的账号"}
+{
+  "navigationBarTitleText": "我的账号",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "app-nav": "/components/app-nav/index"
+  }
+}

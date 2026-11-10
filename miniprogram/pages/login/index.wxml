@@ -1,3 +1,4 @@
+<app-nav title="登录" show-back="{{true}}"/>
 <view class="login-page">
  <view class="login-symbol">慧</view>
  <view class="login-title">{{saveId ? '登录后保存这次成绩' : '登录慧共创'}}</view>

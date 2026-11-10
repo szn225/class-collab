@@ -1,6 +1,6 @@
 <!-- 参照库 —— 录取线 / 指标生对照 / 规则要点（SPEC §7 页5 · UIUX §9.5–9.7） -->
 <nav-bar title="参照"></nav-bar>
-<grade-context />
+
 
 <view class="page">
 
@@ -139,7 +139,7 @@
           bindtap="onPickIndicatorTier"
         >{{item.label}}</view>
       </view>
-      <view class="note" wx:if="{{!mySchool}}">还没设置本校。到「设置 → 本校」选择初中校名后，这里会显示本校对口高中的名额与实录线。</view>
+      <view class="note" wx:if="{{!mySchool}}">设置所在学校，查看对口名额与录取参照。</view>
     </view>
 
     <view class="input search">
@@ -268,7 +268,7 @@
         </view>
       </view>
     </view>
-    <view class="note">点开每一条看细则；这些都是「容易吃亏」的地方，不是官方条文。</view>
+    <view class="note">点击条目查看规则说明。</view>
   </block>
 
   <!-- AC-35：参照数据页显著展示免责声明 -->

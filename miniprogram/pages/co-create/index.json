@@ -1,1 +1,8 @@
-{"navigationBarTitleText":"慧共创","enablePullDownRefresh":true,"usingComponents":{}}
+{
+  "navigationBarTitleText": "慧共创",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "app-nav": "/components/app-nav/index"
+  },
+  "navigationStyle": "custom"
+}

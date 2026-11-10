@@ -2,11 +2,11 @@
 <nav-bar title="复盘">
   <view class="chip" wx:if="{{items.length}}">{{items.length}} 项</view>
 </nav-bar>
-<grade-context />
+
 
 <view class="page">
 
-  <view class="ph-meta">失分点 → 动作 → 时限 → 复检</view>
+
 
   <view class="segment">
     <view
@@ -29,7 +29,7 @@
     wx:elif="{{!items.length}}"
     icon="task"
     title="{{emptyTitle}}"
-    desc="从考试详情的失分点一键生成复盘项，孩子知道下一步做什么"
+    desc="从一次考试开始，找到下一步的方向"
     actionText="去录入一次考试"
     actionIcon="add"
     bind:action="goRecord"

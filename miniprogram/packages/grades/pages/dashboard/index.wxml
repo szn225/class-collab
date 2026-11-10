@@ -1,13 +1,6 @@
 <!-- 定位（首页）—— 位次定位仪表盘；L1 结论层首屏不滚动即读完 -->
-<nav-bar title="成绩记录">
-  <view class="iconbtn" bindtap="onRefresh" aria-label="刷新数据" aria-role="button">
-    <t-icon name="refresh" size="24px" />
-  </view>
-  <view class="iconbtn" bindtap="onMore" aria-label="更多操作" aria-role="button">
-    <t-icon name="ellipsis" size="24px" />
-  </view>
-</nav-bar>
-<grade-context />
+<nav-bar title="成绩"><view class="nav-more" bindtap="onMore" aria-label="更多操作">•••</view></nav-bar>
+
 
 <view class="page">
   <view wx:if="{{saved}}" class="saved-confirmation">✓ 成绩已保存</view>

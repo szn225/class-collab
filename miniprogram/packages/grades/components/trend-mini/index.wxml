@@ -29,17 +29,11 @@
       <view class="lg-dot lg-solid"></view>
       <text>折算位次</text>
       <view class="lg-dot lg-hollow"></view>
-      <text>{{legend}}</text>
-      <text class="lg-hint">长按圆点看详情</text>
+      <text>校内考试</text>
+      <text class="lg-hint">长按查看</text>
     </view>
 
     <!-- 反向指标三重保险之③：显式语义声明 -->
-    <view class="semantic">
-      <view class="semantic-ic">
-        <t-icon name="arrow-down" size="16px" />
-      </view>
-      <text>位次下降代表进步（不用股市红涨绿跌；<text class="txt-up">绿=进步</text>、<text class="txt-down">红=退步</text>）</text>
-    </view>
 
     <view class="tip" wx:if="{{singlePointTip}}">{{singlePointTip}}</view>
   </block>

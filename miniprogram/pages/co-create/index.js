@@ -28,7 +28,7 @@ Page({
  to(screen){clearTimeout(this.pollTimer);clearTimeout(this.streamTimer);const previous=this.data.screen;if(previous!==screen&&!(activityTabs.includes(previous)&&activityTabs.includes(screen)))this.stack.push(previous);if(screen==='profile')this.stack=[];this.setData({screen,title:names[screen]||'慧共创',error:'',keyboardHeight:0});wx.setNavigationBarTitle({title:names[screen]||'慧共创'});wx.pageScrollTo({scrollTop:0,duration:0})},
  demo(){this.to('demo')},
  openAccount(){wx.navigateTo({url:'/pages/login/index'})},
- hub(){wx.reLaunch({url:'/pages/home/index'})},
+ hub(){if(this.data.dirty)return wx.showModal({title:'文章尚未保存',content:'离开会放弃尚未保存的修改。',confirmText:'离开',success:r=>{if(r.confirm)wx.reLaunch({url:'/pages/home/index'})}});wx.reLaunch({url:'/pages/home/index'})},
 
  participate(e){this.navigate(e)},
  navigate(e){const screen=e.currentTarget.dataset.screen;if(screen==='profile'){if(!getApp().globalData.sessionToken)return this.openAccount();return this.run(()=>this.profile())};if(screen==='points')return this.run(()=>this.points());if(screen==='members')return this.run(()=>this.loadMembers());if(screen==='materials')return this.run(()=>this.loadMaterials());if(screen==='article')return this.run(()=>this.loadArticle());if(screen==='stream')return this.run(()=>this.loadStream());if(screen==='settings')return this.settings();if(screen==='invite')return this.to('invite');if(screen==='create'){this.setData({name:'',description:''})}this.to(screen)},

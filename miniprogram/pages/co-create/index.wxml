@@ -1,6 +1,6 @@
-<view class="hub-return"><button class="link" bindtap="hub">‹ 慧共创首页</button></view>
-<view class="page {{screen === 'home' || screen === 'profile' ? 'with-nav' : ''}} {{screen === 'stream' && activity.status === 'collecting' ? 'with-composer' : ''}}">
- <view wx:if="{{screen !== 'home' && screen !== 'profile'}}" class="top"><button class="link" bindtap="back">‹ 返回</button></view>
+<app-nav title="{{screen === 'home' ? '活动共创' : title}}" show-back="{{screen !== 'home'}}" custom-back="{{screen !== 'home'}}" bindback="back" bindhome="hub"><view wx:if="{{screen === 'home'}}" class="nav-account" data-screen="profile" bindtap="navigate">我的</view></app-nav>
+<view class="page  {{screen === 'stream' && activity.status === 'collecting' ? 'with-composer' : ''}}">
+
  <view wx:if="{{error}}" class="error"><text>{{error}}</text><button class="link" bindtap="retry">重试</button></view>
  <view wx:if="{{loading}}" class="loading">正在加载…</view>
  <view wx:if="{{screen === 'privacy'}}" class="card prose"><view class="h2">隐私说明</view><text>微信身份标识用于关联账号，显示姓名仅用于展示。同名用户不会共享账号。\n\n活动文字和图片仅向有权限的成员展示；确认 AI 任务后，必要资料会发送给模型服务处理。\n\n公开文章通过主动分享的链接访问，管理者可关闭分享。撤回资料不会自动撤回已复制或发布到外部的内容。</text></view>
@@ -57,5 +57,5 @@
  <block wx:elif="{{screen === 'points'}}"><view class="card heading"><text>可用 {{user.balance}} 点</text><text>冻结 {{user.frozen}} 点</text></view><view class="hint">点数不足请联系运营者申请补充。</view><view wx:if="{{!ledger.length && !error}}" class="empty">暂无点数记录</view><view wx:for="{{ledger}}" wx:key="id" class="card heading" data-index="{{index}}" bindtap="pointDetail"><view><view>{{item.label}}</view><view class="hint">{{item.time}}</view></view><text>{{item.amount > 0 ? '+' : ''}}{{item.amount}}</text></view><button wx:if="{{hasMorePoints}}" bindtap="morePoints" disabled="{{busy}}">加载更多</button></block>
  <view wx:elif="{{screen === 'help'}}" class="card prose"><view class="h2">使用说明</view><text>创建活动后分享邀请，参与者可以提交文字与照片。\n\n发起人和协作者可整理素材、生成和编辑文章。协作者使用 AI 需单独获得授权，消耗发起人的点数。\n\n创建、收集、手工编辑、定稿和导出免费。AI 任务确认费用后才启动。\n\n文章定稿后可以分享链接，或在电脑打开链接，将正文复制到公众号后台手动发布。</text></view>
  <view wx:elif="{{screen === 'access'}}" class="empty">没有活动访问权限，可能已被移出。<button bindtap="goHome">返回共创活动</button></view>
- <view wx:if="{{screen === 'home' || screen === 'profile'}}" class="bottom-nav"><button class="{{screen === 'home' ? 'active' : ''}}" bindtap="goHome"><view class="nav-icon nav-activities"/><text>共创活动</text></button><button class="{{screen !== 'home' ? 'active' : ''}}" data-screen="profile" bindtap="navigate"><view class="nav-icon nav-person"/><text>我的</text></button></view>
+
 </view>

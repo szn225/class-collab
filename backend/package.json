@@ -12,7 +12,8 @@
     "test": "node --test ../scripts/v2-domain.test.cjs ../scripts/v2-http.test.cjs ../scripts/v2-miniprogram.test.cjs ../scripts/v2-network.test.cjs",
     "test:grades": "node ../scripts/grades-integration.test.cjs",
     "typecheck:mini": "tsc -p ../miniprogram/tsconfig.json",
-    "test:guest": "node ../scripts/guest-save.test.cjs"
+    "test:guest": "node ../scripts/guest-save.test.cjs",
+    "test:interaction": "node ../scripts/interaction-2.1.4.test.cjs"
   },
   "dependencies": {
     "next": "^14.2.0",

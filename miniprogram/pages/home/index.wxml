@@ -1,6 +1,7 @@
+<app-nav title="慧共创" show-home="{{false}}"><view class="nav-account" bindtap="account">我的</view></app-nav>
 <view class="hub">
- <view class="hub-heading"><view><view class="brand-mark">共</view><text>慧共创</text></view><button bindtap="account">我的</button></view>
- <view class="hub-intro"><view class="eyebrow">记录 · 连接 · 成长</view><view class="hub-title"><view>让每一份记录，</view><view>都有回响。</view></view></view>
+
+ <view class="hub-intro"><view class="hub-title">今天，想记录什么？</view></view>
  <button class="entry-card collab" bindtap="coCreate" aria-label="进入活动文章共创">
   <view class="entry-icon paper-icon"><view></view><view></view><view></view></view>
   <view class="entry-title">活动文章共创</view><view class="entry-note">把活动里的精彩，写成共同的记忆</view><view class="entry-action">开始共创 <text>↗</text></view>

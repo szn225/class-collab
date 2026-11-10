@@ -1,11 +1,1 @@
-<!-- 固定栏 + 等高占位（占位在文档流内，页面内容自然下移） -->
-<view class="nav" style="height:{{totalHeight}}px;padding-top:{{statusBarHeight}}px">
-  <view class="nav-row" style="height:{{navBarHeight}}px;padding-right:{{rightPad}}px">
-    <view class="nav-back" wx:if="{{showBack}}" bindtap="onBack" aria-role="button" aria-label="返回">
-      <t-icon name="chevron-left" size="24px" />
-    </view>
-    <view class="nav-title">{{title}}</view>
-    <view class="nav-actions"><slot></slot></view>
-  </view>
-</view>
-<view class="nav-spacer" style="height:{{totalHeight}}px"></view>
+<view class="nav" style="padding-top:{{statusBarHeight}}px"><view class="nav-row" style="height:{{navBarHeight}}px;padding-right:{{rightPad}}px"><view class="nav-leading" wx:if="{{showBack || showHome}}"><button wx:if="{{showBack}}" class="nav-control" bindtap="onBack" aria-label="返回上一页"><view class="back-icon"/></button><button wx:if="{{showHome}}" class="nav-control" bindtap="onHome" aria-label="返回首页"><view class="home-icon"/></button></view><view class="nav-title">{{title}}</view><view class="nav-actions"><slot/></view></view></view><view style="height:{{totalHeight}}px"/>

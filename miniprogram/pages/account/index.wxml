@@ -1,5 +1,6 @@
+<app-nav title="我的" show-back="{{true}}"/>
 <view class="account">
- <view class="account-heading">我的</view>
+
  <view class="identity-card"><view class="avatar">{{user ? (user.name || '我') : '访'}}</view><view class="identity-copy"><view class="identity-name">{{user ? (user.name || '微信用户') : '你好，欢迎来记录'}}</view><view class="sub">{{user ? '共创与成绩，一个账号' : '现在就可以开始，无需登录'}}</view></view><button wx:if="{{!user}}" class="login-pill" bindtap="signIn">登录</button></view>
  <view wx:if="{{error}}" class="error">{{error}}</view>
  <view class="section-label">成绩空间</view>
@@ -12,5 +13,5 @@
  <block wx:if="{{user}}"><button class="menu-row" data-section="profile" bindtap="toggle"><text>账号设置</text><text class="row-meta">{{section === 'profile' ? '−' : '＋'}}</text></button><view wx:if="{{section === 'profile'}}" class="reveal"><input value="{{name}}" data-field="name" bindinput="input" maxlength="30" placeholder="显示称呼（选填）"/><button bindtap="saveName" disabled="{{busy || !name}}">保存称呼</button><button class="danger" bindtap="logout" disabled="{{busy}}">退出账号</button></view></block>
  <block wx:if="{{backups.length}}"><button class="menu-row" data-section="backups" bindtap="toggle"><text>历史备份</text><text class="row-meta">{{section === 'backups' ? '−' : '＋'}}</text></button><view wx:if="{{section === 'backups'}}" class="reveal"><button wx:for="{{backups}}" wx:key="id" data-id="{{item.id}}" bindtap="restoreBackup" disabled="{{busy}}">{{item.time}} · 恢复</button></view></block>
  <button class="menu-row" data-section="help" bindtap="toggle"><text>数据与隐私</text><text class="row-meta">{{section === 'help' ? '−' : '＋'}}</text></button><view wx:if="{{section === 'help'}}" class="reveal"><view class="sub">未开启同步的资料仅保存在本机，清理小程序数据可能丢失。成绩不向共创成员公开。登录不获取手机号、头像或昵称。旧助手资料可从成绩设置导入 JSON 备份。</view></view>
- </view><button class="back-link" bindtap="back">返回</button>
+ </view>
 </view>

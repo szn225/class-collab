@@ -2,3 +2,5 @@
 
 
 .collab-empty{margin:36rpx 0;padding:64rpx 32rpx 48rpx;text-align:center;background:#fff;border:1rpx solid #e3e8df;border-radius:30rpx}.collab-symbol{margin:0 auto 32rpx;width:100rpx;height:100rpx;line-height:100rpx;border-radius:32rpx;background:#eeeee2;color:#8b8762;font-size:64rpx}.collab-title{font-size:34rpx;font-weight:600;color:#284a39}.collab-sub{font-size:25rpx;color:#7b887a;margin:16rpx 0 40rpx}.collab-empty .primary{border-radius:20rpx}.collab-empty .demo-disclosure{font-size:24rpx;background:transparent;color:#68806b;margin-top:20rpx}.home-heading{padding-top:16rpx}.home-heading .h1{font-size:40rpx;letter-spacing:1rpx}.hub-return{padding:12rpx 24rpx}.hub-return .link{font-size:24rpx;color:#7b8b7b;background:transparent}
+
+.nav-account{padding:8px 4px;font-size:13px;color:#4e6b54}.hub{padding-top:30rpx}.account{padding-top:36rpx}.page{padding-top:20rpx}

@@ -147,11 +147,12 @@ gradePage({
   /** 次要操作收敛到 ActionSheet（UIUX §7.4：小程序无 hover） */
   onMore() {
     wx.showActionSheet({
-      itemList: ['数据备份与设置', '去录入新考试', '刷新数据'],
+      itemList: ['数据备份与设置', '去录入新考试', '刷新数据', '学生与账号'],
       success: (res) => {
         if (res.tapIndex === 0) this.goProfile();
         if (res.tapIndex === 1) this.goRecord();
         if (res.tapIndex === 2) this.load();
+        if (res.tapIndex === 3) wx.navigateTo({url:'/pages/account/index'});
       },
     });
   },

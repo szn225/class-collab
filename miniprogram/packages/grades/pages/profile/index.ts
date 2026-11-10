@@ -19,7 +19,9 @@ interface KvItem {
 }
 
 gradePage({
+  toggle(e: WechatMiniprogram.BaseEvent) {const section=String(e.currentTarget.dataset.section);this.setData({openSection:this.data.openSection===section?'':section});},
   data: {
+    openSection:'',
     exporting: false,
     importing: false,
     meta: null as DatasetMeta | null,

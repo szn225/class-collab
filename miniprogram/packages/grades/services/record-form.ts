@@ -40,8 +40,17 @@ export interface RecordForm {
   remark: string;
 }
 
-/** 常见科目名（只给名称，满分由家长填，不臆造满分值） */
-export const SUBJECT_PRESETS = ['语文', '数学', '英语', '物理', '化学', '道法', '历史'];
+import subjectRules from '../data/subject-rules';
+export const SUBJECT_PRESETS = subjectRules.subjects.map(s => s.name);
+/** Fixed visible score rows; keep previously entered marks and custom paper maxima intact. */
+export function hydrateSubjects(form: RecordForm): RecordForm {
+  const existing = form.subjects || [];
+  const subjects = subjectRules.subjects.map((s, i) => {
+    const old = existing.find(r => r.subject === s.name || (s.name === '道法' && r.subject === '道德与法治'));
+    return old ? {...old, full:old.full || String(s.paperFull)} : {id:'subject_'+i,subject:s.name,full:String(s.paperFull),score:''};
+  });
+  return {...form,subjects:subjects.concat(existing.filter(r => !subjects.some(s => s.id === r.id)))};
+}
 
 export function emptyForm(todayStr: string): RecordForm {
   return {
@@ -85,7 +94,7 @@ export function toRawExamInput(form: RecordForm): RawExamInput {
     totalScore: form.totalScore,
     totalFull: form.totalFull,
     langMathEngTotal: form.langMathEngTotal,
-    subjectScores: form.subjects.map((s) => ({ subject: s.subject, full: s.full, score: s.score })),
+    subjectScores: form.subjects.filter(s => s.score.trim() !== '').map((s) => ({ subject: s.subject, full: s.full, score: s.score })),
     surveyGrades: grades,
     qualityEval: form.qualityEval,
   };
@@ -102,7 +111,7 @@ export function toExamInput(form: RecordForm): ExamInput {
     return p.kind === 'value' ? p.value : null;
   };
   const subjectScores = form.subjects
-    .filter((s) => s.subject.trim() !== '')
+    .filter((s) => s.subject.trim() !== '' && s.score.trim() !== '')
     .map((s) => ({ subject: s.subject.trim(), full: n(s.full) ?? 0, score: n(s.score) ?? 0 }))
     .filter((s) => s.full > 0);
   const surveyGrades: Record<string, SurveyGrade> = {};

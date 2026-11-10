@@ -191,7 +191,7 @@ Component({
       ctx.font = '10px sans-serif';
       ctx.textAlign = 'right';
       ctx.textBaseline = 'bottom';
-      model.targets.forEach((t) => ctx.fillText(t.label, right, t.y - 3));
+      model.targets.forEach((t) => {if (!model.latest || Math.abs(t.y-model.latest.y)>22) ctx.fillText(t.label, right, t.y - 3);});
 
       // ③ Y 轴方向提示（反向指标三重保险之①：轴倒置）
       ctx.textAlign = 'right';

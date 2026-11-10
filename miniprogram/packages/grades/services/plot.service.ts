@@ -161,11 +161,14 @@ export function buildTrendModel(
     label: s.label && s.label !== '' ? s.label : `${i === 0 ? '最优档' : '稳妥档'}线 ${formatRank(s.rank)}`,
   }));
 
-  // X 轴标签：超过 8 点时隔点显示，避免拥挤（视觉降噪）
-  const labelStep = series.points.length > 8 ? 2 : 1;
-  const xLabels = series.points
-    .map((p, i) => ({ x: xOf(i), text: formatMonthCn(p.examDate) }))
-    .filter((_, i) => i % labelStep === 0);
+  // Retain readable dates rather than a label at every point.
+  const xLabels: {x:number;text:string}[] = [];
+  series.points.forEach((p,i) => {
+    const x=xOf(i),text=p.examDate.slice(5).replace('-', '/');
+    const last=xLabels[xLabels.length-1];
+    if (!last || x-last.x>=48) xLabels.push({x,text});
+    else if (i===series.points.length-1 && x-last.x>=20) {xLabels.pop();xLabels.push({x,text});}
+  });
 
   const yLabels = [
     { y: pad.top + 4, text: '位次优' },

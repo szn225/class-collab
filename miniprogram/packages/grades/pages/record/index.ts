@@ -16,6 +16,7 @@ import { recordService } from '../../services/record.service';
 import type { PreviewView } from '../../services/record.service';
 import {
   applyProfile,
+  hydrateSubjects,
   emptyForm,
   SUBJECT_PRESETS,
   validateForm,
@@ -144,7 +145,7 @@ gradePage({
 
       // 草稿优先恢复（UIUX §9.2.7）
       const draft = recordService.getDraft();
-      const form = pending ? pending.form : draft ? draft.form : base;
+      const form = hydrateSubjects(pending ? pending.form : draft ? draft.form : base);
       let draftNotice = '';
       if (draft) {
         const age = Date.now() - (draft.savedAt || 0);

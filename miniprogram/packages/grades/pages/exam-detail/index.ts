@@ -45,7 +45,10 @@ function addDays(base: string, days: number): string {
 }
 
 gradePage({
+  chartHelp(){wx.showModal({title:'分科表现',content:'得分率为该科得分除以卷面满分。长按科目行可只看这一科或标记已分析。',showCancel:false});},
+  toggleAttribution(){this.setData({showAttribution:!this.data.showAttribution});},
   data: {
+    showAttribution:false,
     loading: true,
     error: '',
     detail: null as ExamDetailView | null,
