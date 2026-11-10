@@ -1,8 +1,1 @@
-<!-- 免责声明条：凡参照数据页面显著展示（AC-35 / 合规红线） -->
-<view class="disclaim">
-  <view class="disclaim-h">
-    <t-icon name="info-circle" size="16px" />
-    <text>免责声明</text>
-  </view>
-  <view class="disclaim-b">{{text}}</view>
-</view>
+<view class="disclaim"><button class="disclaim-h" bindtap="toggle" aria-expanded="{{expanded}}"><t-icon name="info-circle" size="14px"/><text>位次仅供参考，不代表录取结果</text><text class="disclaim-more">{{expanded ? '收起' : '详情'}}</text></button><view wx:if="{{expanded}}" class="disclaim-b">{{text}}</view></view>

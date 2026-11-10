@@ -7,6 +7,8 @@
 Component({
   options: { styleIsolation: 'apply-shared' },
 
+  data:{expanded:false},
+  methods:{toggle(){this.setData({expanded:!this.data.expanded})}},
   properties: {
     text: { type: String, value: '' },
   },

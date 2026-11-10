@@ -234,6 +234,7 @@ gradePage({
     });
   },
 
+  storageInfo() { wx.showModal({title:'本机保存',content:'成绩保存在当前设备。清理小程序数据可能导致丢失，可在“我的”中登录并主动开启云端同步。',showCancel:false}); },
   onToggleMore() {
     this.setData({ showMore: !this.data.showMore });
   },

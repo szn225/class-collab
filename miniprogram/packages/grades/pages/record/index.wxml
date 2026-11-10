@@ -2,7 +2,8 @@
 <grade-context />
 <view class="page record-page">
  <view wx:if="{{draftNotice}}" class="draft-notice">{{draftNotice}}</view>
- <view class="card entry-form">
+ <view class="record-heading"><view class="record-eyebrow">新的记录</view><view class="record-title">记下这一次的进步</view></view>
+ <view class="card entry-form"><view class="form-section-title">考试信息</view>
   <view class="field"><view class="lab">考试名称 <text class="req">*</text></view><view class="input {{errors.examName ? 'err' : ''}}"><input value="{{form.examName}}" placeholder="例如：期中考试" data-field="examName" bindinput="onInput" maxlength="40"/></view><view wx:if="{{errors.examName}}" class="hint">{{errors.examName}}</view></view>
   <view class="field"><view class="lab">考试日期</view><picker mode="date" value="{{form.examDate}}" bindchange="onDateChange"><view class="input date-input"><text>{{form.examDate}}</text><t-icon name="chevron-right" size="18px"/></view></picker></view>
   <view class="field"><view class="lab">考试类型</view><view class="seg"><view wx:for="{{scopeOptions}}" wx:key="value" class="seg-item {{form.scope === item.value ? 'on' : ''}}" data-scope="{{item.value}}" bindtap="onPickScope">{{item.label}}</view></view></view>
@@ -11,7 +12,7 @@
   <view wx:if="{{form.scope === 'group'}}" class="field"><view class="lab">集团排名 <text class="req">*</text></view><view class="input {{errors.groupRank ? 'err' : ''}}"><input type="number" value="{{form.groupRank}}" placeholder="填写集团联考排名" data-field="groupRank" bindinput="onInput"/></view><view wx:if="{{errors.groupRank}}" class="hint">{{errors.groupRank}}</view></view>
   <block wx:if="{{form.scope === 'school'}}"><view class="field"><view class="lab">校内排名 <text class="req">*</text></view><view class="input {{errors.schoolRank ? 'err' : ''}}"><input type="number" value="{{form.schoolRank}}" placeholder="填写校内排名" data-field="schoolRank" bindinput="onInput"/></view></view><view class="field"><view class="lab">参考人数 <text class="req">*</text></view><view class="input {{errors.schoolSize ? 'err' : ''}}"><input type="number" value="{{form.schoolSize}}" placeholder="本次考试的全校参考人数" data-field="schoolSize" bindinput="onInput"/></view></view></block>
  </view>
- <view class="card extra-card"><view class="fold-head" bindtap="onToggleMore"><text>各科成绩及其他信息</text><text class="optional">选填 <t-icon name="{{showMore ? 'chevron-down' : 'chevron-right'}}" size="16px"/></text></view>
+ <view class="card extra-card"><view class="fold-head" bindtap="onToggleMore"><text>补充成绩信息</text><text class="optional">选填 <t-icon name="{{showMore ? 'chevron-down' : 'chevron-right'}}" size="16px"/></text></view>
   <view wx:if="{{showMore}}" class="extra-fields">
    <view class="field"><view class="lab">总分</view><view class="subrow"><view class="input grow"><input type="digit" value="{{form.totalScore}}" placeholder="得分" data-field="totalScore" bindinput="onInput"/></view><text>/</text><view class="input grow"><input type="number" value="{{form.totalFull}}" placeholder="满分" data-field="totalFull" bindinput="onInput"/></view></view></view>
    <view class="field"><view class="lab">各科成绩</view><view wx:for="{{form.subjects}}" wx:key="id" class="subrow"><input class="subrow-name" value="{{item.subject}}" placeholder="科目" data-index="{{index}}" data-key="subject" bindinput="onSubjectInput"/><input class="subrow-num" type="digit" value="{{item.score}}" placeholder="得分" data-index="{{index}}" data-key="score" bindinput="onSubjectInput"/><text>/</text><input class="subrow-num" type="number" value="{{item.full}}" placeholder="满分" data-index="{{index}}" data-key="full" bindinput="onSubjectInput"/><view data-index="{{index}}" bindtap="onRemoveSubject"><t-icon name="close" size="18px"/></view></view><view wx:if="{{subjectError}}" class="hint">{{subjectError}}</view><view class="chips"><view wx:for="{{subjectPresets}}" wx:key="*this" class="chipbtn" data-name="{{item}}" bindtap="onAddSubject">＋ {{item}}</view></view></view>
@@ -21,4 +22,4 @@
   </view>
  </view>
 </view>
-<view class="save-bar"><view class="hint">成绩先保存在本机，清理小程序数据可能丢失。可在“我的”中登录、导入并开启云端同步。</view><view wx:if="{{saveError}}" class="save-error">{{saveError}}</view><button class="save-primary" bindtap="onSave" loading="{{saving}}" disabled="{{saving}}">{{saving ? '正在保存…' : '保存成绩'}}</button></view>
+<view class="save-bar"><button class="storage-note" bindtap="storageInfo">本机保存 <text>ⓘ</text></button><view wx:if="{{saveError}}" class="save-error">{{saveError}}</view><button class="save-primary" bindtap="onSave" loading="{{saving}}" disabled="{{saving}}">{{saving ? '正在保存…' : '保存成绩'}}</button></view>

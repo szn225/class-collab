@@ -17,24 +17,24 @@ page,
 .token-scope {
   /* ---------- A1-identity ---------- */
   /* 表面层 */
-  --bg: #F5F7F7;
+  --bg: #F6F7F4;
   --surface: #FFFFFF;
-  --surface-2: #EEF1F1;
+  --surface-2: #EFF2EC;
   /* 前景层 */
-  --fg: #14181A;
-  --fg-2: #3C464A;
-  --muted: #5F6A6E; /* AA：在 bg 上 5.18:1（原 #6B7679 仅 4.35，临界未达 4.5） */
+  --fg: #243C30;
+  --fg-2: #4A6050;
+  --muted: #627461; /* AA：在 bg 上 5.18:1（原 #6B7679 仅 4.35，临界未达 4.5） */
   /* --meta #98A2A5 仅作装饰 / ≥18px 大字；小字占位改走 --muted（2.43:1 未达 AA） */
   --meta: #98A2A5;
   /* 边框层 */
-  --border: #E2E7E7;
-  --border-soft: #EEF1F1;
+  --border: #E2E8DE;
+  --border-soft: #EFF2EC;
   --border-width: 1px;
   /* 强调色（沉青，已加深至 AA：白字 4.58:1 / onSurf 4.58:1） */
-  --accent: #0B8478;
-  --accent-hover: #0B7C73;
-  --accent-active: #0A6B63;
-  --accent-subtle: #E6F4F2;
+  --accent: #285B4B;
+  --accent-hover: #244E40;
+  --accent-active: #1C4334;
+  --accent-subtle: #E8F0E6;
   --accent-on: #FFFFFF;
 
   /* 字体 */
@@ -63,8 +63,8 @@ page,
   /* 冲/稳/保 三档（行业通用心智） */
   --tier-chong: #9C5800; /* AA：在 chong-bg 上 5.00:1（原 #D97706 仅 2.89，未达 AA） */
   --tier-chong-bg: #FBF3E4;
-  --tier-wen: #0B8478;
-  --tier-wen-bg: #E6F4F2;
+  --tier-wen: #285B4B;
+  --tier-wen-bg: #E8F0E6;
   --tier-bao: #3F5E8C;
   --tier-bao-bg: #EAF0F7;
   /* 趋势方向：教育语义 —— 绿=进步（位次下降）/ 红=退步（位次上升） */

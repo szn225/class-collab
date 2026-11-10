@@ -42,3 +42,5 @@
   line-height: var(--leading-base);
   color: var(--fg-2);
 }
+
+.hero{padding:24px;border-radius:22px;border-color:#dce6d7;background:linear-gradient(135deg,#e9f1e4,#e0ecdf);gap:8px}.hero-k{font-size:12px;letter-spacing:1px}.hero-v{font-size:46px;line-height:1.2;color:#244832}.hero-sub{font-size:13px}
