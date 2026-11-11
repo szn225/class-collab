@@ -14,4 +14,5 @@
  <block wx:if="{{backups.length}}"><button class="menu-row" data-section="backups" bindtap="toggle"><text>历史备份</text><ui-icon name="{{section === 'backups' ? 'chevron-up' : 'chevron-down'}}" size="20px"/></button><view wx:if="{{section === 'backups'}}" class="reveal"><button wx:for="{{backups}}" wx:key="id" data-id="{{item.id}}" bindtap="restoreBackup" disabled="{{busy}}">{{item.time}} · 恢复</button></view></block>
  <button class="menu-row" data-section="help" bindtap="toggle"><text>数据与隐私</text><ui-icon name="{{section === 'help' ? 'chevron-up' : 'chevron-down'}}" size="20px"/></button><view wx:if="{{section === 'help'}}" class="reveal"><view class="sub">未开启同步的资料仅保存在本机，清理小程序数据可能丢失。成绩不向共创成员公开。登录不获取手机号、头像或昵称。旧助手资料可从成绩设置导入 JSON 备份。</view></view>
  </view>
+ <view class="release-version">慧共创 · {{releaseVersion}}</view>
 </view>

@@ -90,16 +90,14 @@
           bindtap="onTapRecord"
           bindlongpress="onLongPressRecord"
         >
-          <view class="grow">
-            <view class="ttl">{{item.examName}}</view>
+          <view class="exam-row-head"><view class="ttl">{{item.examName}}</view><view class="row-rank num">{{item.rankText}}</view><view class="chev"><ui-icon name="chevron-right" size="18px" /></view></view>
+          <view class="exam-row-info">
             <view class="exam-meta">
               <text class="cap">{{item.dateText}}</text>
               <view class="chip">{{item.scopeText}}</view>
-              <text class="cap" wx:if="{{item.tierText}}">{{item.tierText}}</text>
             </view>
+            <view class="exam-tier" wx:if="{{item.tierText}}">{{item.tierText}}</view>
           </view>
-          <view class="row-rank num">{{item.rankText}}</view>
-          <view class="chev"><ui-icon name="chevron-right" size="20px" /></view>
         </view>
       </view>
 

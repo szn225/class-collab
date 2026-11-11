@@ -1,7 +1,7 @@
 const {call}=require('../../utils/v2')
 const grades=require('../../utils/grades')
 Page({
- data:{section:'',user:null,consent:false,busy:false,error:'',students:[],backups:[],active:'',guestStudents:[],sync:{},name:'',studentName:'',conflict:false},
+ data:{releaseVersion:require('../../config/release').version,section:'',user:null,consent:false,busy:false,error:'',students:[],backups:[],active:'',guestStudents:[],sync:{},name:'',studentName:'',conflict:false},
  toggle(e){const section=e.currentTarget.dataset.section;this.setData({section:this.data.section===section?'':section})},
  signIn(){wx.navigateTo({url:'/pages/login/index'})},
  onIdentityChanged(){this.refresh()},

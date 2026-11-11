@@ -1,14 +1,14 @@
-// Runtime counterpart of design-tokens.json.
+// Runtime counterpart of design-tokens.json. Keep canvas and native controls on the same theme.
 const data = {
   "meta": {
-    "source": "docs/UI规范-2.3.1-可读性.md",
+    "source": "docs/ui-redesign-2026-11-10/前端实施说明.md",
     "spec": "docs/SPEC-v1.md §8",
     "theme": "light",
     "note": "前端落地副本，与 miniprogram/styles/design-tokens.wxss **全量对齐**（wxss 的每个 CSS 变量在此都有对应项，命名 kebab 转 camel）；设计师若调整，先改此文件再同步 wxss。"
   },
   "color": {
     "bg": {
-      "value": "#FFFFFF",
+      "value": "#FBF9F5",
       "type": "color"
     },
     "surface": {
@@ -36,11 +36,11 @@ const data = {
       "type": "color"
     },
     "border": {
-      "value": "#E6E9ED",
+      "value": "#DDE3DA",
       "type": "color"
     },
     "borderSoft": {
-      "value": "#EDF0EB",
+      "value": "#EAEDE6",
       "type": "color"
     },
     "accent": {
@@ -56,7 +56,7 @@ const data = {
       "type": "color"
     },
     "accentSubtle": {
-      "value": "#EDF3EE",
+      "value": "#F0F4E9",
       "type": "color"
     },
     "accentOn": {
@@ -122,6 +122,22 @@ const data = {
     "canvas": {
       "value": "#E9EBEB",
       "type": "color"
+    },
+    "data": {
+      "value": "#234D68",
+      "type": "color"
+    },
+    "dataSubtle": {
+      "value": "#EFF4F8",
+      "type": "color"
+    },
+    "review": {
+      "value": "#756683",
+      "type": "color"
+    },
+    "reviewSubtle": {
+      "value": "#F0EDF5",
+      "type": "color"
     }
   },
   "font": {
@@ -147,15 +163,15 @@ const data = {
         "type": "dimension"
       },
       "base": {
-        "value": "17px",
+        "value": "16px",
         "type": "dimension"
       },
       "lg": {
-        "value": "20px",
+        "value": "19px",
         "type": "dimension"
       },
       "xl": {
-        "value": "24px",
+        "value": "22px",
         "type": "dimension"
       },
       "2xl": {
@@ -236,7 +252,7 @@ const data = {
   },
   "radius": {
     "sm": {
-      "value": "6px",
+      "value": "8px",
       "type": "dimension"
     },
     "md": {
@@ -244,7 +260,7 @@ const data = {
       "type": "dimension"
     },
     "lg": {
-      "value": "14px",
+      "value": "16px",
       "type": "dimension"
     },
     "pill": {
@@ -292,7 +308,7 @@ const data = {
   },
   "chart": {
     "lineColor": {
-      "value": "#4D6B82",
+      "value": "#234D68",
       "type": "color"
     },
     "lineWidth": {
@@ -329,7 +345,7 @@ const data = {
       "type": "boxShadow"
     },
     "raised": {
-      "value": "0 1px 2px rgba(20,24,26,0.04), 0 4px 10px rgba(20,24,26,0.05)",
+      "value": "none",
       "type": "boxShadow"
     },
     "focusRing": {

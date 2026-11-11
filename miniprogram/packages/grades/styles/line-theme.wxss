@@ -1,0 +1,10 @@
+/* Final page layer: consistent flat surfaces, hairline divisions and compact type. */
+.page{gap:20px;padding:20px 20px 24px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:none}
+.h2,.card-h .h2{font-size:var(--text-lg);font-weight:600}.h3{font-size:var(--text-base)}
+.btn{border-radius:var(--radius-md);font-size:var(--text-base);line-height:1.5;min-height:48px;box-shadow:none}
+.btn.ghost{background:var(--surface)}.chip{font-size:var(--text-xs);border-radius:var(--radius-sm)}
+.segment{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:none}
+.segment .seg-item{font-size:var(--text-sm);min-height:44px}.segment .seg-item.on{background:var(--accent-subtle);color:var(--accent);box-shadow:none}
+.input,.input input{font-size:var(--text-base)}.input{border-radius:var(--radius-md);background:var(--surface)}
+.rows .row{border-color:var(--border-soft)}.exam-rows .ttl,.row-rank{font-size:var(--text-base)}

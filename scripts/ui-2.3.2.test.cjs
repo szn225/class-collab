@@ -31,6 +31,6 @@ homeApp.globalData={sessionToken:'fixture-session',userInfo:{id:'u1',name:'æµ‹è¯
 homeApp.globalData={sessionToken:'',userInfo:{id:'stale'}};homePage.refresh.call(homeCtx);assert.equal(homeCtx.data.user,null)
 console.log('PASS home account status follows shared session and cannot show a stale signed-out identity')
 
-assert.equal(require('../miniprogram/packages/grades/styles/design-tokens.json').color.bg.value,'#FFFFFF')
+assert.equal(require('../miniprogram/packages/grades/styles/design-tokens.json').color.bg.value,'#FBF9F5')
 for(const icon of ['filter','chevron-up','chevron-down','settings','chevron'])assert.ok(fs.existsSync('miniprogram/assets/ui/'+icon+'.svg'))
-console.log('PASS pure white page token and local vector assets for supplemental controls')
+console.log('PASS approved warm ivory page token and local vector assets for supplemental controls')

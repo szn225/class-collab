@@ -1,95 +1,60 @@
-> 当前开发版本为 **慧共创 v2**，正式手机入口为 `miniprogram/pages/co-create/index`。开发范围、数据库增量迁移、环境配置和联调步骤见 [新版开发说明](docs/慧共创-v2-开发与联调.md)。下方为旧版项目说明，仅作历史参考。
+# 慧共创
 
-# 班级共创 - 微信公众号文章协作小程序
+慧共创是微信原生小程序，提供活动素材共创与初三成绩追踪两个入口，共用微信登录与账号体系。共创支持资料收集、选材、AI 写作、文章编辑和分享；成绩模块支持多学生档案、成绩定位、趋势、复盘和云端同步。
 
-班级活动素材收集 + AI 自动生成公众号文章。
+## 当前状态
 
-## 项目结构
+截至 2026-11-11，仓库小程序版本为 **2.4.0**，已上传微信开发版本；审核与正式发布尚未核验。最近一次用户确认的线上版本为 **2.1.1**（2026-11-10）。管理后台 **admin-ui-1.1.0** 已部署。详细依据和验收边界统一见 [版本状态](docs/STATUS.md)。
 
-```
-backend/          # Next.js 后端 (部署到 Vercel)
-  ├── src/app/api/   # API 路由
-  ├── src/lib/       # 核心库 (Supabase, DeepSeek, HTML模板)
-  └── prisma/        # 数据库 Schema + SQL
-miniprogram/      # 微信小程序前端
-  ├── pages/         # 页面 (登录/主题列表/详情/文章/管理)
-  └── utils/         # API 封装
-```
+## 工程结构
 
-## 部署步骤
+| 路径 | 用途 |
+| --- | --- |
+| `miniprogram/` | 正式小程序工程；首页 `pages/home/index`，共创 `pages/co-create/index` |
+| `miniprogram/packages/grades/` | 成绩助手分包，含页面、业务服务与换算内核 |
+| `backend/` | Next.js 14 + TypeScript 后端，v2 API、文章分享页与管理后台 |
+| `backend/prisma/` | 数据库增量 SQL 与旧版迁移资料 |
+| `scripts/` | 回归检查、设备验收与发布打包脚本 |
+| `docs/` | 开发指南、版本状态、验收证据和历史归档 |
+| `ui-preview/` | 早期浏览器交互原型，仅供设计参考 |
 
-### 1. 注册微信小程序
-1. 打开 https://mp.weixin.qq.com 注册小程序账号（个人主体免费）
-2. 获取 AppID，填入 `miniprogram/project.config.json` 的 `appid` 字段
 
-### 2. 设置 Supabase 数据库
-1. 在 https://supabase.com 注册并创建项目（免费 Starter 计划）
-2. 进入项目 → SQL Editor，粘贴运行 `backend/prisma/supabase-schema.sql`
-3. 创建 Storage bucket: Project Settings → Storage → Create bucket `materials`，设为 public
-4. 获取 Project URL 和 anon key (Project Settings → API)
+## 本地开发
 
-### 3. 获取 DeepSeek API Key
-1. 打开 https://platform.deepseek.com 注册账号
-2. 创建 API Key
+使用 Node.js 22.12+（22 系列）或 24+（24 系列）；本次验证环境为 Node.js 24.16.0。首次准备后端依赖，在仓库根目录运行：
 
-### 4. 部署后端到 Vercel
-1. 登录 https://vercel.com
-2. 导入 `backend/` 目录
-3. 设置环境变量 (见下方)
-4. 部署成功后获得域名如 `your-app.vercel.app`
-
-### 5. 环境变量
-
-在 Vercel 项目 Settings → Environment Variables 中添加：
-
-| 变量名 | 说明 |
-|--------|------|
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase 项目 URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service_role key |
-| `DEEPSEEK_API_KEY` | DeepSeek API Key |
-
-### 6. 配置小程序
-1. 打开微信开发者工具，导入 `miniprogram/` 目录
-2. 修改 `miniprogram/utils/api.js` 中的 `baseUrl` 为 Vercel 域名
-3. 在微信小程序后台 → 开发 → 开发设置 → 服务器域名，添加 Vercel 域名
-
-### 7. 本地开发
-
-```bash
-# 启动后端 (backend/)
-npm install
-cp .env.example .env.local  # 填入配置
-npm run dev
-
-# 小程序在微信开发者工具中打开 miniprogram/ 目录即可
+```sh
+npm --prefix backend install
 ```
 
-## 使用流程
+本地首次配置：将 `backend/.env.example` 复制为 `backend/.env.local` 并填写环境变量；已有配置时沿用。配置与迁移说明见 [v2 开发与联调](docs/慧共创-v2-开发与联调.md)。
 
-1. 第一位用户注册 → 自动成为管理员
-2. 管理员创建主题 → 系统生成6位邀请码
-3. 管理员将邀请码分享到班级群
-4. 班级成员输入姓名登录 → 输入邀请码加入主题
-5. 活动过程中，成员提交文字/语音/图片素材
-6. 活动结束，管理员点击"生成文章"
-7. AI 基于所有素材自动生成公众号文章
-8. 管理员复制 HTML → 粘贴到微信公众平台编辑器 → 发布
+```sh
+npm --prefix backend run dev
+```
 
-## API 接口
+使用微信开发者工具打开 `miniprogram/`。接口地址统一配置在 `miniprogram/config/endpoints.js`，当前 develop、trial、release 均指向 `https://gongchuang-test.chaohuiwan.com.cn`。本机后端联调需使用设备可访问的地址，并核对微信域名及隐私配置。
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| POST | /api/auth | 登录/注册 |
-| GET | /api/topics?userId=xxx | 获取用户主题列表 |
-| POST | /api/topics | 创建主题 (管理员) |
-| GET | /api/topics/:id | 获取主题详情 |
-| PATCH | /api/topics/:id | 更新主题 |
-| POST | /api/topics/join | 通过邀请码加入主题 |
-| GET | /api/materials?topicId=xxx | 获取素材列表 |
-| POST | /api/materials | 提交素材 |
-| POST | /api/upload | 上传图片 |
-| GET | /api/members?topicId=xxx | 获取成员列表 |
-| DELETE | /api/members | 移除成员 |
-| POST | /api/generate | AI 生成文章 (管理员) |
-| GET | /api/article?topicId=xxx | 获取生成的文章 |
+## 常用检查
+
+以下命令在仓库根目录运行，具体覆盖范围见各开发指南：
+
+```sh
+npm --prefix backend test
+npm --prefix backend run test:grades:unit
+npm --prefix backend run typecheck:mini
+npm --prefix backend run build
+```
+
+`test:grades:unit` 独立运行主工程成绩内核与本地数据源测试，无需旧成绩助手目录。成绩数据库联调另见 [成绩助手开发与验收](docs/慧共创-成绩助手开发与验收.md)；该检查需要额外的本地测试依赖。
+
+旧独立工程已移出本仓库，作为外部历史备份；当前成绩代码和测试均在本仓库独立维护。
+
+## 文档与服务入口
+
+- [完整文档索引](docs/README.md)
+- [当前版本、发布与验收状态](docs/STATUS.md)
+- [管理后台](https://gongchuang.chaohuiwan.com.cn/manage)
+- [历史资料与归档规则](docs/archive/README.md)
+
+旧版项目介绍、部署步骤和 v1 API 清单已归入 [旧版 README](docs/archive/legacy/README-v1.md)。

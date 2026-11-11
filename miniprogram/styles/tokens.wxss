@@ -1,0 +1,11 @@
+/* 线描主题：全局语义变量。15px 辅助 / 16px 正文 / 19px 区块 / 22px 页标题。 */
+page,.token-scope {
+ --ui-bg:#FBF9F5; --ui-surface:#FFFFFF; --ui-surface-soft:#F4F5F0;
+ --ui-ink:#263B37; --ui-secondary:#465D56; --ui-muted:#65736B;
+ --ui-line:#DDE3DA; --ui-line-soft:#EAEDE6;
+ --ui-green:#245D50; --ui-green-soft:#F0F4E9; --ui-green-line:#CCD8C1;
+ --ui-blue:#234D68; --ui-blue-soft:#EFF4F8; --ui-blue-line:#CEDDE8;
+ --ui-warn:#855C35; --ui-warn-soft:#F8F1E6; --ui-danger:#A33F32; --ui-danger-soft:#FCF0EC;
+ --ui-radius:16px; --ui-control-radius:10px;
+ --ui-meta:15px; --ui-body:16px; --ui-title:19px; --ui-heading:22px;
+}

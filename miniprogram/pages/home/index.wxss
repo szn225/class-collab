@@ -1,2 +1,22 @@
-page{background:#fff;color:#263b37}.hub{padding:20px;display:flex;flex-direction:column;gap:16px}.account-summary{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12px;padding:4px 0 20px;border-bottom:1px solid #e6e9ed}.account-summary>button{max-width:none;margin:0;padding:0;background:transparent;color:#263b37;border:0;font-weight:400}.account-summary>button.identity-entry{display:flex;align-items:center;gap:12px;width:auto;min-width:0;flex:1;text-align:left;min-height:52px}.account-avatar{display:flex;align-items:center;justify-content:center;flex:none;width:44px;height:44px;border-radius:14px;background:#f5f6f8}.account-avatar image{width:24px;height:24px}.identity-copy{min-width:0}.account-name{font-size:17px;line-height:1.5;font-weight:500;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.account-status{font-size:15px;line-height:1.5;color:#65736b;margin-top:2px}.account-summary>button.signin-link{display:flex;width:auto;flex:none;align-items:center;gap:6px;min-height:44px;padding:8px 0 8px 12px;color:#245d50;font-size:17px;line-height:1.5}.account-summary>button.account-settings{display:flex;align-items:center;justify-content:center;width:44px;height:44px;flex:none}.account-settings image{width:22px;height:22px}.hub>button.entry-card{display:flex;align-items:center;width:100%;max-width:none;min-height:116px;margin:0;padding:20px 16px;border:1px solid #e6e9ed;border-radius:16px;background:#fff;gap:14px;text-align:left;white-space:normal;font-weight:400;box-shadow:0 2px 10px rgba(24,39,50,.025)}.tool-icon{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;flex:none}.tool-icon image{width:26px;height:26px}.collab-icon{background:#f7f0e6}.grades-icon{background:#edf2f7}.tool-copy{flex:1;min-width:0}.entry-title{font-size:20px;line-height:1.4;font-weight:500;color:#263b37}.entry-note{font-size:15px;line-height:1.5;color:#65736b;margin-top:8px}.chevron-icon{width:18px;height:18px;flex:none}.entry-card:active,.identity-entry:active{opacity:.8}@media(max-width:350px){.hub>button.entry-card{padding:18px 12px;gap:10px}.tool-icon{width:36px;height:36px}.entry-title{font-size:20px}}
-.account-summary>button.identity-entry{justify-content:flex-start}
+page{background:var(--ui-bg);color:var(--ui-ink)}
+.hub{position:relative;z-index:1;padding:16px 20px calc(40px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:16px;min-height:calc(100vh - 88px)}
+.account-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 0 20px;margin-bottom:6px;border-bottom:1px solid var(--ui-line)}
+.account-summary>button{max-width:none;margin:0;padding:0;background:transparent;border:0;border-radius:8px;color:var(--ui-ink)}
+.account-summary>button.identity-entry{justify-content:flex-start;gap:12px;width:auto;flex:1;min-width:0;min-height:48px;text-align:left}
+.account-avatar{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid var(--ui-line);border-radius:50%;background:var(--ui-green-soft);flex:none}
+.identity-copy{min-width:0}.account-name{font-size:16px;line-height:1.5;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.account-status{font-size:15px;color:var(--ui-muted);font-weight:400}
+.account-summary>button.signin-link{width:auto;gap:4px;min-height:44px;font-size:15px;color:var(--ui-green);flex:none}
+.account-summary>button.account-settings{width:44px;height:44px;flex:none}
+.hub>button.entry-card{position:relative;display:flex;align-items:center;justify-content:flex-start;width:100%;max-width:none;min-height:150px;margin:0;padding:18px 20px;border:1px solid var(--ui-green-line);border-radius:16px;background:var(--ui-green-soft);text-align:left;overflow:hidden;color:var(--ui-green);box-shadow:none}
+.hub>button.grades{background:var(--ui-blue-soft);border-color:var(--ui-blue-line);color:var(--ui-blue)}
+.entry-art{position:absolute;right:-12px;bottom:0;width:58%;height:154px;pointer-events:none}
+.tool-copy{position:relative;z-index:1;min-width:0;width:100%}
+.entry-title{font-size:19px;line-height:1.4;font-weight:600;max-width:100%}
+.entry-note{margin-top:6px;font-size:15px;color:var(--ui-secondary);font-weight:400}
+.entry-action{display:flex;align-items:center;gap:5px;min-height:44px;margin-top:12px;font-size:15px;font-weight:500;width:max-content}
+@media(max-width:350px){.hub{padding-left:16px;padding-right:16px}.hub>button.entry-card{padding:20px 16px}.entry-art{width:41%;opacity:.55}.entry-title{font-size:18px}}
+
+.hub-background{position:fixed;left:0;top:0;width:100%;height:100vh;z-index:0;pointer-events:none}
+
+.collab .entry-art{right:0;width:50%;height:142px}

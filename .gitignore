@@ -1,3 +1,22 @@
 node_modules/
 .next/
 *.local
+
+# Local machine state and build caches
+.DS_Store
+.vite/
+*.tsbuildinfo
+miniprogram/project.private.config.json
+
+# Ephemeral WeChat preview/login screens and original phone feedback
+preview-qr.png
+platform-login.png
+article-phone-feedback-comparison.png
+
+# Credentials and deployment linkage
+.env
+.env.local
+.env.*.local
+.vercel/
+*.pem
+*.key

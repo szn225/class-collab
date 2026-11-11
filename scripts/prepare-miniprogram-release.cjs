@@ -27,7 +27,7 @@ function copy(relative) {
  assert.ok(!relative.endsWith('.test.ts') && !relative.endsWith('.local'))
  fs.mkdirSync(path.dirname(to), { recursive: true }); fs.copyFileSync(from, to)
 }
-for (const name of ['app.js', 'app.json', 'app.wxss', 'sitemap.json', 'project.config.json', 'components/app-nav', 'components/ui-icon', 'assets/ui', 'config', 'utils/v2.js', 'utils/grades.js', 'utils/auth.js']) copy(name)
+for (const name of ['app.js', 'app.json', 'app.wxss', 'sitemap.json', 'project.config.json', 'styles', 'components/app-nav', 'components/ui-icon', 'assets/ui', 'assets/redesign', 'config', 'utils/v2.js', 'utils/grades.js', 'utils/auth.js']) copy(name)
 for (const page of app.pages) copy(path.dirname(page))
 for (const pack of app.subPackages) copy(pack.root)
 const configFile = path.join(target, 'project.config.json')
@@ -44,6 +44,20 @@ function inventory(directory) {
  }
 }
 inventory(target)
+// Fail the package build if a registered screen lost a stylesheet or local image.
+for (const relative of Object.keys(manifest.files)) {
+ const file = path.join(target, relative)
+ if (relative.endsWith('.wxss')) {
+  for (const match of fs.readFileSync(file, 'utf8').matchAll(/@import\s+["']([^"']+)/g)) {
+   assert.ok(fs.existsSync(path.resolve(path.dirname(file), match[1])), 'Missing packaged stylesheet: ' + relative + ' -> ' + match[1])
+  }
+ }
+ if (relative.endsWith('.wxml')) {
+  for (const match of fs.readFileSync(file, 'utf8').matchAll(/src="(\/assets\/[^"{]+)"/g)) {
+   assert.ok(fs.existsSync(path.join(target, match[1])), 'Missing packaged image: ' + match[1])
+  }
+ }
+}
 const output = path.join(root, 'docs/device-test/release-' + version)
 fs.mkdirSync(output, { recursive: true })
 fs.writeFileSync(path.join(output, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n')

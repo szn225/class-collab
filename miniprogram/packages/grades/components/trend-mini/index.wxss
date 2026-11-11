@@ -61,4 +61,4 @@
 }
 
 /* 2.3.1 — readable type hierarchy; keep layout flexible. */
-.trend-head{flex-wrap:wrap;gap:6px}.trend-head .h2{font-size:20px;line-height:1.4}.trend-head .sub{font-size:15px;line-height:1.5}.legend,.lg-hint,.tip{font-size:15px;line-height:1.5}.lg-hint{margin-left:0}.lg-solid{background:#4d6b82}
+.trend-head{flex-wrap:wrap;gap:6px}.trend-head .h2{font-size:19px;line-height:1.4}.trend-head .sub{font-size:15px;line-height:1.5}.legend,.lg-hint,.tip{font-size:15px;line-height:1.5}.lg-hint{margin-left:0}.lg-solid{background:var(--data)}

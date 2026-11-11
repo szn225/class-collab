@@ -1,5 +1,7 @@
 # 2026-11-04 上线记录
 
+> 历史记录（原位归档）：保留本次设计或部署事实，不作为当前版本状态；现状见 [版本状态](STATUS.md)。
+
 - Vercel 团队：anns-projects-14c3a4b1
 - 项目：class-collab（prj_4Qscf5gVh1oq7MnZ3Hjg2ujP47jn）
 - 正式域名：https://gongchuang.chaohuiwan.com.cn

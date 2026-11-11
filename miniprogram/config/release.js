@@ -1,0 +1,6 @@
+// Native WeChat runtime cannot require JSON modules directly.
+module.exports = {
+  "version": "2.4.0",
+  "date": "2026-11-10",
+  "description": "线描界面整合版：图文汇成文章示意、统一成绩记录与折叠项、文章固定操作栏"
+}

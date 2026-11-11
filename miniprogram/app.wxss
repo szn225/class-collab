@@ -1,10 +1,10 @@
-page { background:#ffffff; color:#263b37; font-family:-apple-system,'PingFang SC',sans-serif; font-size:15px; line-height:1.6; }
-view,button,input,textarea,image,scroll-view { box-sizing:border-box; }
-button::after { border:0; }
-button[disabled] { opacity:.45; }
-
-/* 2.3.1 — readable type hierarchy; keep layout flexible. */
-page{font-size:17px;line-height:1.55;color:#263b37}button,input,textarea{font-family:inherit}button{font-weight:500}
-
-/* 2.3.3 icon and input alignment. */
-.input-placeholder{font-size:15px;font-weight:400;color:#65736b}button{display:flex;align-items:center;justify-content:center;gap:8px;line-height:1.5;white-space:normal}input,textarea{font-weight:400}
+@import "styles/tokens.wxss";
+page{background:var(--ui-bg);color:var(--ui-ink);font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;font-size:var(--ui-body);line-height:1.6}
+view,button,input,textarea,image,scroll-view,picker{box-sizing:border-box}
+button,input,textarea{font-family:inherit}
+button{display:flex;align-items:center;justify-content:center;gap:8px;font-weight:500;line-height:1.5;white-space:normal}
+button::after{border:0}
+button[disabled]{opacity:.45}
+button:active{opacity:.8}
+input,textarea{font-weight:400}
+.input-placeholder{font-size:15px;font-weight:400;color:var(--ui-muted)}
