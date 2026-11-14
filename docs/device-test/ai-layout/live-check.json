@@ -1,0 +1,17 @@
+{
+  "model": "deepseek-flash",
+  "usage": {
+    "prompt_tokens": 829,
+    "completion_tokens": 844,
+    "total_tokens": 1673,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "prompt_cache_hit_tokens": 0,
+    "prompt_cache_miss_tokens": 829
+  },
+  "summary": "以暖米色纸张底与墨绿文字营造秋日观察册的温和气质，首段导读色块、无框圆角配图和一处原文摘句形成清晰而不过度的阅读节奏。",
+  "designPlan": "文章是校园秋日观察活动的记录，语气温和、轻盈，带有手账/观察册的质感。视觉上采用暖米色底与深墨绿文字，营造秋日纸张感；正文17px、行高1.9，段间留白充足。首段作为导读，用浅暖色块和左侧细线强调，形成进入感。图片置于第二段之后，无框、圆角小阴影，像贴在观察册上的一枚照片，图注留空不显示。摘句仅取“留下各自眼中的秋天”作为轻量装饰性引句，置于图片与第三段之间，用斜体与细线分隔，控制装饰密度。整体单列、克制、有纸张呼吸感。",
+  "valid": true,
+  "fixture": true
+}

@@ -1,0 +1,19 @@
+{
+  "size": {
+    "total": 1095092,
+    "packages": [
+      {
+        "name": "TOTAL",
+        "size": 1095092
+      },
+      {
+        "name": "main",
+        "size": 681259
+      },
+      {
+        "name": "/packages/grades/",
+        "size": 413833
+      }
+    ]
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "at": "2026-11-13T13:43:24.896Z",
+  "existingSession": true,
+  "existingNameUnchanged": true,
+  "profileAvatar": true,
+  "balancesUnchanged": true,
+  "paidCalls": 0,
+  "rows": [
+    {
+      "host": "gongchuang-test.chaohuiwan.com.cn",
+      "command": "me",
+      "status": 200,
+      "totalMs": 1440,
+      "serverTiming": "database;dur=321.0, app;dur=330.4",
+      "vercelId": "sin1::sin1::8p55d-1794577400115-3e51e2243f6e"
+    },
+    {
+      "host": "gongchuang-test.chaohuiwan.com.cn",
+      "command": "health",
+      "status": 200,
+      "totalMs": 325,
+      "serverTiming": "database;dur=136.6, app;dur=137.8",
+      "vercelId": "sin1::sin1::8p55d-1794577401256-76bcc1be8670"
+    },
+    {
+      "host": "gongchuang.chaohuiwan.com.cn",
+      "command": "health",
+      "status": 200,
+      "totalMs": 779,
+      "serverTiming": "database;dur=62.9, app;dur=63.3",
+      "vercelId": "sin1::sin1::gcckb-1794577401868-c809723b9663"
+    },
+    {
+      "host": "gongchuang-test.chaohuiwan.com.cn",
+      "command": "service.capabilities",
+      "status": 200,
+      "totalMs": 177,
+      "serverTiming": "database;dur=54.8, app;dur=55.8",
+      "vercelId": "sin1::sin1::8p55d-1794577402361-07fdc1c74d73"
+    },
+    {
+      "host": "gongchuang-test.chaohuiwan.com.cn",
+      "command": "activities.list",
+      "status": 200,
+      "totalMs": 464,
+      "serverTiming": "database;dur=74.5, app;dur=76.4",
+      "vercelId": "sin1::sin1::hz6r6-1794577402537-bc28af152da6"
+    },
+    {
+      "host": "gongchuang-test.chaohuiwan.com.cn",
+      "command": "activity.get",
+      "status": 200,
+      "totalMs": 213,
+      "serverTiming": "database;dur=81.8, app;dur=82.9",
+      "vercelId": "sin1::sin1::9kqn7-1794577403000-8fb0ca7ff4d5"
+    },
+    {
+      "host": "gongchuang-test.chaohuiwan.com.cn",
+      "command": "materials.list",
+      "status": 200,
+      "totalMs": 402,
+      "serverTiming": "database;dur=69.0, image_sign;dur=648.3, app;dur=281.5",
+      "vercelId": "sin1::sin1::d5q95-1794577403214-ff44bb7df2e8"
+    },
+    {
+      "host": "gongchuang-test.chaohuiwan.com.cn",
+      "command": "article.get",
+      "status": 200,
+      "totalMs": 703,
+      "serverTiming": "database;dur=75.4, image_sign;dur=727.9, app;dur=572.6",
+      "vercelId": "sin1::sin1::s865l-1794577403617-2d3584731213"
+    },
+    {
+      "host": "gongchuang-test.chaohuiwan.com.cn",
+      "command": "grades.students.list",
+      "status": 200,
+      "totalMs": 296,
+      "serverTiming": "database;dur=70.1, grades;dur=70.8, app;dur=142.1",
+      "vercelId": "sin1::sin1::9dpbc-1794577404342-e284fc4bfe2c"
+    },
+    {
+      "host": "gongchuang-test.chaohuiwan.com.cn",
+      "command": "me",
+      "status": 200,
+      "totalMs": 413,
+      "serverTiming": "database;dur=47.8, app;dur=48.5",
+      "vercelId": "sin1::sin1::kfb2c-1794577404616-7ba63d6d6ac6"
+    }
+  ]
+}

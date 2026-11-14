@@ -1,17 +1,19 @@
+import { layoutInstructions, layoutSource, validateLayout } from './layout'
+import { usageCost } from './billing'
 import { Row, State, id, ensure, AppError, activeTask } from './model'
 import { readState, transaction } from './store'
 import { completeTask, finishFailure, taskView, budgetUsage, day } from './domain'
 import { signedImage, removeImages } from './storage'
 class Uncertain extends Error {}
-async function provider(kind:'vision'|'writing',messages:any[],maxTokens:number,lockedModel?:string){
- const prefix=kind==='vision'?'VISION':'WRITING';const key=process.env[`${prefix}_API_KEY`]||(kind==='writing'?process.env.DEEPSEEK_API_KEY:undefined),model=lockedModel||process.env[`${prefix}_MODEL`]||(kind==='writing'?'deepseek-flash':undefined),endpoint=process.env[`${prefix}_API_URL`]||(kind==='writing'?'https://api.deepseek.com/v1/chat/completions':undefined)
+async function provider(kind:'vision'|'writing'|'layout',messages:any[],maxTokens:number,lockedModel?:string){
+ const prefix=kind==='vision'?'VISION':'WRITING';const key=process.env[`${prefix}_API_KEY`]||(kind!=='vision'?process.env.DEEPSEEK_API_KEY:undefined),model=lockedModel||process.env[`${prefix}_MODEL`]||(kind!=='vision'?'deepseek-flash':undefined),endpoint=process.env[`${prefix}_API_URL`]||(kind!=='vision'?'https://api.deepseek.com/v1/chat/completions':undefined)
  ensure(key&&model&&endpoint,'AI 模型尚未配置',503,'CONFIG');ensure(endpoint.startsWith('https://'),'模型服务地址必须使用 HTTPS',503)
  let res:Response
- try{res=await fetch(endpoint,{method:'POST',headers:{Authorization:`Bearer ${key}`,'Content-Type':'application/json'},body:JSON.stringify({model,messages,max_tokens:maxTokens,temperature:kind==='writing'?0.5:0,stream:false,...(kind==='writing'&&new URL(endpoint).hostname==='api.deepseek.com'?{thinking:{type:'disabled'},response_format:{type:'json_object'}}:{})}),signal:AbortSignal.timeout(70000)})}catch{throw new Uncertain('供应商响应待核实')}
+ try{res=await fetch(endpoint,{method:'POST',headers:{Authorization:`Bearer ${key}`,'Content-Type':'application/json'},body:JSON.stringify({model,messages,max_tokens:maxTokens,temperature:kind!=='vision'?0.5:0,stream:false,...(kind!=='vision'&&new URL(endpoint).hostname==='api.deepseek.com'?{thinking:{type:'disabled'},response_format:{type:'json_object'}}:{})}),signal:AbortSignal.timeout(kind==='layout'?180000:70000)})}catch{throw new Uncertain('供应商响应待核实')}
  if(res.status>=500||res.status===408)throw new Uncertain('供应商响应待核实')
  if(!res.ok)throw new AppError('AI 服务未能交付结果',502,'PROVIDER')
  let data:any;try{data=await res.json()}catch{throw new Uncertain('供应商结果待核实')}
- ensure(data.choices?.[0]?.message?.content&&data.choices[0].finish_reason!=='length','模型未交付完整结果',502)
+ if(!data.choices?.[0]?.message?.content||data.choices[0].finish_reason==='length'){const error=new AppError('模型未交付完整结果',502);Object.assign(error,{providerUsage:data.usage||{},providerModel:model,providerKind:kind});throw error}
  return {content:String(data.choices[0].message.content),usage:data.usage||{},model}
 }
 export function providerReady(images:number,visionEnabled=true){ensure(process.env.WRITING_API_KEY||process.env.DEEPSEEK_API_KEY,'写作服务未配置',503,'CONFIG');if(visionEnabled&&images)ensure(process.env.VISION_API_KEY&&process.env.VISION_MODEL&&process.env.VISION_API_URL,'图片理解服务未配置',503,'CONFIG')}
@@ -28,6 +30,20 @@ export async function runTask(taskId?:string){
  let writingUsage:Row|undefined
  try{
   providerReady(task.uncached.length,task.visionEnabled===true)
+  if(task.kind==='layout'||task.phase==='layout'){
+   const article=task.kind==='layout'?task.input.article:task.layoutArticle,source=layoutSource(article),state=await readState()
+   const images=source.images.map((img:Row)=>({id:img.id,caption:img.caption,context:state.activities.find(a=>a.id===task.activityId)?.materials.filter((m:Row)=>!m.withdrawn&&m.images.includes(img.path)).map((m:Row)=>m.text).join(' ').slice(0,500)||'',description:state.cache.find(x=>x.activityId===task.activityId&&x.path===img.path&&x.model===process.env.VISION_MODEL)?.description||'未识图，不可猜测画面'}))
+   await checkpoint(task.id,lease,(_s,t)=>{t.costCents=t.reserveCents})
+   const output=await provider('layout',[{role:'system',content:layoutInstructions},{role:'user',content:JSON.stringify({title:source.title,paragraphs:source.paragraphs.map((text,i)=>({id:'p'+(i+1),text})),images,request:task.focus,previousDesign:article.layout?.summary||'',designSeed:task.id})}],task.kind==='layout'?task.config.maxOutput:task.config.layoutMaxOutput,task.model)
+   writingUsage={...output.usage,model:output.model}
+   let parsed:any;try{parsed=JSON.parse(output.content.replace(/^```(?:json)?\s*/,'').replace(/\s*```$/,''))}catch{throw new AppError('AI 排版格式不完整，冻结点数将退还',502,'LAYOUT_INVALID')}
+   const html=validateLayout(parsed.html,article)
+   const saveResult=()=>checkpoint(task.id,lease,(s,t)=>{t.results={...t.results,title:article.title,body:article.body,layout:{bodyOnly:true,html,designPlan:typeof parsed.designPlan==='string'?parsed.designPlan.slice(0,1500):'',summary:typeof parsed.summary==='string'?parsed.summary.slice(0,500):'',model:output.model,createdAt:Date.now()}};t.usage.push({...output.usage,kind:'layout',model:output.model});addUsageCost(t,'layout',output.usage);t.costCents=t.reserveCents;completeTask(s,t,Date.now())})
+   let saved=false,lastError:unknown
+   for(let attempt=0;attempt<3;attempt++){try{await saveResult();saved=true;break}catch(error){lastError=error;try{if((await readState()).tasks.find(t=>t.id===task.id)?.stage==='succeeded'){saved=true;break}}catch{ /* retry persistence only, never the paid call */ }}}
+   if(!saved)throw lastError
+   return {processed:true,stage:'succeeded'}
+  }
   const descriptions:Record<string,string>={};let processedImages=0
   for(const m of task.visionEnabled===true?task.input.materials:[])for(const path of m.images){
    const state=await readState(),cached=state.cache.find(x=>x.path===path&&x.activityId===task.activityId&&x.model===task.visionModel)
@@ -48,16 +64,17 @@ export async function runTask(taskId?:string){
   ensure(typeof parsed.title==='string'&&parsed.title.trim()&&parsed.title.length<=160&&typeof parsed.body==='string'&&parsed.body.trim()&&parsed.body.length<=15000,'草稿不完整',502)
   ensure(Array.isArray(parsed.usedIds)&&parsed.usedIds.length&&parsed.usedIds.every((x:string)=>validIds.has(x))&&Array.isArray(parsed.images)&&parsed.images.every((x:string)=>validImages.has(x)),'采用素材无效',502)
   for(const m of task.input.materials.filter((m:Row)=>m.state==='include'))ensure(parsed.usedIds.includes(m.id)&&m.images.every((p:string)=>parsed.images.includes(p)),'指定素材未完整采用',502)
-  const saveResult=()=>checkpoint(task.id,lease,(s,t)=>{t.results={title:parsed.title,body:parsed.body,images:[...new Set(parsed.images)]};t.usedIds=[...new Set(parsed.usedIds)];t.omitted=task.input.materials.filter((m:Row)=>!parsed.usedIds.includes(m.id)).map((m:Row)=>({id:m.id,reason:String(parsed.omitted?.find((x:Row)=>x.id===m.id)?.reason||'智能筛选未采用').slice(0,300)}));t.usage.push({kind:'writing',...output.usage,model:output.model});addUsageCost(t,'writing',output.usage);t.costCents=t.reserveCents;completeTask(s,t,Date.now())})
-  let saved=false;let saveError:unknown;for(let attempt=0;attempt<3;attempt++){try{await saveResult();saved=true;break}catch(error){saveError=error;try{const existing=(await readState()).tasks.find(t=>t.id===task.id);if(existing?.stage==='succeeded'){saved=true;break}}catch{ /* retry persistence, never the model call */ }}}if(!saved)throw saveError
+  const saveResult=()=>checkpoint(task.id,lease,(s,t)=>{t.results={title:parsed.title,body:parsed.body,images:[...new Set(parsed.images)]};t.usedIds=[...new Set(parsed.usedIds)];t.omitted=task.input.materials.filter((m:Row)=>!parsed.usedIds.includes(m.id)).map((m:Row)=>({id:m.id,reason:String(parsed.omitted?.find((x:Row)=>x.id===m.id)?.reason||'智能筛选未采用').slice(0,300)}));t.usage.push({kind:'writing',...output.usage,model:output.model});addUsageCost(t,'writing',output.usage);t.costCents=t.reserveCents;if(t.withLayout){t.layoutArticle={title:parsed.title,body:parsed.body,images:[...new Set(parsed.images)].map(path=>({path,caption:''}))};t.phase='layout';t.stage='queued';t.lease=null}else completeTask(s,t,Date.now())})
+  let saved=false;let saveError:unknown;for(let attempt=0;attempt<3;attempt++){try{await saveResult();saved=true;break}catch(error){saveError=error;try{const existing=(await readState()).tasks.find(t=>t.id===task.id);if(existing?.stage==='succeeded'||existing?.phase==='layout'&&existing?.layoutArticle){saved=true;break}}catch{ /* retry persistence, never the model call */ }}}if(!saved)throw saveError
 
-  return {processed:true,stage:'succeeded'}
+  return {processed:true,stage:task.withLayout?'queued':'succeeded'}
  }catch(error){
+  if(!writingUsage&&['writing','layout'].includes((error as any)?.providerKind)&&(error as any)?.providerUsage)writingUsage={...(error as any).providerUsage,model:(error as any).providerModel}
   // A process/network ambiguity never triggers a second supplier call or automatic refund.
-  await transaction(s=>{const t=s.tasks.find(x=>x.id===task.id);if(!t||t.lease!==lease)return;if(writingUsage&&!t.usage.some((x:Row)=>x.kind==='writing')){t.usage.push({kind:'writing',...writingUsage});addUsageCost(t,'writing',writingUsage)}if(error instanceof Uncertain){t.stage='review';t.error='供应商执行结果待核实，请勿重复提交';t.costCents=t.reserveCents;t.lease=null}else{finishFailure(s,t,Date.now(),error instanceof AppError?error.message:'任务未完成，冻结点数已退还')}})
+  await transaction(s=>{const t=s.tasks.find(x=>x.id===task.id);if(!t||t.lease!==lease)return;if(writingUsage&&!t.usage.some((x:Row)=>x.kind===(task.kind==='layout'||task.phase==='layout'?'layout':'writing'))){const kind=task.kind==='layout'||task.phase==='layout'?'layout':'writing';t.usage.push({...writingUsage,kind});addUsageCost(t,kind,writingUsage)}if(error instanceof Uncertain){t.stage='review';t.error='供应商执行结果待核实，请勿重复提交';t.costCents=t.reserveCents;t.lease=null}else{finishFailure(s,t,Date.now(),error instanceof AppError?error.message:'任务未完成，冻结点数已退还')}})
   return {processed:true,stage:error instanceof Uncertain?'review':'failed'}
  }
 }
 export async function cleanupUploads(){const state=await readState(),paths=state.uploads.filter(x=>!x.deleted&&!x.used&&x.expires<Date.now()).map(x=>x.path);for(let i=0;i<paths.length;i+=100)await removeImages(paths.slice(i,i+100));if(paths.length)await transaction(s=>{for(const f of s.uploads)if(paths.includes(f.path))f.deleted=true});return paths.length}
 
-function addUsageCost(t:Row,kind:string,usage:Row){if(!Number.isFinite(usage.prompt_tokens)||!Number.isFinite(usage.completion_tokens)){t.supplierCostUnverified=true;return}const cost=(usage.prompt_tokens*t.config[kind+'InputCentsPerMillion']+usage.completion_tokens*t.config[kind+'OutputCentsPerMillion'])/1000000;t.supplierCostCents=(t.supplierCostCents||0)+cost}
+function addUsageCost(t:Row,kind:string,usage:Row){const cost=usageCost([{...usage,kind}],t.config);if(cost===null){t.supplierCostUnverified=true;return}t.supplierCostCents=(t.supplierCostCents||0)+Number(cost)/1000000}

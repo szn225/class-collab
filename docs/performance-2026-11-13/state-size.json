@@ -1,0 +1,44 @@
+{
+  "sections": {
+    "users": {
+      "count": 9,
+      "bytes": 2155
+    },
+    "sessions": {
+      "count": 15,
+      "bytes": 2408
+    },
+    "activities": {
+      "count": 6,
+      "bytes": 32143
+    },
+    "uploads": {
+      "count": 10,
+      "bytes": 3711
+    },
+    "quotes": {
+      "count": 13,
+      "bytes": 39698
+    },
+    "tasks": {
+      "count": 7,
+      "bytes": 58041
+    },
+    "ledger": {
+      "count": 24,
+      "bytes": 6141
+    },
+    "audit": {
+      "count": 10,
+      "bytes": 1771
+    },
+    "cache": {
+      "count": 0,
+      "bytes": 2
+    },
+    "requests": {
+      "count": 76,
+      "bytes": 28790
+    }
+  }
+}

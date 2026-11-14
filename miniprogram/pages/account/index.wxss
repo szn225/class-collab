@@ -6,3 +6,5 @@ page{background:var(--ui-bg)}.account{padding:24px 20px calc(40px + env(safe-are
 .account input{width:100%;min-height:48px;padding:12px;border:1px solid var(--ui-line);border-radius:10px;margin-top:12px;background:var(--ui-surface);font-size:16px}.account .danger{background:transparent;border:0;color:var(--ui-danger)}.account .back-link{background:transparent;border:0;color:var(--ui-muted);width:auto}.error{color:var(--ui-danger);font-size:15px;line-height:1.7;padding:12px 0}
 
 .release-version{padding:28px 0 0;text-align:center;font-size:15px;line-height:1.5;color:var(--ui-muted)}
+
+.identity-card .avatar{overflow:hidden}.identity-card .avatar image{display:block;width:100%;height:100%}

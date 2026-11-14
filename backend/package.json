@@ -9,14 +9,17 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
-    "test": "node --test ../scripts/v2-domain.test.cjs ../scripts/v2-http.test.cjs ../scripts/v2-miniprogram.test.cjs ../scripts/v2-network.test.cjs",
+    "test": "node --test ../scripts/v2-domain.test.cjs ../scripts/v2-http.test.cjs ../scripts/v2-miniprogram.test.cjs ../scripts/v2-network.test.cjs ../scripts/usage-billing.test.cjs ../scripts/ai-layout.test.cjs ../scripts/ai-layout-http.test.cjs ../scripts/ai-layout-mini.test.cjs ../scripts/generation-option.test.cjs",
     "test:grades": "node ../scripts/grades-integration.test.cjs",
     "typecheck:mini": "tsc -p ../miniprogram/tsconfig.json",
     "test:guest": "node ../scripts/guest-save.test.cjs",
     "test:interaction": "node ../scripts/interaction-2.1.4.test.cjs",
-    "test:grades:unit": "vitest run --config vitest.grades.config.mjs"
+    "test:grades:unit": "vitest run --config vitest.grades.config.mjs",
+    "test:performance": "node --test ../scripts/page-performance.test.cjs",
+    "test:profile": "node --test ../scripts/profile-http.test.cjs ../scripts/profile-mini.test.cjs"
   },
   "dependencies": {
+    "htmlparser2": "^12.0.0",
     "next": "^14.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

@@ -1,4 +1,5 @@
 import { ADMIN_READ_COMMANDS } from '@/lib/v2/admin'
+import { timedResponse, measure } from '@/lib/v2/timing'
 import { NextRequest, NextResponse } from 'next/server'
 import { executeGrades } from '@/lib/v2/grades'
 import { execute, authenticate } from '@/lib/v2/domain'
@@ -26,7 +27,7 @@ async function handle(request:NextRequest,{params}:{params:{path:string[]}}){
   const raw=await request.text();ensure(Buffer.byteLength(raw)<=maxBody,'请求内容过大',413)
   let b:any;try{b=JSON.parse(raw)}catch{throw new AppError('请求格式无效')};ensure(b&&typeof b==='object'&&!Array.isArray(b),'请求格式无效')
   const c={now:Date.now(),sessionHash:hash(request.headers.get('authorization')?.replace(/^Bearer /,'')||''),source:privateHash(request.headers.get('x-forwarded-for')?.split(',')[0]||'unknown'),identity:undefined as string|undefined,sessionToken:undefined as string|undefined,adminLogin:false}
-  if(command.startsWith('grades.')){const user=authenticate(await readState(),c);return response({ok:true,data:await executeGrades(user.id,command,b)})}
+  if(command.startsWith('grades.')){const user=authenticate(await readState(),c);return response({ok:true,data:await measure('grades',()=>executeGrades(user.id,command,b))})}
   if(command==='auth.login'){
    await transaction(s=>rate(s,'wechat-exchange:'+c.source,30,3600000,c.now))
    c.identity=await wechatIdentity(b.code);c.sessionToken=token()
@@ -51,13 +52,18 @@ async function handle(request:NextRequest,{params}:{params:{path:string[]}}){
   if(command==='upload.complete'){
    const s=await readState(),u=authenticate(s,c),f=s.uploads.find(x=>x.id===b.uploadId&&x.userId===u.id&&x.activityId===b.activityId&&!x.deleted);ensure(f,'文件不存在',404);await verifyUpload(f.path,f.size,f.mime)
   }
-  const reads=new Set(['me','activities.list','activity.get','members.list','materials.list','articles.list','article.get','tasks.get','points.list',...ADMIN_READ_COMMANDS]);
+  if(command==='profile.avatar.complete'){
+   const s=await readState(),u=authenticate(s,c),f=s.uploads.find(x=>x.id===b.uploadId&&x.purpose==='avatar'&&x.userId===u.id&&!x.deleted&&x.expires>c.now);ensure(f,'头像凭证已失效，请重新选择',409,'AVATAR_EXPIRED');await verifyUpload(f.path,f.size,f.mime)
+  }
+  const reads=new Set(['me','activities.list','activity.get','members.list','materials.list','articles.list','article.get','tasks.get','points.list','service.capabilities',...ADMIN_READ_COMMANDS]);
   const data=reads.has(command)?execute(await readState(),command,b,c):await transaction(s=>execute(s,command,b,c))
-  if(command==='upload.prepare')return response({ok:true,data:{...data,url:await uploadUrl(data.path)}})
+  if(command==='upload.prepare'||command==='profile.avatar.prepare')return response({ok:true,data:{...data,url:await uploadUrl(data.path)}})
+  const profile=command==='auth.login'?data.user:['me','profile.update'].includes(command)?data:command==='points.list'?data.user:null
+  if(profile){const path=profile.avatarPath;delete profile.avatarPath;if(path){try{profile.avatarUrl=await signedImage(path,3600,3500);profile.avatarExpiresAt=Date.now()+3600000}catch{profile.avatarUrl='';profile.avatarExpiresAt=0}}}
   if(command==='materials.list')await Promise.all(data.items.map(async(item:any)=>{if(item.images)item.images=await Promise.all(item.images.map(async(img:any)=>({...img,url:await signedImage(img.path)})))}))
   if(command==='article.get'&&data)data.images=await Promise.all(data.images.map(async(img:any)=>({...img,url:await signedImage(img.path)})))
   return response({ok:true,data})
  }catch(error){if(error instanceof AppError)return response({ok:false,error:error.message,code:error.code},error.status);console.error('v2 request failed',error instanceof Error?error.name:'unknown');return response({ok:false,error:'服务暂时不可用，请稍后重试',code:'SERVICE'},503)}
 }
-export const POST=handle
-export const GET=handle
+export const POST=(request:NextRequest,context:{params:{path:string[]}})=>timedResponse(()=>handle(request,context))
+export const GET=POST

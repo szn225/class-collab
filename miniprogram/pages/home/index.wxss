@@ -20,3 +20,5 @@ page{background:var(--ui-bg);color:var(--ui-ink)}
 .hub-background{position:fixed;left:0;top:0;width:100%;height:100vh;z-index:0;pointer-events:none}
 
 .collab .entry-art{right:0;width:50%;height:142px}
+
+.account-avatar{overflow:hidden}.account-avatar image{display:block;width:100%;height:100%}

@@ -1,0 +1,12 @@
+{
+  "transport": "static profile mock, grade student-list not covered by this native fixture",
+  "firstLoginOptionalProfile": true,
+  "nativeAvatarInput": true,
+  "nativeNicknameInput": true,
+  "localAvatarBytes": true,
+  "saveProfile": true,
+  "homeDisplay": true,
+  "accountDisplay": true,
+  "editExisting": true,
+  "exceptions": []
+}

@@ -1,0 +1,136 @@
+{
+  "at": "2026-11-13T12:00:29.202Z",
+  "location": "agent host probe, not mobile device",
+  "rows": [
+    {
+      "label": "health-0",
+      "status": 200,
+      "ttfbMs": 3761,
+      "totalMs": 3770,
+      "bytes": 141,
+      "vercelId": "sin1::iad1::9sk2n-1794571200979-7ebfec93fd90",
+      "serverTiming": null,
+      "sbRegion": null
+    },
+    {
+      "label": "health-1",
+      "status": 200,
+      "ttfbMs": 2119,
+      "totalMs": 2924,
+      "bytes": 141,
+      "vercelId": "sin1::iad1::v9wlj-1794571203906-788b6ac7eab9",
+      "serverTiming": null,
+      "sbRegion": null
+    },
+    {
+      "label": "health-2",
+      "status": 200,
+      "ttfbMs": 1896,
+      "totalMs": 2349,
+      "bytes": 141,
+      "vercelId": "sin1::iad1::8bzfs-1794571206830-0f7bc52e5b76",
+      "serverTiming": null,
+      "sbRegion": null
+    },
+    {
+      "label": "me",
+      "status": 200,
+      "ttfbMs": 1841,
+      "totalMs": 2631,
+      "bytes": 142,
+      "vercelId": "sin1::iad1::vdnmx-1794571209186-56c0843c3748",
+      "serverTiming": null,
+      "sbRegion": null
+    },
+    {
+      "label": "me",
+      "status": 200,
+      "ttfbMs": 2001,
+      "totalMs": 2238,
+      "bytes": 142,
+      "vercelId": "sin1::iad1::mjv88-1794571211825-989ffbd6d8d2",
+      "serverTiming": null,
+      "sbRegion": null
+    },
+    {
+      "label": "me",
+      "status": 200,
+      "ttfbMs": 1809,
+      "totalMs": 2038,
+      "bytes": 142,
+      "vercelId": "sin1::iad1::z75r5-1794571214052-de599f569023",
+      "serverTiming": null,
+      "sbRegion": null
+    },
+    {
+      "label": "activities.list",
+      "status": 200,
+      "ttfbMs": 2811,
+      "totalMs": 2813,
+      "bytes": 1794,
+      "vercelId": "sin1::iad1::g8594-1794571216089-329a0563afa6",
+      "serverTiming": null,
+      "sbRegion": null
+    },
+    {
+      "label": "activity.get",
+      "status": 200,
+      "ttfbMs": 1861,
+      "totalMs": 2091,
+      "bytes": 416,
+      "vercelId": "sin1::iad1::hc6sd-1794571218902-697734dd19fa",
+      "serverTiming": null,
+      "sbRegion": null
+    },
+    {
+      "label": "materials.list",
+      "status": 200,
+      "ttfbMs": 2166,
+      "totalMs": 2398,
+      "bytes": 3032,
+      "vercelId": "sin1::iad1::z75r5-1794571220994-ffe4affa7997",
+      "serverTiming": null,
+      "sbRegion": null
+    },
+    {
+      "label": "article.get",
+      "status": 200,
+      "ttfbMs": 2136,
+      "totalMs": 2800,
+      "bytes": 5395,
+      "vercelId": "sin1::iad1::6p5pr-1794571223390-51df2ad0f223",
+      "serverTiming": null,
+      "sbRegion": null
+    },
+    {
+      "label": "grades.students.list",
+      "status": 200,
+      "ttfbMs": 1654,
+      "totalMs": 2632,
+      "bytes": 70,
+      "vercelId": "sin1::iad1::m8f56-1794571226190-490a60b6f83c",
+      "serverTiming": null,
+      "sbRegion": null
+    },
+    {
+      "label": "direct-hui_read-0",
+      "status": 200,
+      "ttfbMs": 350,
+      "totalMs": 371,
+      "bytes": 183567,
+      "vercelId": null,
+      "serverTiming": null,
+      "sbRegion": null
+    },
+    {
+      "label": "direct-hui_read-1",
+      "status": 200,
+      "ttfbMs": 139,
+      "totalMs": 159,
+      "bytes": 183567,
+      "vercelId": null,
+      "serverTiming": null,
+      "sbRegion": null
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "transport": "static mocked response; no native latency measurement",
+  "stream": true,
+  "article": true,
+  "settings": true,
+  "noBannerWithExistingArticle": true,
+  "refreshSettles": true,
+  "exceptions": []
+}

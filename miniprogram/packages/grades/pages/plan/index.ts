@@ -46,7 +46,7 @@ gradePage({
 
   onShow() {
     setTabBarValue(this, 2);
-    this.load();
+    return this.load();
   },
 
   async load() {

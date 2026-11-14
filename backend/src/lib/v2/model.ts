@@ -1,3 +1,4 @@
+import { billingDefaults, pointUnits } from './billing'
 import { createHash, randomBytes, randomUUID } from 'node:crypto'
 export type Row = Record<string, any>
 export interface State {
@@ -9,7 +10,7 @@ export const token = () => randomBytes(32).toString('base64url')
 export const hash = (s: string) => createHash('sha256').update(s).digest('hex')
 export function initialState(): State {
   return { users: [], sessions: [], activities: [], uploads: [], quotes: [], tasks: [], ledger: [], audit: [], cache: [], configHistory: [], rates: [], requests: [], config: {
-    version: 1, confirmed: true, enabled: false, gift: 12, writing: 5, perImage: 0, visionEnabled: false, maxActivities: 30, maxMaterials: 500,
+    ...billingDefaults, version: 1, confirmed: true, enabled: false, gift: 12, writing: 5, perImage: 0, visionEnabled: false, maxActivities: 30, maxMaterials: 500,
     maxImages: 6, maxImageBytes: 10485760, maxText: 5000, maxInput: 30000, maxOutput: 4000,
     dailyPoints: 200, dailyTasks: 10, dailyBudget: 500, monthlyBudget: 0, taskReserveCents: 100,
     writingInputCentsPerMillion: 200, writingOutputCentsPerMillion: 800, visionInputCentsPerMillion: 0, visionOutputCentsPerMillion: 0, visionImageMaxCents: 0,
@@ -19,7 +20,7 @@ export function initialState(): State {
 export class AppError extends Error { constructor(message: string, public status = 400, public code = 'INVALID') { super(message) } }
 export function ensure(value: unknown, message: string, status = 400, code = 'INVALID'): asserts value { if (!value) throw new AppError(message, status, code) }
 export function text(value: unknown, max = 1000, required = false) { ensure(typeof value === 'string' || value == null, '文字格式不正确'); const t = String(value ?? '').trim(); ensure(t.length <= max && (!required || t.length > 0), required ? '请填写有效内容，且不要超出长度限制' : '内容超出长度限制'); return t }
-export const userView = (u: Row) => ({ id: u.id, name: u.name, balance: u.balance, frozen: u.frozen, state: u.state, aiPaused: u.aiPaused })
+export const userView = (u: Row) => ({ id: u.id, name: u.name, balance: u.balance, frozen: u.frozen, state: u.state, aiPaused: u.aiPaused, profileSetupDone:!!u.profileSetupDone, hasAvatar:!!u.avatarPath, ...(u.avatarPath?{avatarPath:u.avatarPath}:{}) })
 export const activeTask = (t: Row) => ['queued','vision','writing','review'].includes(t.stage)
 export function audit(s: State, actor: string, action: string, object: string, reason: string, now: number) { s.audit.push({ id: id(), actor, action, object, reason, at: now }) }
 export function rate(s: State, key: string, limit: number, period: number, now: number) {
@@ -28,10 +29,10 @@ export function rate(s: State, key: string, limit: number, period: number, now: 
   ensure(r.count < limit, '操作过于频繁，请稍后重试', 429, 'RATE'); r.count++
 }
 export function record(s: State, u: Row, amount: number, frozen: number, kind: string, ref: string, now: number, reason = '') {
-  ensure(Number.isSafeInteger(amount) && Number.isSafeInteger(frozen), '点数必须为整数');
+  const amountUnits=pointUnits(amount),frozenUnits=pointUnits(frozen)
   if (s.ledger.some(l => l.ref === ref && l.kind === kind)) return
-  const before = u.balance; ensure(u.balance + amount >= 0 && u.frozen + frozen >= 0, '点数不足', 409, 'BALANCE')
-  u.balance += amount; u.frozen += frozen
+  const before = u.balance, nextBalance=pointUnits(u.balance)+amountUnits,nextFrozen=pointUnits(u.frozen)+frozenUnits; ensure(nextBalance >= 0 && nextFrozen >= 0, '点数不足', 409, 'BALANCE')
+  ensure(Number.isSafeInteger(nextBalance)&&Number.isSafeInteger(nextFrozen),'点数超出支持范围');u.balance = nextBalance/10; u.frozen = nextFrozen/10
   s.ledger.push({ id: id(), userId: u.id, amount, frozen, kind, ref, before, after: u.balance, at: now, reason })
 }
 export function member(a: Row, uid: string) { const m = a.members.find((m: Row) => m.userId === uid && !m.removed); ensure(m, '没有活动访问权限', 403, 'FORBIDDEN'); return m }

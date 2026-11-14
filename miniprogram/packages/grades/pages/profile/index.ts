@@ -33,7 +33,7 @@ gradePage({
   },
 
   onShow() {
-    this.load();
+    return this.load();
   },
 
   async load() {

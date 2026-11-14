@@ -4,14 +4,14 @@ require.extensions['.ts']=(m,f)=>m._compile(ts.transpileModule(fs.readFileSync(f
 const originalResolve=Module._resolveFilename;Module._resolveFilename=function(name,...args){return originalResolve.call(this,name.startsWith('@/')?path.join(root,'backend/src',name.slice(2)):name,...args)}
 process.env.AUTH_SECRET='test-secret-'.repeat(4);process.env.WECHAT_APP_ID='test-app';process.env.WECHAT_APP_SECRET='test-only';process.env.WRITING_API_KEY='test-only';process.env.VISION_API_KEY='test-only';process.env.VISION_MODEL='test-vision';process.env.VISION_API_URL='https://fixture.invalid/vision';process.env.NEXT_PUBLIC_SUPABASE_URL='https://storage.fixture.invalid';process.env.SUPABASE_SERVICE_ROLE_KEY='test-only'
 const {initialState,hash}=require('../backend/src/lib/v2/model.ts'),store=require('../backend/src/lib/v2/store.ts'),{NextRequest}=require('../backend/node_modules/next/server'),route=require('../backend/src/app/api/v2/[...path]/route.ts'),worker=require('../backend/src/lib/v2/worker.ts')
-let current={revision:0,state:initialState()},supplierCalls=0,visionCalls=0,simulateTimeout=false
+let current={revision:0,state:initialState()},supplierCalls=0,visionCalls=0,simulateTimeout=false,layoutCalls=0,failLayout=false
 store.database.read=async()=>structuredClone(current);store.database.cas=async(revision,state)=>{if(current.revision!==revision)return false;current={revision:revision+1,state:structuredClone(state)};return true}
 // Test-only provider transport. Any unexpected network request fails the test.
 global.fetch=async(url,options={})=>{
  if(String(url).startsWith('https://api.weixin.qq.com/sns/jscode2session'))return Response.json({openid:new URL(url).searchParams.get('js_code')})
  if(String(url).includes('/object/sign/'))return Response.json({signedURL:'/object/sign/hui-materials/test.jpg?token=fixture'})
  if(url==='https://fixture.invalid/vision'){visionCalls++;return Response.json({choices:[{message:{content:'图片中可见自然拼贴作品'},finish_reason:'stop'}],usage:{prompt_tokens:30,completion_tokens:20}})}
- if(url==='https://api.deepseek.com/v1/chat/completions'){supplierCalls++;if(simulateTimeout)throw new Error('network response lost');const req=JSON.parse(options.body),payload=JSON.parse(req.messages[1].content);return Response.json({choices:[{message:{content:JSON.stringify({title:'活动记录',body:'大家完成了观察与分享。',usedIds:payload.materials.map(m=>m.id),images:payload.materials.flatMap(m=>m.images.map(i=>i.path)),omitted:[]})},finish_reason:'stop'}],usage:{prompt_tokens:100,completion_tokens:100}})}
+ if(url==='https://api.deepseek.com/v1/chat/completions'){supplierCalls++;if(simulateTimeout)throw new Error('network response lost');const req=JSON.parse(options.body),payload=JSON.parse(req.messages[1].content);if(payload.paragraphs){layoutCalls++;return Response.json({choices:[{message:{content:JSON.stringify({summary:'正文设计',html:failLayout?'<p>无效内容</p>':'<section style="color:#334455">'+payload.paragraphs.map(p=>'<p>{{'+p.id+'}}</p>').join('')+payload.images.map(i=>'<img src="asset:'+i.id+'"/>').join('')+'</section>'})},finish_reason:'stop'}],usage:{prompt_tokens:100,completion_tokens:100}})}return Response.json({choices:[{message:{content:JSON.stringify({title:'活动记录',body:'大家完成了观察与分享。',usedIds:payload.materials.map(m=>m.id),images:payload.materials.flatMap(m=>m.images.map(i=>i.path)),omitted:[]})},finish_reason:'stop'}],usage:{prompt_tokens:100,completion_tokens:100}})}
  throw new Error('Unexpected network request: '+url)
 }
 let i=0
@@ -35,7 +35,35 @@ async function main(){
  const beforeVision=visionCalls;await call('task.run',{...activity,taskId:tb.id},auth);assert.equal(current.state.tasks.at(-1).stage,'queued');assert.equal(visionCalls-beforeVision,2);await call('task.run',{...activity,taskId:tb.id},auth);assert.equal(current.state.tasks.at(-1).stage,'succeeded');assert.equal(visionCalls-beforeVision,3);console.log('PASS image batches resume from saved cache without duplicate recognition');
  const visionBefore=visionCalls;current.state.config.visionEnabled=false;current.state.config.monthlyBudget=0;delete process.env.VISION_API_KEY;delete process.env.VISION_MODEL;delete process.env.VISION_API_URL;
  const noVision=(await call('task.quote',{...activity,mode:'smart'},auth)).data;assert.equal(noVision.price,5);assert.equal(noVision.pendingImages,0);assert.equal(noVision.visionEnabled,false);const noVisionTask=await call('task.start',{...activity,quoteId:noVision.id},auth);assert.equal(noVisionTask.status,200);await call('task.run',{...activity,taskId:noVisionTask.data.id},auth);assert.equal(visionCalls,visionBefore);assert.equal(current.state.tasks.at(-1).stage,'succeeded');console.log('PASS disabled vision permits writing with images, no vision credentials or image fees');
+ // Dynamic pricing end to end, with mocked provider usage and no paid calls.
+ current.state.config.usageBillingEnabled=true;current.state.config.version++;current.state.users[0].balance=300
+ const meteredQuote=(await call('task.quote',{...activity,mode:'smart'},auth)).data
+ assert.equal(meteredQuote.billingMode,'usage');assert.ok(meteredQuote.estimatedPoints<=meteredQuote.price)
+ const meteredTask=(await call('task.start',{...activity,quoteId:meteredQuote.id},auth)).data
+ await Promise.all([call('task.run',{...activity,taskId:meteredTask.id},auth),call('task.run',{...activity,taskId:meteredTask.id},auth)])
+ const receipt=(await call('tasks.get',{...activity,taskId:meteredTask.id},auth)).data
+ assert.equal(receipt.stage,'succeeded');assert.equal(receipt.chargedPoints,1);assert.equal(receipt.billingVerified,true)
+ assert.equal(current.state.users[0].balance,299);assert.equal(current.state.users[0].frozen,0)
+ assert.equal(current.state.ledger.filter(l=>l.kind==='settle'&&l.ref===meteredTask.id).length,1)
+ console.log('PASS HTTP metered quote, frozen cap, provider usage, concurrent settlement and difference refund')
+ // Original generation endpoint now optionally chains layout under one authorization.
+ const bundleQuote=(await call('task.quote',{...activity,mode:'smart',withLayout:true},auth)).data
+ assert.equal(bundleQuote.withLayout,true);assert.ok(Number.isInteger(bundleQuote.price));assert.ok(Number.isInteger(bundleQuote.estimatedPoints))
+ const bundle=(await call('task.start',{...activity,quoteId:bundleQuote.id},auth)).data
+ const versionsBefore=current.state.activities[0].versions.length,layoutBefore=layoutCalls
+ await Promise.all([call('task.run',{...activity,taskId:bundle.id},auth),call('task.run',{...activity,taskId:bundle.id},auth)])
+ assert.equal(current.state.tasks.at(-1).phase,'layout');assert.equal(current.state.tasks.at(-1).stage,'queued');assert.equal(current.state.activities[0].versions.length,versionsBefore)
+ await Promise.all([call('task.run',{...activity,taskId:bundle.id},auth),call('task.run',{...activity,taskId:bundle.id},auth)])
+ const completed=current.state.tasks.at(-1);assert.equal(completed.stage,'succeeded');assert.equal(layoutCalls-layoutBefore,1);assert.ok(current.state.activities[0].versions.at(-1).layout.bodyOnly)
+ assert.deepEqual(completed.usage.map(x=>x.kind),['writing','layout']);assert.equal(completed.chargedPoints,1);assert.equal(current.state.ledger.filter(l=>l.kind==='settle'&&l.ref===bundle.id).length,1)
+ console.log('PASS HTTP original generation with optional layout: two calls, one authorization, one complete version, integer settlement')
+ const failedQuote=(await call('task.quote',{...activity,mode:'smart',withLayout:true},auth)).data,balanceBefore=current.state.users[0].balance
+ const failedBundle=(await call('task.start',{...activity,quoteId:failedQuote.id},auth)).data
+ await call('task.run',{...activity,taskId:failedBundle.id},auth);failLayout=true
+ await call('task.run',{...activity,taskId:failedBundle.id},auth);failLayout=false
+ assert.equal(current.state.tasks.at(-1).stage,'failed');assert.equal(current.state.users[0].balance,balanceBefore);assert.equal(current.state.users[0].frozen,0)
+ console.log('PASS HTTP bundled layout failure refunds entire reservation without partial publication')
  current.state.config.dailyBudget=1;const blockedQuote=(await call('task.quote',{...activity,mode:'smart'},auth)).data;const frozenBefore=current.state.users[0].frozen;const blocked=await call('task.start',{...activity,quoteId:blockedQuote.id},auth);assert.equal(blocked.status,429);assert.equal(blocked.code,'BUDGET');assert.equal(current.state.users[0].frozen,frozenBefore);console.log('PASS daily budget exhaustion refuses task before freezing or calling supplier');
- console.log('8 HTTP integration checks passed; no real network or paid calls')
+ console.log('11 HTTP integration checks passed; no real network or paid calls')
 }
 main().catch(e=>{console.error(e);process.exitCode=1})

@@ -1,11 +1,27 @@
-<app-nav title="登录" show-back="{{true}}"/>
+<app-nav title="{{profileStep ? '个人资料' : '登录'}}" show-back="{{true}}"/>
 <view class="login-page">
- <view class="login-symbol">慧</view>
- <view class="login-title">{{saveId ? '登录后保存这次成绩' : '登录慧共创'}}</view>
- <view class="login-note">{{saveId ? '已填内容会保留，登录后继续保存。' : '用微信账号保存和管理你的内容。'}}</view>
- <view wx:if="{{error}}" class="login-error">{{error}}</view>
- <button class="login-primary" bindtap="login" loading="{{busy}}" disabled="{{busy}}">{{signedIn ? (saveId ? '继续保存' : '继续') : (saveId ? '微信登录并保存' : '微信登录')}}</button>
- <checkbox-group wx:if="{{!signedIn}}" bindchange="consent"><label class="consent-row"><checkbox value="yes" checked="{{consent}}" color="#285b4b"/>已阅读并同意</label><button class="privacy-link" bindtap="privacy">隐私说明</button></checkbox-group>
- <view wx:if="{{privacy}}" class="privacy-copy">微信身份用于关联账号，不获取手机号、头像或昵称。成绩默认保存在本机，主动开启云端同步后保存到个人账号，不向活动成员公开。</view>
- <button class="cancel" bindtap="cancel" disabled="{{busy}}">{{saveId ? '返回继续填写' : '暂不登录'}}</button>
+ <block wx:if="{{profileStep}}">
+  <view class="login-title">{{editingProfile ? '修改个人资料' : '设置头像和昵称'}}</view>
+  <view class="login-note">{{editingProfile ? '在首页和“我的”页面显示。' : '已登录。资料可以稍后再设置。'}}</view>
+  <form bindsubmit="saveProfile">
+   <button class="profile-avatar" open-type="chooseAvatar" bindchooseavatar="chooseAvatar" disabled="{{busy}}" aria-label="选择头像"><image wx:if="{{avatarPreview && !avatarBroken}}" src="{{avatarPreview}}" mode="aspectFill" binderror="avatarError"/><ui-icon wx:else name="person" size="32px" tone="accent"/></button>
+   <view class="avatar-label">点击选择头像</view>
+   <view class="profile-field"><view>昵称</view><input name="nickname" type="nickname" value="{{nickname}}" maxlength="30" bindinput="nicknameInput" bindblur="nicknameBlur" bindnicknamereview="nicknameReview" disabled="{{busy}}" placeholder="填写昵称（选填）" placeholder-class="input-placeholder"/></view>
+   <view wx:if="{{error}}" class="login-error">{{error}}</view>
+   <button class="login-primary" form-type="submit" loading="{{busy}}" disabled="{{busy}}">{{reviewing ? '正在确认昵称' : (saveId ? '保存资料并继续' : '保存')}}</button>
+  </form>
+  <button class="cancel" bindtap="skipProfile" disabled="{{busy}}">{{editingProfile ? '取消修改' : (saveId ? '跳过，继续保存成绩' : '暂时跳过')}}</button>
+ </block>
+ <block wx:else>
+  <view class="login-symbol">慧</view>
+  <view class="login-title">{{saveId ? '登录后保存这次成绩' : '登录慧共创'}}</view>
+  <view class="login-note">{{saveId ? '已填内容会保留，登录后继续保存。' : '用微信账号保存和管理你的内容。'}}</view>
+  <view wx:if="{{error}}" class="login-error">{{error}}</view>
+  <button class="login-primary" bindtap="login" loading="{{busy}}" disabled="{{busy}}">{{signedIn ? (saveId ? '继续保存' : '继续') : (saveId ? '微信登录并保存' : '微信登录')}}</button>
+  <checkbox-group wx:if="{{!signedIn}}" bindchange="consent"><label class="consent-row"><checkbox value="yes" checked="{{consent}}" color="#285b4b"/>已阅读并同意</label><button class="privacy-link" bindtap="privacy">隐私说明</button></checkbox-group>
+  <button class="cancel" bindtap="cancel" disabled="{{busy}}">{{saveId ? '返回继续填写' : '暂不登录'}}</button>
+ </block>
+ <view wx:if="{{profileStep}}" class="profile-privacy">头像和昵称由你主动选择、填写并保存，用于个人资料展示。</view>
+ <button wx:if="{{profileStep}}" class="privacy-link" bindtap="privacy">数据与隐私</button>
+ <view wx:if="{{privacy}}" class="privacy-copy">微信身份用于关联账号，不获取手机号。头像和昵称由你主动选择、填写并保存，用于个人资料展示；共创活动使用你的显示昵称。成绩默认保存在本机，主动开启云端同步后保存到个人账号，不向活动成员公开。</view>
 </view>

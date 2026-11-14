@@ -1,5 +1,6 @@
 'use client'
 import { useRef, useState } from 'react'
+import { prepareWeChatArticle } from '@/lib/wechat-export'
 export default function CopyArticle() {
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState('')
@@ -16,13 +17,15 @@ export default function CopyArticle() {
     try {
       if (!navigator.clipboard?.write || typeof ClipboardItem === 'undefined')
         throw new Error('unsupported')
+      const exported = prepareWeChatArticle(article)
+      if (exported.localImages) throw new Error('local-images')
       await navigator.clipboard.write([
         new ClipboardItem({
-          'text/html': new Blob([article.innerHTML], { type: 'text/html' }),
-          'text/plain': new Blob([article.innerText], { type: 'text/plain' }),
+          'text/html': new Blob([exported.html], { type: 'text/html' }),
+          'text/plain': new Blob([exported.text], { type: 'text/plain' }),
         }),
       ])
-      setMessage('正文已复制。到公众号编辑器粘贴后，请检查图片和排版。')
+      setMessage(exported.hasImages ? '正文已复制。请等待公众号处理图片；未出现的图片需通过编辑器上传，确认后再保存草稿。' : '正文已复制，请粘贴到公众号编辑器。')
     } catch {
       setFailed(true)
       setMessage('自动复制未成功，请点击下方按钮选中正文，再使用系统复制功能。')

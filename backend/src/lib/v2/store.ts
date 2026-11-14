@@ -1,4 +1,5 @@
 import { State, initialState, AppError } from './model'
+import { measure } from './timing'
 // One small-team installation is an optimistic aggregate transaction. PostgreSQL CAS
 // serializes accounting, requests and task ownership across serverless instances.
 // No process-local or filesystem fallback exists in production.
@@ -8,9 +9,11 @@ const headers = () => {
  return { 'Content-Type':'application/json', apikey:key, Authorization:`Bearer ${key}` }
 }
 async function rpc(name: string, body: object) {
+ return measure('database', async () => {
  const res = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/rpc/${name}`, { method:'POST',headers:headers(),body:JSON.stringify(body), cache:'no-store',signal:AbortSignal.timeout(15000) })
  if (!res.ok) throw new AppError('数据服务暂时不可用，请稍后重试',503,'DATABASE')
  return res.json()
+ })
 }
 export interface Store { read(): Promise<{revision:number; state:State}>; cas(revision:number,state:State):Promise<boolean> }
 export const database: Store = {

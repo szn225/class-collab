@@ -1,12 +1,14 @@
 const {call}=require('../../utils/v2')
 const grades=require('../../utils/grades')
 Page({
- data:{releaseVersion:require('../../config/release').version,section:'',user:null,consent:false,busy:false,error:'',students:[],backups:[],active:'',guestStudents:[],sync:{},name:'',studentName:'',conflict:false},
+ data:{releaseVersion:require('../../config/release').version,section:'',user:null,avatarBroken:false,consent:false,busy:false,error:'',students:[],backups:[],active:'',guestStudents:[],sync:{},name:'',studentName:'',conflict:false},
  toggle(e){const section=e.currentTarget.dataset.section;this.setData({section:this.data.section===section?'':section})},
+ editProfile(){wx.navigateTo({url:'/pages/login/index?profile=1'})},
+ avatarError(){this.setData({avatarBroken:true})},
  signIn(){wx.navigateTo({url:'/pages/login/index'})},
  onIdentityChanged(){this.refresh()},
  onShow(){grades.stopDemo();this.refresh();if(getApp().globalData.sessionToken)this.run(async()=>{await call('me').then(u=>getApp().setUserInfo(u));await grades.refreshStudents()})},
- refresh(){const r=grades.students();this.setData({user:getApp().globalData.userInfo||null,name:getApp().globalData.userInfo?.name||'',students:r.students,active:r.active,guestStudents:grades.guestInfo(),sync:grades.status(),backups:grades.conflictBackups()})},
+ refresh(){const user=getApp().globalData.userInfo;if(this.avatarUrl!==user?.avatarUrl){this.avatarUrl=user?.avatarUrl;this.setData({avatarBroken:false})}const r=grades.students();this.setData({user:getApp().globalData.userInfo||null,name:getApp().globalData.userInfo?.name||'',students:r.students,active:r.active,guestStudents:grades.guestInfo(),sync:grades.status(),backups:grades.conflictBackups()})},
  async run(fn){if(this.data.busy)return;this.setData({busy:true,error:''});try{await fn()}catch(e){this.setData({error:e.message||'操作失败，请重试'})}finally{this.setData({busy:false});this.refresh()}},
  input(e){this.setData({[e.currentTarget.dataset.field]:e.detail.value})},
  consent(e){this.setData({consent:e.detail.value.length>0})},

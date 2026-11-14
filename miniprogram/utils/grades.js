@@ -46,7 +46,7 @@ function importGuest(studentId){
 async function api(command,data){return require('./v2').call('grades.'+command,data)}
 async function refreshStudents(){if(identity()==='guest')return;const key=scopeKey(),result=await guardAwait(api('students.list',{}),key),r=registry();if(result.length&&r.students.length===1&&!Object.keys(read().values).length&&!result.some(s=>s.id===r.active)){r.students=[];r.active=result[0].id}for(const s of result)if(!r.students.some(x=>x.id===s.id))r.students.push(s);setRegistry(r)}
 let timer=null,inflight=null
-function schedule(){clearTimeout(timer);if(read().enabled)timer=setTimeout(()=>sync().catch(()=>{}),1200)}
+function schedule(){clearTimeout(timer);const d=read();if(d.enabled&&(d.pending||d.generation!==d.syncedGeneration))timer=setTimeout(()=>sync().catch(()=>{}),1200)}
 function status(){const d=read();return {enabled:d.enabled,dirty:d.generation!==d.syncedGeneration,pending:!!d.pending,conflict:!!d.conflict,error:d.error||'',count:count()}}
 async function enableSync(){
  if(demoMode)throw new Error('示例不参与云端同步');if(identity()==='guest')throw new Error('请先登录')
@@ -84,12 +84,28 @@ function resolveConflict(choice){const d=read();if(!d.conflict)return;const remo
  d.revision=remote.revision;d.conflict=null;d.pending=null;d.error='';write(d);return sync()
 }
 function stopSync(){const d=read();d.enabled=false;write(d)}
+let pageSync=null
 function gradePage(definition){
- const load=definition.onLoad,show=definition.onShow,hide=definition.onHide,initial=clone(definition.data||{})
+ const load=definition.onLoad,show=definition.onShow,hide=definition.onHide,unload=definition.onUnload,initial=clone(definition.data||{})
  definition.onLoad=function(...args){this.gradeScope=scopeKey();const original=this.setData.bind(this);this.gradeSetData=original;this.setData=(data,cb)=>{if(scopeKey()===this.gradeScope)original(data,cb)};return load?.apply(this,args)}
  definition.onIdentityChanged=function(){this.gradeSetData?.(clone(initial))}
- definition.onShow=async function(...args){if(this.gradeScope!==scopeKey()){this.gradeSetData(clone(initial));wx.redirectTo({url:'/packages/grades/pages/dashboard/index'});return}if(read().enabled){try{await sync()}catch{}if(this.gradeScope!==scopeKey())return}return show?.apply(this,args)}
- definition.onHide=function(...args){schedule();return hide?.apply(this,args)}
+ definition.onShow=function(...args){
+  if(this.gradeScope!==scopeKey()){this.gradeSetData(clone(initial));wx.redirectTo({url:'/packages/grades/pages/dashboard/index'});return}
+  this.gradeVisible=true;const visit=this.gradeVisit=(this.gradeVisit||0)+1,key=this.gradeScope,token=getApp().globalData.sessionToken,d=read(),revision=d.revision
+  // Render local records immediately; only refresh this still-visible view if cloud data changes.
+  const local=show?.apply(this,args)
+  const recent=pageSync&&pageSync.key===key&&pageSync.token===token&&Date.now()-pageSync.at<15000
+  if(d.enabled&&(!recent||d.pending||d.generation!==d.syncedGeneration))sync().then(async()=>{
+   if(scopeKey()!==key||getApp().globalData.sessionToken!==token)return
+   let current=read();if(!current.conflict)pageSync={key,token,at:Date.now()}
+   await local
+   current=read(key)
+   if(this.gradeVisible&&this.gradeVisit===visit&&scopeKey()===key&&getApp().globalData.sessionToken===token&&!current.conflict&&current.revision!==revision&&current.generation===current.syncedGeneration)await show?.apply(this,args)
+  }).catch(()=>{})
+  return local
+ }
+ definition.onHide=function(...args){this.gradeVisible=false;schedule();return hide?.apply(this,args)}
+ definition.onUnload=function(...args){this.gradeVisible=false;this.gradeVisit=(this.gradeVisit||0)+1;return unload?.apply(this,args)}
  Page(definition)
 }
 module.exports={conflictBackups,restoreConflictBackup,scopedTimeout,startDemo,stopDemo,isDemo,uid,identity,scopeKey,assertScope,guardAwait,storage,students,addStudent,selectStudent,count,guestInfo,importGuest,refreshStudents,status,enableSync,sync,resolveConflict,stopSync,gradePage,read}

@@ -1,0 +1,48 @@
+{
+  "at": "2026-11-13",
+  "scope": "Public health DB read only via Vercel protected fetch. Server durations, not phone roundtrip.",
+  "rows": [
+    {
+      "region": "iad1",
+      "round": 0,
+      "status": 200,
+      "serverTiming": "database;dur=1764.4, app;dur=1766.1",
+      "vercelId": "sfo1:iad1::iad1::f2k44-1794574462469-e5969fde2b5d"
+    },
+    {
+      "region": "sin1",
+      "round": 0,
+      "status": 200,
+      "serverTiming": "database;dur=370.0, app;dur=371.5",
+      "vercelId": "sfo1:iad1::sin1::cwh6f-1794574472850-e6b9aa51dad4"
+    },
+    {
+      "region": "iad1",
+      "round": 1,
+      "status": 200,
+      "serverTiming": "database;dur=1341.0, app;dur=1341.4",
+      "vercelId": "sfo1:iad1::iad1::5r85m-1794574480526-b40efa27f7c1"
+    },
+    {
+      "region": "sin1",
+      "round": 1,
+      "status": 200,
+      "serverTiming": "database;dur=114.9, app;dur=115.4",
+      "vercelId": "sfo1:iad1::sin1::h428r-1794574492940-d8bcbf9cd274"
+    },
+    {
+      "region": "iad1",
+      "round": 2,
+      "status": 200,
+      "serverTiming": "database;dur=1329.9, app;dur=1330.3",
+      "vercelId": "sfo1:iad1::iad1::jjx5v-1794574499738-8912a60e7814"
+    },
+    {
+      "region": "sin1",
+      "round": 2,
+      "status": 200,
+      "serverTiming": "database;dur=144.8, app;dur=145.2",
+      "vercelId": "sfo1:iad1::sin1::6rs5t-1794574518955-06b493843594"
+    }
+  ]
+}

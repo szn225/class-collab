@@ -65,7 +65,7 @@ gradePage({
   onLoad(options: Record<string, string>) { this.setData({saved:options.saved==='1'}); },
   onShow() {
     setTabBarValue(this, 0);
-    this.load();
+    return this.load();
   },
 
   onPullDownRefresh() {

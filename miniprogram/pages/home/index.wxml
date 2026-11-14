@@ -2,7 +2,7 @@
 <image class="hub-background" src="/assets/redesign/contour-bg.jpg" mode="aspectFill" aria-hidden="true"/>
 <view class="hub">
  <view class="account-summary">
-  <button class="identity-entry" bindtap="account" aria-label="查看个人账号"><view class="account-avatar"><ui-icon name="person" size="24px" tone="accent"/></view><view class="identity-copy"><view class="account-name">{{user ? (user.name || '微信用户') : '访客'}}</view><view class="account-status">{{user ? '已登录' : '未登录'}}</view></view></button>
+  <button class="identity-entry" bindtap="account" aria-label="查看个人账号"><view class="account-avatar"><image wx:if="{{user.avatarUrl && !avatarBroken}}" src="{{user.avatarUrl}}" mode="aspectFill" binderror="avatarError"/><ui-icon wx:else name="person" size="24px" tone="accent"/></view><view class="identity-copy"><view class="account-name">{{user ? (user.name || '微信用户') : '访客'}}</view><view class="account-status">{{user ? '已登录' : '未登录'}}</view></view></button>
   <button wx:if="{{!user}}" class="signin-link" bindtap="signIn">登录<ui-icon name="chevron-right" size="18px" tone="accent"/></button>
   <button wx:else class="account-settings" bindtap="account" aria-label="账号设置"><ui-icon name="settings" size="22px"/></button>
  </view>
