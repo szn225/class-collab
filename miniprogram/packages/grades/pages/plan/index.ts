@@ -41,6 +41,8 @@ gradePage({
     filters: FILTERS,
     items: [] as PlanRow[],
     emptyTitle: '还没有复盘项',
+    emptyAction: '查看考试并创建复盘',
+    emptyDescription: '从考试详情开始复盘，把薄弱科目转成改进动作。',
     loading: true,
   },
 
@@ -70,7 +72,7 @@ gradePage({
         : this.data.filter === 'done'
           ? '还没有已复检的复盘项'
           : '还没有复盘项';
-    this.setData({ items, emptyTitle, loading: false });
+    this.setData({ items, emptyTitle, loading: false, emptyAction: this.data.filter === 'all' ? '查看考试并创建复盘' : '查看全部复盘', emptyDescription: this.data.filter === 'all' ? '从考试详情开始复盘，把薄弱科目转成改进动作。' : '当前筛选下没有记录，可切换到全部查看。' });
   },
 
   onPickFilter(e: WechatMiniprogram.BaseEvent) {
@@ -105,6 +107,11 @@ gradePage({
         this.load();
       },
     });
+  },
+
+  onEmptyAction() {
+    if (this.data.filter !== 'all') { this.setData({filter:'all'}, () => this.load()); return; }
+    wx.redirectTo({url:'/packages/grades/pages/dashboard/index'});
   },
 
   goRecord() {

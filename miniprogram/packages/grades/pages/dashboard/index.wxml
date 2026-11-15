@@ -3,6 +3,7 @@
 
 
 <view class="page">
+  <button class="student-switch" bindtap="switchStudent" aria-label="切换当前学生"><text>{{studentName}}</text><view><text>切换学生</text><ui-icon name="chevron-down" size="18px"/></view></button>
   <view wx:if="{{saved}}" class="saved-confirmation"><ui-icon name="check-circle" tone="accent" size="18px"/><text>成绩已保存</text></view>
 
   <!-- 页级上下文（原 page-head，现为内容首行，对应原型 eyebrow） -->
@@ -91,7 +92,7 @@
           bindlongpress="onLongPressRecord"
         >
           <view class="exam-row-head"><view class="ttl">{{item.examName}}</view><view class="row-rank num">{{item.rankText}}</view><view class="chev"><ui-icon name="chevron-right" size="18px" /></view></view>
-          <view class="exam-row-info">
+          <button class="record-more" data-id="{{item.id}}" catchtap="onLongPressRecord" aria-label="{{item.examName}}的更多操作">更多操作</button><view class="exam-row-info">
             <view class="exam-meta">
               <text class="cap">{{item.dateText}}</text>
               <view class="chip">{{item.scopeText}}</view>

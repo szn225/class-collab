@@ -2,24 +2,26 @@
 <view class="login-page">
  <block wx:if="{{profileStep}}">
   <view class="login-title">{{editingProfile ? '修改个人资料' : '设置头像和昵称'}}</view>
-  <view class="login-note">{{editingProfile ? '在首页和“我的”页面显示。' : '已登录。资料可以稍后再设置。'}}</view>
+  <view class="login-note">{{editingProfile ? '在首页和“我的”页面显示。' : '请选择头像并填写昵称，也可以稍后设置。'}}</view>
+  <view wx:if="{{profileProbe}}" class="profile-probe"><button class="login-primary" bindtap="probeWechatProfile" loading="{{probeBusy}}" disabled="{{busy || probeBusy}}">验证微信头像昵称授权</button><view class="login-note">本次只显示微信返回结果，不保存或覆盖你的个人资料。</view><view wx:if="{{probeResult}}" class="probe-result" aria-live="polite">{{probeResult}}</view><image wx:if="{{probeAvatar}}" class="probe-avatar" src="{{probeAvatar}}" mode="aspectFill"/><view wx:if="{{probeNickname}}" class="probe-result">微信返回昵称：{{probeNickname}}</view></view>
   <form bindsubmit="saveProfile">
-   <button class="profile-avatar" open-type="chooseAvatar" bindchooseavatar="chooseAvatar" disabled="{{busy}}" aria-label="选择头像"><image wx:if="{{avatarPreview && !avatarBroken}}" src="{{avatarPreview}}" mode="aspectFill" binderror="avatarError"/><ui-icon wx:else name="person" size="32px" tone="accent"/></button>
-   <view class="avatar-label">点击选择头像</view>
-   <view class="profile-field"><view>昵称</view><input name="nickname" type="nickname" value="{{nickname}}" maxlength="30" bindinput="nicknameInput" bindblur="nicknameBlur" bindnicknamereview="nicknameReview" disabled="{{busy}}" placeholder="填写昵称（选填）" placeholder-class="input-placeholder"/></view>
+   <button wx:if="{{avatarPickerSupported}}" class="avatar-picker" open-type="chooseAvatar" bindchooseavatar="chooseAvatar" binderror="avatarPickerError" disabled="{{busy || choosingAvatar}}" aria-label="选择微信头像"><view class="profile-avatar"><image wx:if="{{avatarPreview && !avatarBroken}}" src="{{avatarPreview}}" mode="aspectFill" binderror="avatarError"/><ui-icon wx:else name="person" size="32px" tone="accent"/></view><view class="avatar-label">{{avatarPreview ? '更换头像' : '选择微信头像'}}</view></button>
+   <button wx:else class="avatar-picker" bindtap="chooseAvatarFromAlbum" disabled="{{busy || choosingAvatar}}" aria-label="从相册选择头像"><view class="profile-avatar"><image wx:if="{{avatarPreview && !avatarBroken}}" src="{{avatarPreview}}" mode="aspectFill" binderror="avatarError"/><ui-icon wx:else name="person" size="32px" tone="accent"/></view><view class="avatar-label">选择头像</view></button>
+   <button wx:if="{{avatarPickerSupported}}" class="album-picker" bindtap="chooseAvatarFromAlbum" loading="{{choosingAvatar}}" disabled="{{busy || choosingAvatar}}">从相册选择</button>
+   <view class="profile-field"><view>昵称</view><input name="nickname" type="nickname" value="{{nickname}}" maxlength="30" bindinput="nicknameInput" bindblur="nicknameBlur" bindnicknamereview="nicknameReview" disabled="{{busy || choosingAvatar}}" placeholder="点击填写微信昵称或输入称呼" placeholder-class="input-placeholder"/></view>
    <view wx:if="{{error}}" class="login-error">{{error}}</view>
-   <button class="login-primary" form-type="submit" loading="{{busy}}" disabled="{{busy}}">{{reviewing ? '正在确认昵称' : (saveId ? '保存资料并继续' : '保存')}}</button>
+   <button class="login-primary" form-type="submit" loading="{{busy}}" disabled="{{busy || choosingAvatar}}">{{reviewing ? '正在确认昵称' : (saveId ? '保存资料并继续' : '保存')}}</button>
   </form>
-  <button class="cancel" bindtap="skipProfile" disabled="{{busy}}">{{editingProfile ? '取消修改' : (saveId ? '跳过，继续保存成绩' : '暂时跳过')}}</button>
+  <button class="cancel" bindtap="skipProfile" disabled="{{busy || choosingAvatar}}">{{editingProfile ? '取消修改' : (saveId ? '跳过，继续保存成绩' : '暂时跳过')}}</button>
  </block>
  <block wx:else>
   <view class="login-symbol">慧</view>
   <view class="login-title">{{saveId ? '登录后保存这次成绩' : '登录慧共创'}}</view>
   <view class="login-note">{{saveId ? '已填内容会保留，登录后继续保存。' : '用微信账号保存和管理你的内容。'}}</view>
   <view wx:if="{{error}}" class="login-error">{{error}}</view>
-  <button class="login-primary" bindtap="login" loading="{{busy}}" disabled="{{busy}}">{{signedIn ? (saveId ? '继续保存' : '继续') : (saveId ? '微信登录并保存' : '微信登录')}}</button>
+  <button class="login-primary" bindtap="login" loading="{{busy}}" disabled="{{busy || choosingAvatar}}">{{signedIn ? (saveId ? '继续保存' : '继续') : (saveId ? '微信登录并保存' : '微信登录')}}</button>
   <checkbox-group wx:if="{{!signedIn}}" bindchange="consent"><label class="consent-row"><checkbox value="yes" checked="{{consent}}" color="#285b4b"/>已阅读并同意</label><button class="privacy-link" bindtap="privacy">隐私说明</button></checkbox-group>
-  <button class="cancel" bindtap="cancel" disabled="{{busy}}">{{saveId ? '返回继续填写' : '暂不登录'}}</button>
+  <button class="cancel" bindtap="cancel" disabled="{{busy || choosingAvatar}}">{{saveId ? '返回继续填写' : '暂不登录'}}</button>
  </block>
  <view wx:if="{{profileStep}}" class="profile-privacy">头像和昵称由你主动选择、填写并保存，用于个人资料展示。</view>
  <button wx:if="{{profileStep}}" class="privacy-link" bindtap="privacy">数据与隐私</button>

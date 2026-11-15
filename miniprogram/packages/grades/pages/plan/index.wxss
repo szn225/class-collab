@@ -85,3 +85,5 @@
 .pl-title{font-size:16px;line-height:1.55;font-weight:600}.pl-meta{font-size:15px;line-height:1.5}.pl-status{font-size:15px;line-height:1.5}.pl-head{flex-wrap:wrap;gap:12px}.pl-head .grow{flex-basis:60%}.pl-actions{flex-wrap:wrap}.pl-btn{font-size:16px;min-height:48px;line-height:1.5}.plan-card{padding:20px}
 
 @import "../../styles/line-theme.wxss";
+
+.plan-more{min-height:44px;font-size:15px;background:transparent;color:var(--accent);border:0;margin:0;padding:8px 12px;line-height:1.5}.pl-actions{flex-wrap:wrap;gap:8px}

@@ -6,7 +6,7 @@ function setup(user={id:'A',name:'',profileSetupDone:false}){
  const api={requestId:()=> 'fixture_'+Math.random().toString(36).slice(2),uploadAvatar:async photo=>{calls.push({command:'upload',photo});photo.uploadId='avatar-upload';return photo.uploadId},call:async(command,data,id)=>{calls.push({command,data,id});if(failSave)throw Error('响应丢失');return {...app.globalData.userInfo,...(data.name?{name:data.name}:{}),profileSetupDone:true,...(data.avatarUploadId?{avatarUrl:'https://fixture.invalid/avatar',hasAvatar:true,avatarExpiresAt:Date.now()+3600000}:{})}}}
  vm.runInNewContext(src('pages/login/index.js'),{Page:d=>definition=d,require:n=>n.endsWith('/auth')?auth:n.endsWith('/grades')?{refreshStudents:async()=>calls.push({command:'students'})}:api,getApp:()=>app,wx,Date,Math,Promise,setTimeout,clearTimeout})
  const p={...definition,data:structuredClone(definition.data),setData(d){Object.assign(this.data,d)}};p.onLoad({});p.data.consent=true
- return {p,app,calls,storage,fail(v){failSave=v},signed(){logged=true;app.globalData.sessionToken='token-A';app.globalData.userInfo=user}}
+ return {p,app,calls,storage,wx,fail(v){failSave=v},signed(){logged=true;app.globalData.sessionToken='token-A';app.globalData.userInfo=user}}
 }
 test('new login offers optional profile in the same page; skip resumes held grade save without profile mutation',async()=>{
  const {p,calls,storage}=setup();p.data.saveId='held-grade';await p.login();assert.equal(p.data.profileStep,true);assert.ok(!calls.some(c=>c.command==='claim'))
@@ -34,4 +34,23 @@ test('expired avatar refresh cannot put another account back into the home page'
  let definition,resolve;const app={globalData:{sessionToken:'A',userInfo:{id:'A',hasAvatar:true,avatarUrl:'expired',avatarExpiresAt:1}},setUserInfo(u){this.globalData.userInfo=u}},pending=new Promise(r=>resolve=r)
  vm.runInNewContext(src('pages/home/index.js'),{Page:d=>definition=d,getApp:()=>app,Date,require:n=>n.endsWith('/grades')?{stopDemo(){},count:()=>0}:{call:()=>pending}})
  const p={...definition,data:structuredClone(definition.data),setData(d){Object.assign(this.data,d)}};p.refresh();app.globalData.sessionToken='B';app.globalData.userInfo={id:'B',name:'另一账号'};p.onIdentityChanged();resolve({id:'A',avatarUrl:'refreshed'});await tick();assert.equal(app.globalData.userInfo.id,'B');assert.equal(p.data.user.id,'B')
+})
+test('incomplete nickname-only accounts still see avatar setup instead of skipping it',async()=>{
+ const f=setup({id:'A',name:'已填昵称',profileSetupDone:false});await f.p.login();assert.equal(f.p.data.profileStep,true);assert.equal(f.p.data.nickname,'已填昵称');assert.ok(!f.calls.some(c=>c.command==='back'))
+})
+test('album selection uses the real image picker and saves the selected avatar',async()=>{
+ const f=setup();await f.p.login();let options;f.wx.chooseMedia=o=>{options=o;o.success({tempFiles:[{tempFilePath:'/tmp/album.jpg'}]})};await f.p.chooseAvatarFromAlbum();assert.deepEqual(Array.from(options.sourceType),['album']);assert.equal(f.p.data.avatarPreview,'/tmp/album.jpg');assert.equal(f.p.data.choosingAvatar,false);await f.p.saveProfile();assert.equal(f.calls.find(c=>c.command==='upload').photo.path,'/tmp/album.jpg');assert.equal(f.app.globalData.userInfo.hasAvatar,true)
+})
+test('cancelled album selection preserves the avatar; old account callbacks are discarded',async()=>{
+ const f=setup();await f.p.login();f.p.chooseAvatar({detail:{avatarUrl:'/tmp/original.jpg'}});f.wx.chooseMedia=o=>o.fail({errMsg:'chooseMedia:fail cancel'});await f.p.chooseAvatarFromAlbum();assert.equal(f.p.data.avatarPreview,'/tmp/original.jpg');assert.equal(f.p.data.error,'')
+ let pending;f.wx.chooseMedia=o=>{pending=o};const select=f.p.chooseAvatarFromAlbum();f.app.globalData={sessionToken:'token-B',userInfo:{id:'B'}};f.p.onIdentityChanged();pending.success({tempFiles:[{tempFilePath:'/tmp/private-A.jpg'}]});await select;assert.equal(f.p.data.avatarPreview,'');assert.equal(f.p.photo,null);assert.equal(f.p.data.choosingAvatar,false)
+})
+test('native avatar failures provide actionable feedback',async()=>{
+ const f=setup();await f.p.login();f.p.avatarPickerError({detail:{errMsg:'chooseAvatar:fail privacy permission is not authorized'}});assert.match(f.p.data.error,/隐私授权/);f.p.avatarPickerError({detail:{errMsg:'chooseAvatar:fail unknown'}});assert.match(f.p.data.error,/相册/)
+})
+test('profile probe invokes WeChat directly on tap and never saves an anonymous response',()=>{
+ const f=setup();f.signed();f.p.onLoad({profile:'1',probe:'1'});let request;f.wx.getUserProfile=o=>{request=o};f.p.probeWechatProfile();assert.ok(request);assert.equal(f.p.data.probeBusy,true);request.success({userInfo:{nickName:'微信用户',avatarUrl:'https://example.invalid/default'}});assert.match(f.p.data.probeResult,/不能据此确认/);assert.equal(f.p.data.probeBusy,false);assert.ok(!f.calls.some(c=>c.command==='profile.update'||c.command==='upload'));assert.equal(f.app.globalData.userInfo.name,'')
+})
+test('profile probe discards an old account response and remains hidden without the probe query',()=>{
+ const f=setup();f.signed();let count=0,request;f.wx.getUserProfile=o=>{count++;request=o};f.p.probeWechatProfile();assert.equal(count,0);f.p.onLoad({profile:'1',probe:'1'});f.p.probeWechatProfile();f.app.globalData={sessionToken:'B',userInfo:{id:'B',name:'B'}};f.p.onIdentityChanged();request.success({userInfo:{nickName:'A的隐私资料',avatarUrl:'https://example.invalid/private-A'}});assert.equal(f.p.data.probeNickname,'');assert.equal(f.p.data.probeAvatar,'');assert.equal(f.app.globalData.userInfo.name,'B')
 })

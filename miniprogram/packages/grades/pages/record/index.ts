@@ -112,6 +112,7 @@ gradePage({
     showSubjects: false,
     scopeIndex: 0,
     attempted: false,
+    studentName: '',
     draftNotice: '',
     groups: [] as string[],
     groupIndex: 0,
@@ -149,6 +150,8 @@ gradePage({
       const base = applyProfile({...emptyForm(today()), scope:'city'}, profile);
 
       // 草稿优先恢复（UIUX §9.2.7）
+      const registry = grades.students();
+      this.setData({studentName: registry.students.find((s: {id:string;name:string}) => s.id === registry.active)?.name || '当前学生'});
       const draft = recordService.getDraft();
       const form = hydrateSubjects(pending ? pending.form : draft ? draft.form : base);
       let draftNotice = '';

@@ -29,10 +29,10 @@
     wx:elif="{{!items.length}}"
     icon="task"
     title="{{emptyTitle}}"
-    desc=""
-    actionText="去录入一次考试"
+    desc="{{emptyDescription}}"
+    actionText="{{emptyAction}}"
     actionIcon="add"
-    bind:action="goRecord"
+    bind:action="onEmptyAction"
   />
 
   <block wx:else>
@@ -61,6 +61,7 @@
       </view>
 
       <view class="pl-actions">
+        <button class="plan-more" data-id="{{item.id}}" bindtap="onLongPress">更多操作</button>
         <view class="btn ghost pl-btn" data-id="{{item.id}}" bindtap="onToggleDone">
           <ui-icon name="{{item.status === 'done' ? 'rollback' : 'check-circle'}}" size="20px" />
           <text>{{item.status === 'done' ? '改回待办' : '标记已复检'}}</text>
@@ -68,7 +69,7 @@
       </view>
     </view>
 
-    <view class="note" wx:if="{{items.length}}">长按卡片可删除该复盘项。</view>
+    <view class="note" wx:if="{{items.length}}">点击“更多操作”可管理复盘项。</view>
   </block>
 
   <view class="tabbar-spacer"></view>

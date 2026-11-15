@@ -1,4 +1,5 @@
 import { scopeKey, guardAwait } from '../../utils/scope';
+const grades = require('../../../../utils/grades');
 const { gradePage }: { gradePage: typeof Page } = require('../../../../utils/grades');
 /**
  * 定位（首页）—— 位次定位仪表盘（SPEC §7 页1 / UIUX §9.1）
@@ -20,6 +21,7 @@ import { setTabBarValue } from '../../utils/tabbar';
 import { trackEvent } from '../../utils/track';
 
 interface DashboardData {
+  studentName: string;
   saved: boolean;
   loading: boolean;
   error: string;
@@ -46,6 +48,7 @@ interface DashboardCtx {
 
 gradePage({
   data: {
+    studentName: '',
     saved: false,
     loading: true,
     error: '',
@@ -75,7 +78,8 @@ gradePage({
   async load() {
  const gradeOperationScope = scopeKey(); void gradeOperationScope;
 
-    this.setData({ loading: true, error: '' });
+    const registry = grades.students();
+    this.setData({ loading: true, error: '', studentName: registry.students.find((s: {id:string;name:string}) => s.id === registry.active)?.name || '当前学生' });
     try {
       // 三条读取互不依赖，并行取；免责声明与参照页同源（datasetService.getDisclaimer），避免文案副本
       const [dataset, view, target, disclaimer] = await guardAwait(Promise.all([
@@ -123,6 +127,17 @@ gradePage({
     } catch (e) {
       this.setData({ loading: false, error: describeDataSourceError(e) });
     }
+  },
+
+  switchStudent() {
+    const registry = grades.students(), currentScope = scopeKey();
+    const choices = [...registry.students.filter((s: {id:string}) => s.id === registry.active), ...registry.students.filter((s: {id:string}) => s.id !== registry.active)].slice(0, 5);
+    wx.showActionSheet({itemList: [...choices.map((s: {id:string;name:string}) => s.name + (s.id === registry.active ? '（当前）' : '')), '管理学生档案'], success: (res) => {
+      if (scopeKey() !== currentScope) return;
+      if (res.tapIndex === choices.length) { wx.navigateTo({url:'/pages/account/index'}); return; }
+      const student = choices[res.tapIndex];
+      if (student && student.id !== registry.active) { grades.selectStudent(student.id); wx.redirectTo({url:'/packages/grades/pages/dashboard/index'}); }
+    }});
   },
 
   goRecord() {
