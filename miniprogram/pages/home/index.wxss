@@ -3,7 +3,7 @@ page{background:var(--ui-bg);color:var(--ui-ink)}
 .account-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 0 20px;margin-bottom:6px;border-bottom:1px solid var(--ui-line)}
 .account-summary>button{max-width:none;margin:0;padding:0;background:transparent;border:0;border-radius:8px;color:var(--ui-ink)}
 .account-summary>button.identity-entry{justify-content:flex-start;gap:12px;width:auto;flex:1;min-width:0;min-height:48px;text-align:left}
-.account-avatar{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid var(--ui-line);border-radius:50%;background:var(--ui-green-soft);flex:none}
+.account-avatar{display:flex;align-items:center;justify-content:center;width:48px;height:48px;border:1px solid var(--ui-line);border-radius:12px;background:var(--ui-green-soft);flex:none}
 .identity-copy{min-width:0}.account-name{font-size:16px;line-height:1.5;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .account-summary>button.signin-link{width:auto;gap:4px;min-height:44px;font-size:15px;color:var(--ui-green);flex:none}
 .account-summary>button.account-settings{width:44px;height:44px;flex:none}

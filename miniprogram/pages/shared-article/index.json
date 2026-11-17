@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "文章",
+  "navigationStyle": "custom",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "app-nav": "/components/app-nav/index"
+  }
+}

@@ -64,6 +64,10 @@ async function main(){
  assert.equal(current.state.tasks.at(-1).stage,'failed');assert.equal(current.state.users[0].balance,balanceBefore);assert.equal(current.state.users[0].frozen,0)
  console.log('PASS HTTP bundled layout failure refunds entire reservation without partial publication')
  current.state.config.dailyBudget=1;const blockedQuote=(await call('task.quote',{...activity,mode:'smart'},auth)).data;const frozenBefore=current.state.users[0].frozen;const blocked=await call('task.start',{...activity,quoteId:blockedQuote.id},auth);assert.equal(blocked.status,429);assert.equal(blocked.code,'BUDGET');assert.equal(current.state.users[0].frozen,frozenBefore);console.log('PASS daily budget exhaustion refuses task before freezing or calling supplier');
- console.log('11 HTTP integration checks passed; no real network or paid calls')
+ const latest=current.state.activities[0].versions.at(-1),published=await call('article.finalizePublish',{...activity,revision:latest.revision},auth);assert.equal(published.status,200);
+ const membersBefore=current.state.activities[0].members.length,guestArticle=await call('public.article',{token:published.data.token});assert.equal(guestArticle.status,200);assert.equal(guestArticle.data.title,latest.title);assert.equal(guestArticle.data.materials,undefined);assert.equal(guestArticle.data.members,undefined);assert.equal(guestArticle.data.availableImages,undefined);assert.equal(current.state.activities[0].members.length,membersBefore);
+ const newest={...structuredClone(latest),id:'private-new-draft',revision:latest.revision+1,status:'draft',title:'不可公开的新草稿'};current.state.activities[0].versions.push(newest);assert.equal((await call('public.article',{token:published.data.token})).data.title,latest.title);
+ assert.equal((await call('public.article',{token:'not-a-valid-token'})).status,404);await call('article.share',{...activity,enabled:false},auth);assert.equal((await call('public.article',{token:published.data.token})).status,404);console.log('PASS guest public reading needs no login/membership, excludes private fields/new drafts, and respects revocation');
+ console.log('12 HTTP integration checks passed; no real network or paid calls')
 }
 main().catch(e=>{console.error(e);process.exitCode=1})

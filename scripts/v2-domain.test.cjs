@@ -27,6 +27,11 @@ command(owner,'material.send',{...activity,text:'活动完成了小组观察与�
 command(owner,'materials.select',{...activity,ids:[a.materials[2].id],state:'exclude'})
 const quote=command(owner,'task.quote',{...activity,mode:'smart'}),q=s.quotes.find(q=>q.id===quote.id)
 check('excluded and withdrawn materials never enter snapshot',()=>{assert.equal(q.snapshot.materials.length,1);assert.ok(!JSON.stringify(q.snapshot).includes('私密'))})
+check('explicit material ids use only current choices regardless of legacy states and reject withdrawn ids',()=>{
+ const result=command(owner,'task.quote',{...activity,mode:'specified',materialIds:[a.materials[2].id],billingVersion:1});const selected=s.quotes.find(x=>x.id===result.id);assert.deepEqual(selected.snapshot.materials.map(x=>x.id),[a.materials[2].id]);assert.ok(Number.isFinite(result.layoutExtraPoints));
+ const styled=command(owner,'task.quote',{...activity,mode:'specified',materialIds:[a.materials[2].id],billingVersion:1,withLayout:true});assert.equal(styled.estimatedPoints-result.estimatedPoints,styled.layoutExtraPoints);
+ for(const ids of [[],[a.materials[0].id],['missing'],[a.materials[1].id,a.materials[1].id]])assert.throws(()=>command(owner,'task.quote',{...activity,mode:'specified',materialIds:ids}));
+})
 check('AI is disabled until pricing and budgets are explicitly configured',()=>assert.throws(()=>command(owner,'task.start',{...activity,quoteId:q.id}),e=>e.code==='AI_PAUSED'))
 Object.assign(s.config,{confirmed:true,enabled:true,dailyBudget:10000,monthlyBudget:10000});s.users[0].balance=300
 command(owner,'activity.update',{...activity,description:'更新后的说明'})
@@ -39,7 +44,33 @@ let ar=a.versions[0];const saved=command(owner,'article.save',{...activity,revis
 check('editing preserves old version and rejects stale revisions',()=>{assert.equal(a.versions.length,2);assert.throws(()=>command(owner,'article.save',{...activity,revision:ar.revision,title:'覆盖',body:'覆盖',images:[]}),e=>e.code==='VERSION_CONFLICT')})
 check('finalization requires explicit human review',()=>assert.throws(()=>command(owner,'article.finalize',{...activity,revision:saved.revision,reviewed:false})))
 command(owner,'article.finalize',{...activity,revision:saved.revision,reviewed:true});let share=command(owner,'article.share',{...activity,enabled:true});check('public link uses revocable credential, never activity id',()=>{assert.equal(a.shareHash,hash(share.token));assert.notEqual(share.token,aid);command(owner,'article.share',{...activity,enabled:false});assert.equal(a.shareHash,null)})
-check('participant cannot view private draft or historical versions',()=>assert.throws(()=>command(participant,'article.get',activity),e=>e.status===403));command(owner,'article.visibility',{...activity,visible:true});assert.ok(command(participant,'article.get',activity))
+check('one publish action finalizes and shares atomically, reuses links and rejects stale/unauthorized requests',()=>{
+ const fixture=structuredClone(s),target=fixture.activities.find(x=>x.id===aid),latest=target.versions.at(-1);latest.status='draft';
+ const body={activityId:aid,revision:latest.revision,requestId:'publish_atomic_request'};
+ const result=execute(fixture,'article.finalizePublish',body,owner);assert.ok(result.token);assert.equal(latest.status,'final');assert.equal(target.shareVersion,latest.id);assert.equal(target.publishedVersion,latest.id);assert.deepEqual(execute(fixture,'article.finalizePublish',body,owner),result);
+ const secretHash=target.shareHash;const again=execute(fixture,'article.finalizePublish',{...body,requestId:'publish_again_request'},owner);assert.equal(again.token,result.token);assert.equal(target.shareHash,secretHash);
+ assert.throws(()=>execute(fixture,'article.finalizePublish',{...body,revision:999,requestId:'publish_stale_request'},owner),e=>e.code==='VERSION_CONFLICT');assert.equal(target.shareHash,secretHash);
+ assert.throws(()=>execute(fixture,'article.finalizePublish',{...body,requestId:'publish_forbidden_request'},participant),e=>e.status===403);
+ target.status='archived';assert.throws(()=>execute(fixture,'article.finalizePublish',{...body,requestId:'publish_archived_request'},owner));
+})
+check('share retrieval recovers a stable link on another device and preserves legacy links',()=>{
+ const fixture=structuredClone(s),target=fixture.activities.find(x=>x.id===aid);target.shareHash=hash('legacy-secret');target.shareVersion=target.finalId;delete target.shareToken;
+ const get=(requestId,cachedToken)=>execute(fixture,'article.shareLink',{activityId:aid,requestId,...(cachedToken?{cachedToken}:{})},owner);
+ const old=get('share_recover_original','legacy-secret');assert.equal(old.token,'legacy-secret');assert.equal(get('share_another_device').token,old.token);
+ delete target.shareToken;const recovered=get('share_without_cache');assert.equal(target.shareHash,hash('legacy-secret'));assert.equal(target.shareToken,recovered.token);assert.equal(get('share_repeat_recover').token,recovered.token);
+ assert.throws(()=>execute(fixture,'article.shareLink',{activityId:aid,requestId:'share_wrong_member'},participant),e=>e.status===403);
+ execute(fixture,'article.share',{activityId:aid,enabled:false,requestId:'share_close_recovered'},owner);assert.equal(target.shareHash,null);assert.equal(target.shareToken,null);
+})
+check('account article count includes readable joined activities once and excludes removed memberships',()=>{
+ const fixture=structuredClone(s),target=fixture.activities.find(x=>x.id===aid);target.membersVisible=true;const initial=execute(fixture,'account.articles',{},participant);assert.equal(initial.length,1);assert.equal(initial[0].activityId,aid);target.versions.push({...target.versions.at(-1),id:'new-draft',revision:99});assert.equal(execute(fixture,'account.articles',{},participant).length,1);target.membersVisible=false;assert.equal(execute(fixture,'account.articles',{},participant).length,1);assert.notEqual(execute(fixture,'account.articles',{},participant)[0].revision,99);assert.equal(execute(fixture,'account.articles',{},owner).length,1);target.members.find(x=>x.userId===second.user.id).removed=true;target.membersVisible=true;assert.equal(execute(fixture,'account.articles',{},participant).length,0)
+})
+check('drafts stay with managers while members keep reading the previous final without a visibility toggle',()=>{
+ const fixture=structuredClone(s),target=fixture.activities.find(x=>x.id===aid),final=target.versions.find(x=>x.id===target.finalId),draft={...structuredClone(final),id:'private-current-draft',revision:final.revision+1,title:'协作中的新草稿',status:'draft'};target.versions.push(draft);target.membersVisible=true;
+ assert.equal(execute(fixture,'article.get',activity,owner).id,draft.id);assert.equal(execute(fixture,'article.get',activity,collaborator).id,draft.id);assert.equal(execute(fixture,'article.get',activity,participant).id,final.id);assert.throws(()=>execute(fixture,'article.get',{...activity,versionId:draft.id},participant),e=>e.status===403);
+ assert.equal(execute(fixture,'activity.get',activity,owner).articleStatus,'draft');assert.notEqual(execute(fixture,'activity.get',activity,participant).articleStatus,'draft');target.membersVisible=false;assert.equal(execute(fixture,'article.get',activity,participant).id,final.id);
+ target.finalId=null;assert.equal(execute(fixture,'article.get',activity,participant),null);assert.equal(execute(fixture,'account.articles',{},participant).length,0);assert.equal(execute(fixture,'article.get',activity,collaborator).id,draft.id)
+})
+check('participants automatically read finalized articles',()=>assert.equal(command(participant,'article.get',activity).status,'final'));command(owner,'article.visibility',{...activity,visible:true});assert.ok(command(participant,'article.get',activity))
 command(owner,'activity.update',{...activity,status:'archived'});check('archived activity blocks submit, withdrawal and generation',()=>{assert.throws(()=>command(participant,'material.send',{...activity,text:'新消息',uploadIds:[]}));assert.throws(()=>command(owner,'task.quote',{...activity,mode:'smart'}));assert.throws(()=>command(owner,'material.withdraw',{...activity,materialId:a.materials[1].id}))})
 command(owner,'activity.update',{...activity,status:'collecting'});command(owner,'member.update',{...activity,userId:second.user.id,remove:true})
 check('removed member loses reads and cannot reuse invitation',()=>{assert.throws(()=>command(participant,'materials.list',activity),e=>e.status===403);assert.throws(()=>command(participant,'activity.join',{inviteCode:a.inviteCode}),e=>e.status===403);assert.equal(a.materials.length,3)})

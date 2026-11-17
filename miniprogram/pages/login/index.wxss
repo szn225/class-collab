@@ -1,5 +1,5 @@
 page{background:var(--ui-bg)}
-.login-page{padding:48px 24px}.login-symbol{display:flex;align-items:center;justify-content:center;width:48px;height:48px;border:1px solid var(--ui-green-line);border-radius:14px;background:var(--ui-green-soft);color:var(--ui-green);font-size:22px;margin-bottom:28px}
+.login-page{padding:48px 24px}.login-symbol{display:block;width:48px;height:48px;margin-bottom:28px}
 .login-title{font-size:22px;line-height:1.4;font-weight:600}.login-note{font-size:16px;line-height:1.75;color:var(--ui-muted);margin:12px 0 32px}
 .login-page>button.login-primary{display:flex;align-items:center;justify-content:center;width:100%;max-width:none;min-height:48px;padding:12px 16px;line-height:24px;border:1px solid var(--ui-green);border-radius:10px;background:var(--ui-green);color:#fff;font-size:16px}
 .login-error{color:var(--ui-danger);background:var(--ui-danger-soft);padding:12px;border-radius:10px;font-size:15px;margin:16px 0}
@@ -13,3 +13,8 @@ page{background:var(--ui-bg)}
 .login-page .avatar-picker{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;min-height:124px;padding:8px 12px;margin:0;background:transparent;border:0;line-height:1.5}.avatar-picker .profile-avatar{flex:none;margin:0}.avatar-picker .avatar-label{margin:12px 0 0;font-size:16px}.login-page .album-picker{display:flex;align-items:center;justify-content:center;width:auto;min-height:44px;margin:0 auto 24px;padding:8px 16px;background:transparent;color:var(--ui-green);border:0;font-size:15px}
 
 .profile-probe{padding:16px;border:1px solid var(--ui-line);border-radius:12px;margin-bottom:24px}.profile-probe .login-note{margin:12px 0;font-size:15px}.probe-result{font-size:15px;line-height:1.7;overflow-wrap:break-word}.probe-avatar{display:block;width:64px;height:64px;border-radius:50%;margin:12px 0}
+
+.profile-progress{display:flex;justify-content:space-between;gap:12px;padding:12px 14px;margin-bottom:16px;border-radius:10px;background:var(--ui-green-soft);color:var(--ui-muted);font-size:14px;line-height:1.6}.profile-ready{color:var(--ui-green)}.nickname-label{display:flex;align-items:center;justify-content:space-between;gap:12px}.login-page .nickname-shortcut{width:auto;min-height:44px;margin:0;padding:8px 0 8px 12px;background:transparent;color:var(--ui-green);font-size:15px;line-height:28px}
+
+/* 个人资料页：居中头像、名字输入和单一保存操作。 */
+.login-page.profile-page{padding:40px 24px}.profile-page .avatar-picker{min-height:128px;padding:0;margin:0 0 40px}.profile-page .profile-avatar{width:68px;height:68px;min-height:68px;border-radius:16px}.profile-page .avatar-picker .avatar-label{margin:14px 0 0;font-size:15px;color:var(--ui-muted)}.profile-page .profile-field{margin-bottom:32px}.profile-page .nickname-label>text{font-size:16px;font-weight:600}.profile-page .nickname-shortcut{font-size:15px;color:var(--ui-muted);font-weight:400}.profile-page .profile-field input{margin-top:8px}.profile-page .login-primary{margin:0}

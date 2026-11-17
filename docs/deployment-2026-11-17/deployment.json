@@ -1,0 +1,28 @@
+{
+  "build": "2026-11-17.1",
+  "projectId": "prj_AuicRy7kDGszYbTu7Anco6vGyi36",
+  "teamId": "team_AcOQuXI4QJQohewxNNOsbrNz",
+  "deploymentId": "dpl_BRkXC9vbVvBN555foeduZYM5UjRv",
+  "url": "https://class-collab-v2-test-pd3u87ico-anns-projects-14c3a4b1.vercel.app",
+  "previousProduction": "dpl_J3Je9u9gdZCGqnVaqNCgY22YPeGe",
+  "phase": "production-ready",
+  "regions": [
+    "sin1"
+  ],
+  "domains": [
+    "gongchuang-test.chaohuiwan.com.cn",
+    "gongchuang.chaohuiwan.com.cn"
+  ],
+  "checks": {
+    "candidateHealth": "passed via Vercel connector",
+    "existingDeviceSession": "passed",
+    "anonymousPrivateAccess": "401",
+    "unavailablePublicArticle": "404",
+    "accountArticles": "passed",
+    "localBackendSuites": "36 tests passed plus 31 domain checks and 12 HTTP checks",
+    "typescript": "passed",
+    "runtimeErrorLogScan": "no error or fatal logs in deployment window"
+  },
+  "databaseMigration": false,
+  "paidModelCalls": false
+}

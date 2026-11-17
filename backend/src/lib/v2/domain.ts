@@ -1,7 +1,8 @@
 import { layoutDefaults } from './layout'
 import { billingDefaults, quoteBilling, settlement, pointUnits } from './billing'
 import { ADMIN_READ_COMMANDS, adminRead } from './admin'
-import { State, Row, id, token, hash, ensure, text, userView, activeTask, audit, rate, record, member, manage, writable, activityView, articleChanged, AppError } from './model'
+import { articleForRole, imageDefaults, imageLimits, State, Row, id, token, hash, ensure, text, userView, activeTask, audit, rate, record, member, manage, writable, activityView, articleChanged, AppError } from './model'
+function stableShareToken(a:Row,cachedToken?:unknown){if(!a.shareToken){a.shareToken=typeof cachedToken==='string'&&a.shareHash===hash(cachedToken)?cachedToken:token()}if(!a.shareHash)a.shareHash=hash(a.shareToken);return a.shareToken}
 export interface Context { now:number; sessionHash?:string; identity?:string; sessionToken?:string; adminLogin?:boolean; source?:string }
 export function authenticate(s:State,c:Context,admin=false) {
  const session=s.sessions.find(x=>x.hash===c.sessionHash&&x.expires>c.now&&!x.revoked&&x.admin===admin)
@@ -28,13 +29,13 @@ export function execute(s:State,command:string,b:Row,c:Context):any {
  if(command==='auth.logout'||command==='admin.logout'){s.sessions=s.sessions.filter(x=>x.hash!==c.sessionHash);return {loggedOut:true}}
  if(command==='me')return userView(u)
  // Mutating requests are deduplicated in the same transaction as their effect.
- const readOnly=['me','activities.list','activity.get','invite.preview','members.list','materials.list','articles.list','article.get','tasks.get','points.list','service.capabilities',...ADMIN_READ_COMMANDS]
+ const readOnly=['account.articles','me','activities.list','activity.get','invite.preview','members.list','materials.list','articles.list','article.get','tasks.get','points.list','service.capabilities',...ADMIN_READ_COMMANDS]
  const mutation=!readOnly.includes(command)
  let requestKey=''
  if(mutation){ensure(typeof b.requestId==='string'&&/^[a-zA-Z0-9_-]{12,100}$/.test(b.requestId),'缺少有效操作标识');requestKey=u.id+':'+command+':'+b.requestId;const old=s.requests.find(x=>x.key===requestKey);if(old){ensure(old.bodyHash===hash(JSON.stringify(b)),'重复请求参数不同',409);return old.result}}
  const run=():any=>{
  if(admin)return adminCommand(s,command,b,c,u)
- if(command==='service.capabilities')return {aiLayout:true,bundledGeneration:true,wholePointBilling:true,profileAvatar:true,version:'2.5.5'}
+ if(command==='service.capabilities')return {aiLayout:true,bundledGeneration:true,wholePointBilling:true,profileAvatar:true,automaticMemberReading:true,publicArticleReader:true,explicitMaterialSelection:true,configurableActivityImages:true,version:'2026-11-17.1'}
  if(command==='profile.avatar.prepare'){
   rate(s,'avatar:'+u.id,10,3600000,now)
   const size=Number(b.size);ensure(Number.isSafeInteger(size)&&size>0&&size<=1048576,'头像不能超过 1 MB');ensure(['image/jpeg','image/png','image/webp'].includes(b.mime),'仅支持 JPEG、PNG、WebP 头像')
@@ -58,6 +59,7 @@ export function execute(s:State,command:string,b:Row,c:Context):any {
   return userView(u)
  }
  if(command==='points.list')return {user:userView(u),items:s.ledger.filter(x=>x.userId===u.id).slice().reverse().slice(Number(b.offset)||0,(Number(b.offset)||0)+30)}
+ if(command==='account.articles')return s.activities.flatMap(a=>{const m=a.members.find((m:Row)=>m.userId===u.id&&!m.removed),v=m?articleForRole(a,m.role):null;if(!m||!v)return [];return [{activityId:a.id,activityName:a.name,title:v.title,revision:v.revision,status:v.status}]}).reverse()
  if(command==='activities.list')return s.activities.filter(a=>a.members.some((m:Row)=>m.userId===u.id&&!m.removed)).map(a=>activityView(a,u.id,s)).reverse()
  if(command==='activity.create'){
   ensure(u.name,'请先填写显示姓名');rate(s,'create:'+u.id,5,3600000,now);ensure(s.activities.filter(a=>a.ownerId===u.id).length<s.config.maxActivities,'活动数量达到上限')
@@ -68,7 +70,7 @@ export function execute(s:State,command:string,b:Row,c:Context):any {
  if(command==='invite.preview'||command==='activity.join'){
   rate(s,'invite:'+u.id,30,3600000,now);const a=s.activities.find(x=>x.inviteCode===b.inviteCode);ensure(a,'邀请不存在或已失效',404,'INVITE')
   const m=a.members.find((m:Row)=>m.userId===u.id);ensure(!m?.removed,'你已被移出该活动，请联系发起人',403)
-  if(command==='invite.preview')return {id:a.id,name:a.name,description:a.description,status:a.status,joined:!!m,memberCount:a.members.filter((m:Row)=>!m.removed).length}
+  if(command==='invite.preview')return {ownerName:s.users.find(x=>x.id===a.ownerId)?.name||'微信用户',id:a.id,name:a.name,description:a.description,status:a.status,joined:!!m,memberCount:a.members.filter((m:Row)=>!m.removed).length}
   ensure(u.name,'请先填写显示姓名');if(!m){writable(a);a.members.push({userId:u.id,role:'participant',ai:false,joinedAt:now})}return activityView(a,u.id,s)
  }
  const a=s.activities.find(x=>x.id===b.activityId);ensure(a,'活动不存在',404);const m=member(a,u.id)
@@ -87,19 +89,20 @@ export function execute(s:State,command:string,b:Row,c:Context):any {
  }
  if(command==='materials.list'){
   const all=a.materials;const offset=Math.max(0,Number(b.offset)||0);ensure(offset<100000,'分页无效');const items=all.slice(Math.max(0,all.length-offset-30),all.length-offset)
-  return {items:items.map((x:Row)=>x.withdrawn?{id:x.id,withdrawn:true,userId:x.userId,name:x.name,createdAt:x.createdAt}:{...x,images:x.images.map((path:string)=>({path})),state:m.role==='participant'?undefined:x.state}),hasMore:all.length>offset+30,revision:a.revision}
+  return {items:items.map((x:Row)=>x.withdrawn?{id:x.id,withdrawn:true,userId:x.userId,name:x.name,createdAt:x.createdAt}:{...x,avatarPath:s.users.find(u=>u.id===x.userId)?.avatarPath,images:x.images.map((path:string)=>({path})),state:m.role==='participant'?undefined:x.state}),hasMore:all.length>offset+30,revision:a.revision}
  }
  if(command==='upload.prepare'){
   ensure(a.status==='collecting','当前活动不接受新资料',409);rate(s,'upload:'+u.id,60,3600000,now)
   const size=Number(b.size);ensure(Number.isSafeInteger(size)&&size>0&&size<=s.config.maxImageBytes,'图片大小超限');ensure(['image/jpeg','image/png','image/webp'].includes(b.mime),'仅支持 JPEG、PNG、WebP 图片')
-  const reservations=s.uploads.filter(x=>!x.deleted&&(x.used||x.expires>now));const bytes=(items:Row[])=>items.reduce((n,x)=>n+(x.used?x.size:s.config.maxImageBytes),0);ensure(bytes(reservations.filter(x=>x.activityId===a.id))+s.config.maxImageBytes<=s.config.maxStorageBytes,'活动图片容量已满');ensure(bytes(reservations.filter(x=>x.userId===u.id))+s.config.maxImageBytes<=s.config.maxUserStorageBytes,'个人图片容量已满');ensure(bytes(reservations)+s.config.maxImageBytes<=s.config.maxPlatformStorageBytes,'平台图片容量暂不足')
+  const reservations=s.uploads.filter(x=>!x.deleted&&(x.used||x.expires>now));ensure(reservations.filter(x=>x.activityId===a.id).length<imageLimits(s).maxActivityImages,`每个活动最多上传${imageLimits(s).maxActivityImages}张图片，上传中的图片也占用名额`,409,'ACTIVITY_IMAGE_LIMIT');const bytes=(items:Row[])=>items.reduce((n,x)=>n+(x.used?x.size:s.config.maxImageBytes),0);ensure(bytes(reservations.filter(x=>x.activityId===a.id))+s.config.maxImageBytes<=s.config.maxStorageBytes,'活动图片容量已满');ensure(bytes(reservations.filter(x=>x.userId===u.id))+s.config.maxImageBytes<=s.config.maxUserStorageBytes,'个人图片容量已满');ensure(bytes(reservations)+s.config.maxImageBytes<=s.config.maxPlatformStorageBytes,'平台图片容量暂不足')
   const upload={id:id(),activityId:a.id,userId:u.id,path:`${a.id}/${id()}.${b.mime==='image/png'?'png':b.mime==='image/webp'?'webp':'jpg'}`,size,mime:b.mime,complete:false,used:false,expires:now+7200000};s.uploads.push(upload);return upload
  }
  if(command==='upload.complete'){const upload=s.uploads.find(x=>x.id===b.uploadId&&x.userId===u.id&&x.activityId===a.id&&!x.deleted);ensure(upload&&upload.expires>now,'上传凭证已失效');ensure(a.status==='collecting','活动已暂停，资料尚未提交',409);upload.complete=true;return {id:upload.id,path:upload.path}}
  if(command==='material.send'){
   ensure(a.status==='collecting','当前活动不接受新资料',409);rate(s,'send:'+u.id,120,3600000,now);ensure(a.materials.length<s.config.maxMaterials,'资料数量达到上限')
-  const content=text(b.text,s.config.maxText);ensure(Array.isArray(b.uploadIds)&&b.uploadIds.length<=s.config.maxImages,'每次图片数超限');ensure(new Set(b.uploadIds).size===b.uploadIds.length,'图片重复')
+  const content=text(b.text,s.config.maxText);ensure(Array.isArray(b.uploadIds)&&b.uploadIds.length<=imageLimits(s).maxImages,`每次最多上传${imageLimits(s).maxImages}张图片`);ensure(new Set(b.uploadIds).size===b.uploadIds.length,'图片重复')
   const uploads=b.uploadIds.map((uploadId:string)=>{const f=s.uploads.find(x=>x.id===uploadId&&x.activityId===a.id&&x.userId===u.id&&x.complete&&!x.used&&!x.deleted&&x.expires>now);ensure(f,'图片不可用，请重新选择');return f})
+  if(uploads.length)ensure(s.uploads.filter(x=>x.activityId===a.id&&!x.deleted&&x.used).length+uploads.length<=imageLimits(s).maxActivityImages,`每个活动最多上传${imageLimits(s).maxActivityImages}张图片`,409,'ACTIVITY_IMAGE_LIMIT')
   ensure(content||uploads.length,'请输入文字或图片');const item={id:id(),userId:u.id,name:u.name,text:content,images:uploads.map((x:Row)=>x.path),state:'auto',createdAt:now,withdrawn:false};a.materials.push(item);uploads.forEach((x:Row)=>{x.used=true;x.materialId=item.id});a.revision++;return {id:item.id}
  }
  if(command==='material.withdraw'){writable(a);const material=a.materials.find((x:Row)=>x.id===b.materialId);ensure(material&&material.userId===u.id,'只能撤回自己的资料',403);material.withdrawn=true;material.text='';material.images=[];a.revision++;return {withdrawn:true}}
@@ -117,14 +120,15 @@ export function execute(s:State,command:string,b:Row,c:Context):any {
  }
  if(command==='task.quote'){
   ensure(b.kind===undefined||b.kind==='writing','任务类型无效');ensure(b.withLayout===undefined||typeof b.withLayout==='boolean','排版选项无效');ensure(b.billingVersion===undefined||b.billingVersion===1,'计费协议版本无效')
-  aiPermission(s,a,u);ensure(b.tone===undefined||['自然温暖','正式纪实','轻松活泼'].includes(b.tone),'语气选项无效');rate(s,'quote:'+u.id,30,3600000,now);ensure(['smart','specified'].includes(b.mode),'选材方式无效');const materials=a.materials.filter((x:Row)=>!x.withdrawn&&x.state!=='exclude'&&(b.mode==='smart'||x.state==='include'))
+  aiPermission(s,a,u);ensure(b.tone===undefined||['自然温暖','正式纪实','轻松活泼'].includes(b.tone),'语气选项无效');rate(s,'quote:'+u.id,30,3600000,now);ensure(['smart','specified'].includes(b.mode),'选材方式无效');let materials:Row[]
+  if(b.materialIds!==undefined){ensure(Array.isArray(b.materialIds)&&b.materialIds.length>0&&b.materialIds.length<=s.config.maxMaterials&&b.materialIds.every((id:unknown)=>typeof id==='string')&&new Set(b.materialIds).size===b.materialIds.length,'请选择有效资料');materials=a.materials.filter((x:Row)=>!x.withdrawn&&b.materialIds.includes(x.id));ensure(materials.length===b.materialIds.length,'所选资料已撤回或不存在，请重新选择',409)}else materials=a.materials.filter((x:Row)=>!x.withdrawn&&x.state!=='exclude'&&(b.mode==='smart'||x.state==='include'))
   ensure(materials.length,'没有可用资料，请先指定素材');const images=materials.flatMap((x:Row)=>x.images)
   ensure(images.length<=s.config.maxTaskImages,'图片超出本次任务上限，请调整选材');ensure(materials.reduce((n:number,x:Row)=>n+x.text.length,0)<=s.config.maxInput,'文字超出单次上限，请调整选材')
   const visionEnabled=s.config.visionEnabled===true;ensure(visionEnabled||!images.length||materials.some((x:Row)=>x.text.trim())||a.description.trim(),'暂未启用识图，请补充活动说明或图片文字说明');const uncached=visionEnabled?images.filter((p:string)=>!s.cache.some(x=>x.path===p&&x.activityId===a.id&&x.model===process.env.VISION_MODEL)):[];const price=s.config.writing+uncached.length*s.config.perImage
   const q:Row={id:id(),withLayout:b.withLayout===true,activityId:a.id,userId:u.id,ownerId:a.ownerId,revision:a.revision,configVersion:s.config.version,config:{...billingDefaults,...layoutDefaults,...structuredClone(s.config),usageBillingEnabled:b.withLayout===true||b.billingVersion===1||s.config.usageBillingEnabled===true,pointStep:1},price,createdAt:now,expires:now+300000,
    snapshot:{name:a.name,description:a.description,materials:structuredClone(materials)},visionEnabled,uncached,mode:b.mode,length:Math.min(1500,Math.max(300,Number(b.length)||800)),tone:text(b.tone,30)||'自然温暖',focus:text(b.focus,500),model:process.env.WRITING_MODEL||'deepseek-flash',visionModel:process.env.VISION_MODEL||''}
   const inputBound=Buffer.byteLength(JSON.stringify(q.snapshot),'utf8')+images.length*5000+5000;const costBoundCents=Math.max(1,Math.ceil((inputBound*s.config.writingInputCentsPerMillion+s.config.maxOutput*s.config.writingOutputCentsPerMillion)/1000000)+uncached.length*s.config.visionImageMaxCents);q.layoutInputBound=q.withLayout?q.length*9+12000+images.length*5000:0;Object.assign(q,{costBoundCents:costBoundCents+(q.withLayout?Math.ceil((q.layoutInputBound*s.config.writingInputCentsPerMillion+q.config.layoutMaxOutput*s.config.writingOutputCentsPerMillion)/1000000):0)});
-  Object.assign(q,quoteBilling(q,inputBound));s.quotes.push(q);return {id:q.id,withLayout:q.withLayout,price:q.price,...('billingMode' in q?{billingMode:q.billingMode,estimatedPoints:q.estimatedPoints,billingRates:q.billingRates}:{}),images:images.length,visionEnabled,pendingImages:uncached.length,texts:materials.filter((x:Row)=>x.text).length,balance:s.users.find(x=>x.id===a.ownerId)?.balance,expires:q.expires}
+  Object.assign(q,quoteBilling(q,inputBound));const plain=quoteBilling({...q,withLayout:false},inputBound),styled=quoteBilling({...q,withLayout:true,layoutInputBound:q.length*9+12000+images.length*5000},inputBound);const layoutExtraPoints=Math.max(0,(styled.estimatedPoints??q.price)-(plain.estimatedPoints??q.price));s.quotes.push(q);return {id:q.id,selectedMaterialIds:materials.map((x:Row)=>x.id),layoutExtraPoints,withLayout:q.withLayout,price:q.price,...('billingMode' in q?{billingMode:q.billingMode,estimatedPoints:q.estimatedPoints,billingRates:q.billingRates}:{}),images:images.length,visionEnabled,pendingImages:uncached.length,texts:materials.filter((x:Row)=>x.text).length,balance:s.users.find(x=>x.id===a.ownerId)?.balance,expires:q.expires}
  }
  if(command==='task.start'){
   aiPermission(s,a,u);const q=s.quotes.find(x=>x.id===b.quoteId&&x.activityId===a.id&&x.userId===u.id);ensure(q&&q.expires>now,'报价已过期，请重新确认',409,'QUOTE')
@@ -144,9 +148,9 @@ export function execute(s:State,command:string,b:Row,c:Context):any {
  if(command==='tasks.get'){const task=s.tasks.find(x=>x.id===b.taskId&&x.activityId===a.id);ensure(task&&m.role!=='participant','任务不可访问',403);return taskView(task)}
  if(command==='articles.list'){ensure(m.role!=='participant','无版本管理权限',403);return a.versions.map((x:Row)=>({id:x.id,title:x.title,status:x.status,createdAt:x.createdAt,revision:x.revision}))}
  if(command==='article.get'){
-  const v=b.versionId?a.versions.find((x:Row)=>x.id===b.versionId):a.versions[a.versions.length-1];if(!v)return null
-  ensure(m.role!=='participant'||a.membersVisible&&(!b.versionId||b.versionId===a.finalId),'文章暂未向成员开放',403)
-  return {...v,usedDetails:(v.usedIds||[]).map((mid:string)=>{const x=a.materials.find((x:Row)=>x.id===mid);return x?{id:x.id,name:x.name,text:x.text,withdrawn:x.withdrawn}:{id:mid,text:'资料已不可用'}}),changed:articleChanged(a,v),membersVisible:a.membersVisible,shareEnabled:!!a.shareHash,publishedUrl:a.publishedUrl,publishedAt:a.publishedAt,publishedVersion:a.publishedVersion}
+  ensure(m.role!=='participant'||!b.versionId||b.versionId===a.finalId,'草稿仅发起人和协作者可见',403)
+  const v=b.versionId?a.versions.find((x:Row)=>x.id===b.versionId):articleForRole(a,m.role);if(!v)return null
+  return {...v,usedDetails:(v.usedIds||[]).map((mid:string)=>{const x=a.materials.find((x:Row)=>x.id===mid);return x?{id:x.id,name:x.name,text:x.text,withdrawn:x.withdrawn}:{id:mid,text:'资料已不可用'}}),changed:articleChanged(a,v),membersVisible:!!a.finalId,shareEnabled:!!a.shareHash,publishedUrl:a.publishedUrl,publishedAt:a.publishedAt,publishedVersion:a.publishedVersion}
  }
  if(command==='article.save'){
   manage(a,u.id);writable(a);const previous=a.versions[a.versions.length-1];ensure(previous&&previous.revision===b.revision,'文章已被其他管理者修改，请保留修改并刷新',409,'VERSION_CONFLICT')
@@ -156,13 +160,17 @@ export function execute(s:State,command:string,b:Row,c:Context):any {
  if(command==='article.restore'){
   manage(a,u.id);writable(a);const source=a.versions.find((x:Row)=>x.id===b.versionId);ensure(source,'版本不存在');const latest=a.versions[a.versions.length-1];ensure(latest.revision===b.revision,'文章已更新，请刷新',409,'VERSION_CONFLICT');const v={...structuredClone(source),id:id(),revision:latest.revision+1,status:'draft',createdAt:now,editorId:u.id};a.versions.push(v);return v
  }
+ if(command==='article.finalizePublish'){
+  manage(a,u.id);writable(a);const v=a.versions[a.versions.length-1];ensure(v&&v.revision===b.revision,'文章版本已更新，请刷新后重试',409,'VERSION_CONFLICT');v.status='final';v.reviewedRevision=a.revision;a.finalId=v.id;const secret=stableShareToken(a);a.shareVersion=v.id;a.publishedUrl='';a.publishedAt=now;a.publishedVersion=v.id;return {finalId:v.id,enabled:true,...(secret?{token:secret}:{})}
+ }
  if(command==='article.finalize'){
   manage(a,u.id);writable(a);const v=a.versions[a.versions.length-1];ensure(v&&v.revision===b.revision,'文章版本已更新',409);ensure(b.reviewed===true,'请确认已核对事实与素材变化');v.status='final';v.reviewedRevision=a.revision;a.finalId=v.id;return {finalId:v.id}
  }
- if(command==='article.visibility'){manage(a,u.id);writable(a);a.membersVisible=b.visible===true;return {visible:a.membersVisible}}
+ if(command==='article.visibility'){manage(a,u.id);return {visible:!!a.finalId}}
+ if(command==='article.shareLink'){manage(a,u.id);ensure(a.finalId,'请先定稿后分享');const secret=stableShareToken(a,b.cachedToken);if(!a.shareVersion)a.shareVersion=a.finalId;return {token:secret,enabled:true}}
  if(command==='article.share'){
-  manage(a,u.id);if(b.enabled===false){a.shareHash=null;a.shareVersion=null;return {enabled:false}}
-  ensure(a.finalId,'请先定稿后分享');const secret=token();a.shareHash=hash(secret);a.shareVersion=a.finalId;return {token:secret,enabled:true}
+  manage(a,u.id);if(b.enabled===false){a.shareHash=null;a.shareToken=null;a.shareVersion=null;return {enabled:false}}
+  ensure(a.finalId,'请先定稿后分享');const secret=token();a.shareToken=secret;a.shareHash=hash(secret);a.shareVersion=a.finalId;return {token:secret,enabled:true}
  }
  if(command==='article.publish'){manage(a,u.id);writable(a);ensure(a.finalId,'请先定稿');const url=text(b.url,1000);ensure(!url||/^https:\/\/mp\.weixin\.qq\.com\//.test(url),'请填写有效公众号文章链接');a.publishedUrl=url;a.publishedAt=now;a.publishedVersion=a.finalId;return {published:true}}
  throw new AppError('操作不存在',404)
@@ -185,10 +193,10 @@ function adminCommand(s:State,command:string,b:Row,c:Context,u:Row):any {
  }
  if(command==='admin.activity'){const a=s.activities.find(x=>x.id===b.activityId);ensure(a,'活动不存在');a.aiPaused=b.aiPaused===true;audit(s,u.id,command,a.id,reason(),now);return {updated:true}}
  if(command==='admin.configure'){
-  const why=reason();ensure(b.values&&typeof b.values==='object','配置参数无效');ensure(b.version===s.config.version,'配置已更新，请重新加载',409);const candidate:Row={...billingDefaults,...layoutDefaults,...s.config}
+  const why=reason();ensure(b.values&&typeof b.values==='object','配置参数无效');ensure(b.version===s.config.version,'配置已更新，请重新加载',409);const candidate:Row={...billingDefaults,...layoutDefaults,...imageDefaults,...s.config,...imageLimits(s)}
   for(const k of Object.keys(candidate)){if(k==='version')continue;if(b.values[k]===undefined)continue;if(typeof candidate[k]==='boolean'){ensure(typeof b.values[k]==='boolean','配置类型无效');candidate[k]=b.values[k]}else{ensure(Number.isSafeInteger(b.values[k])&&b.values[k]>=0&&b.values[k]<=1000000000000,'配置数值无效');candidate[k]=b.values[k]}}
   ensure(candidate.maxTaskImages>0&&candidate.maxTaskImages<=30&&candidate.maxMaterials>0&&candidate.maxMaterials<=5000&&candidate.maxActivities>0&&candidate.maxActivities<=1000,'容量参数超出支持范围');
-  ensure(candidate.maxImages>0&&candidate.maxImages<=6&&candidate.maxImageBytes>0&&candidate.maxImageBytes<=10485760&&candidate.maxText>0&&candidate.maxInput>0&&candidate.maxOutput>0&&candidate.maxOutput<=8000,'输入限额超出支持范围')
+  ensure(candidate.maxImages>0&&candidate.maxImages<=3&&candidate.maxActivityImages>0&&candidate.maxImageBytes>0&&candidate.maxImageBytes<=10485760&&candidate.maxText>0&&candidate.maxInput>0&&candidate.maxOutput>0&&candidate.maxOutput<=8000,'输入限额超出支持范围')
   ensure(!candidate.enabled||candidate.writingInputCentsPerMillion>0&&candidate.writingOutputCentsPerMillion>0&&(!candidate.visionEnabled||candidate.visionImageMaxCents>0&&candidate.visionInputCentsPerMillion>0&&candidate.visionOutputCentsPerMillion>0),'开启前请填写供应商价格及图片成本上限');
   ensure(candidate.layoutMaxOutput>=2000&&candidate.layoutMaxOutput<=20000,'排版输出 token 上限须为 2000 至 20000');
   ensure(!candidate.usageBillingEnabled||candidate.pointsPerYuan>0&&candidate.pointsPerYuan<=100000&&candidate.serviceMarkupBps>=10000&&candidate.serviceMarkupBps<=100000&&candidate.writingCacheInputCentsPerMillion<=candidate.writingInputCentsPerMillion,'动态计价兑换比例或服务倍率无效');

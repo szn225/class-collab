@@ -3,7 +3,8 @@
     "pages/home/index",
     "pages/account/index",
     "pages/co-create/index",
-    "pages/login/index"
+    "pages/login/index",
+    "pages/shared-article/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FFFFFF",

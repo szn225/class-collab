@@ -14,5 +14,4 @@
   <image class="entry-art" src="/assets/redesign/grades-line.png" mode="aspectFit" aria-hidden="true"/>
   <view class="tool-copy"><view class="entry-title">成绩追踪助手</view><view class="entry-note">记录成绩，看见进步</view><view class="entry-action"><text>记录与查看</text><ui-icon name="chevron-right" size="18px" tone="default"/></view></view>
  </button>
- <view wx:if="{{recentActivity}}" class="recent-section"><view class="recent-title">继续使用</view><button wx:if="{{recentActivity}}" class="recent-row" bindtap="continueActivity"><view class="recent-copy"><view class="recent-name">{{recentActivity.name}}</view><view class="recent-meta">最近查看的共创活动</view></view><ui-icon name="chevron-right" size="18px"/></button></view>
 </view>

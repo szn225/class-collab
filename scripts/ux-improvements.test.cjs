@@ -27,12 +27,12 @@ test('article drafts survive reopening, retain source revision, and stay isolate
 test('declining draft recovery removes only the current activity draft',()=>{
  const f=page();f.p.data.activity.writable=true;f.p.data.article={revision:1,title:'原文',body:'正文',images:[]};f.cache['hui.article.draft.A.a']={revision:1,title:'草稿',body:'草稿正文',images:[]};f.cache['hui.article.draft.A.other']={body:'其他活动'};f.p.editArticle();f.modal.success({confirm:false});assert.equal(f.p.data.editBody,'正文');assert.equal(f.cache['hui.article.draft.A.a'],undefined);assert.equal(f.cache['hui.article.draft.A.other'].body,'其他活动')
 })
-test('home continuation never shows another account activity',()=>{
+test('home omits activity content even when a recent activity is cached',()=>{
  let definition;const cache={'hui.recent.activity.A':{id:'a',name:'A的活动'}},app={globalData:{sessionToken:'A-token',userInfo:{id:'A'}}},grades={stopDemo(){},count:()=>2,students:()=>({active:'s',students:[{id:'s',name:'当前学生'}]}),read:()=>({values:{exam_draft:{form:{}}}})}
  vm.runInNewContext(fs.readFileSync(require.resolve('../miniprogram/pages/home/index.js'),'utf8'),{Page:d=>definition=d,getApp:()=>app,wx:{getStorageSync:k=>cache[k]},require:()=>grades})
- const p={...definition,data:structuredClone(definition.data),setData(d){Object.assign(this.data,d)}};p.refresh();assert.equal(p.data.recentActivity.id,'a')
- app.globalData={sessionToken:'B-token',userInfo:{id:'B'}};p.onIdentityChanged();assert.equal(p.data.recentActivity,null)
- app.globalData={sessionToken:null,userInfo:null};p.onIdentityChanged();assert.equal(p.data.recentActivity,null)
+ const p={...definition,data:structuredClone(definition.data),setData(d){Object.assign(this.data,d)}};p.refresh();assert.equal(p.data.recentActivity,undefined);assert.equal(p.continueActivity,undefined);assert.ok(!fs.readFileSync(require.resolve('../miniprogram/pages/home/index.wxml'),'utf8').includes('recentActivity'))
+ app.globalData={sessionToken:'B-token',userInfo:{id:'B'}};p.onIdentityChanged();assert.equal(p.data.recentActivity,undefined)
+ app.globalData={sessionToken:null,userInfo:null};p.onIdentityChanged();assert.equal(p.data.recentActivity,undefined)
 })
 test('student shortcut supports 20 profiles within action-sheet limits and ignores a stale account choice',()=>{
  const ts=require('../backend/node_modules/typescript');let definition,menu,currentScope='A',selected=null
@@ -56,4 +56,12 @@ test('activity progress and filters prioritize finalized articles over collectio
 })
 test('reading the newly finalized article updates the visible activity status immediately',async()=>{
  const f=page(async()=>({id:'v',status:'final',revision:1,title:'文章',body:'正文',images:[]}));f.p.data.activity={id:'a',status:'collecting',role:'owner',articleStatus:'none'};f.p.data.screen='article';await f.p.loadArticle(false);assert.equal(f.p.data.activity.displayStatus,'已成文');assert.equal(f.p.data.activity.articleStatus,'final')
+})
+
+test('combined share page reads published content instead of the current private draft',async()=>{
+ const calls=[],secret='s'.repeat(43),f=page(async(command)=>{calls.push(command);return command==='article.shareLink'?{token:secret}:{title:'公开定稿标题',body:'已发布正文',images:[],revision:2}});f.p.data.article={title:'新编辑的私密草稿',shareEnabled:true};await f.p.sharePage();assert.equal(f.p.data.screen,'share');assert.deepEqual(calls,['article.shareLink','public.article']);assert.equal(f.p.data.shareArticle.title,'公开定稿标题');assert.ok(f.p.data.shareDisplayHtml.includes('已发布正文'));assert.ok(!f.p.data.shareDisplayHtml.includes('私密'));assert.equal(f.p.data.shareUrl,'https://example.test/s/'+secret);
+})
+
+test('late account article counts cannot leak a previous account list',async()=>{
+ let resolve;const f=accountPage(()=>new Promise(r=>resolve=r));const pending=f.p.loadArticles();f.app.globalData={sessionToken:'B',userInfo:{id:'B'}};f.p.onIdentityChanged();resolve([{activityId:'private-A',title:'A的文章'}]);await pending;assert.equal(f.p.data.articles.length,0);assert.equal(f.p.data.articleCount,null);assert.equal(f.p.data.user.id,'B')
 })

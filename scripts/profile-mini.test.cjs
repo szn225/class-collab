@@ -49,8 +49,16 @@ test('native avatar failures provide actionable feedback',async()=>{
  const f=setup();await f.p.login();f.p.avatarPickerError({detail:{errMsg:'chooseAvatar:fail privacy permission is not authorized'}});assert.match(f.p.data.error,/隐私授权/);f.p.avatarPickerError({detail:{errMsg:'chooseAvatar:fail unknown'}});assert.match(f.p.data.error,/相册/)
 })
 test('profile probe invokes WeChat directly on tap and never saves an anonymous response',()=>{
- const f=setup();f.signed();f.p.onLoad({profile:'1',probe:'1'});let request;f.wx.getUserProfile=o=>{request=o};f.p.probeWechatProfile();assert.ok(request);assert.equal(f.p.data.probeBusy,true);request.success({userInfo:{nickName:'微信用户',avatarUrl:'https://example.invalid/default'}});assert.match(f.p.data.probeResult,/不能据此确认/);assert.equal(f.p.data.probeBusy,false);assert.ok(!f.calls.some(c=>c.command==='profile.update'||c.command==='upload'));assert.equal(f.app.globalData.userInfo.name,'')
+ const f=setup();f.signed();f.p.onLoad({profile:'1',probe:'1'});let request;f.wx.getUserProfile=o=>{request=o};f.p.probeWechatProfile();assert.ok(request);assert.equal(request.desc,"用于展示头像昵称");assert.ok(Buffer.byteLength(request.desc,"utf8")<=30);assert.equal(f.p.data.probeBusy,true);request.success({userInfo:{nickName:'微信用户',avatarUrl:'https://example.invalid/default'}});assert.match(f.p.data.probeResult,/不能据此确认/);assert.equal(f.p.data.probeBusy,false);assert.ok(!f.calls.some(c=>c.command==='profile.update'||c.command==='upload'));assert.equal(f.app.globalData.userInfo.name,'')
 })
 test('profile probe discards an old account response and remains hidden without the probe query',()=>{
  const f=setup();f.signed();let count=0,request;f.wx.getUserProfile=o=>{count++;request=o};f.p.probeWechatProfile();assert.equal(count,0);f.p.onLoad({profile:'1',probe:'1'});f.p.probeWechatProfile();f.app.globalData={sessionToken:'B',userInfo:{id:'B',name:'B'}};f.p.onIdentityChanged();request.success({userInfo:{nickName:'A的隐私资料',avatarUrl:'https://example.invalid/private-A'}});assert.equal(f.p.data.probeNickname,'');assert.equal(f.p.data.probeAvatar,'');assert.equal(f.app.globalData.userInfo.name,'B')
+})
+test('WeChat avatar selection fills preview and guides nickname selection before persisting both',async()=>{
+ const f=setup();await f.p.login();f.p.chooseAvatar({detail:{avatarUrl:'/tmp/wechat-avatar.jpg'}});assert.equal(f.p.data.avatarPreview,'/tmp/wechat-avatar.jpg');assert.equal(f.p.data.nicknameFocus,true)
+ f.p.nicknameInput({detail:{value:'点选的微信昵称'}});f.p.nicknameBlur({detail:{value:'点选的微信昵称'}});assert.equal(f.p.data.nicknameFocus,false);assert.equal(f.p.data.nickname,'点选的微信昵称');assert.ok(!f.calls.some(c=>c.command==='profile.update'))
+ await f.p.saveProfile({detail:{value:{nickname:'点选的微信昵称'}}});assert.equal(f.app.globalData.userInfo.name,'点选的微信昵称');assert.equal(f.app.globalData.userInfo.hasAvatar,true);assert.equal(f.calls.find(c=>c.command==='upload').photo.path,'/tmp/wechat-avatar.jpg');assert.equal(f.calls.at(-1).command,'back')
+})
+test('nickname shortcut focuses the native nickname input and ignores busy interaction',async()=>{
+ const f=setup();f.p.useWechatNickname();assert.equal(f.p.data.nicknameFocus,false);await f.p.login();f.p.useWechatNickname();assert.equal(f.p.data.nicknameFocus,true);f.p.nicknameBlur({detail:{value:''}});f.p.data.busy=true;f.p.useWechatNickname();assert.equal(f.p.data.nicknameFocus,false)
 })

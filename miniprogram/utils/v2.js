@@ -7,7 +7,7 @@ function networkFailure(error) {
 }
 const requestId = () => 'r_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 14)
 // Share only simultaneous reads, never settled results or mutations/quotes.
-const reads=new Set(['me','activities.list','activity.get','materials.list','members.list','article.get','articles.list','points.list','grades.students.list','grades.workspace.get'])
+const reads=new Set(['account.articles','public.article','me','activities.list','activity.get','materials.list','members.list','article.get','articles.list','points.list','grades.students.list','grades.workspace.get'])
 const inflight=new Map()
 function call(command, data = {}, operationId) {
   const app = getApp()

@@ -1,3 +1,5 @@
+export const imageDefaults = {maxActivityImages:20,maxImages:3}
+export function imageLimits(s:State){return {maxActivityImages:s.config.maxActivityImages??imageDefaults.maxActivityImages,maxImages:Math.min(s.config.maxImages??3,3)}}
 import { billingDefaults, pointUnits } from './billing'
 import { createHash, randomBytes, randomUUID } from 'node:crypto'
 export type Row = Record<string, any>
@@ -11,7 +13,7 @@ export const hash = (s: string) => createHash('sha256').update(s).digest('hex')
 export function initialState(): State {
   return { users: [], sessions: [], activities: [], uploads: [], quotes: [], tasks: [], ledger: [], audit: [], cache: [], configHistory: [], rates: [], requests: [], config: {
     ...billingDefaults, version: 1, confirmed: true, enabled: false, gift: 12, writing: 5, perImage: 0, visionEnabled: false, maxActivities: 30, maxMaterials: 500,
-    maxImages: 6, maxImageBytes: 10485760, maxText: 5000, maxInput: 30000, maxOutput: 4000,
+    ...imageDefaults, maxImageBytes: 10485760, maxText: 5000, maxInput: 30000, maxOutput: 4000,
     dailyPoints: 200, dailyTasks: 10, dailyBudget: 500, monthlyBudget: 0, taskReserveCents: 100,
     writingInputCentsPerMillion: 200, writingOutputCentsPerMillion: 800, visionInputCentsPerMillion: 0, visionOutputCentsPerMillion: 0, visionImageMaxCents: 0,
     maxPlatformConcurrent: 4, maxUserConcurrent: 1, maxTaskImages: 30, maxStorageBytes: 524288000, maxUserStorageBytes: 1073741824, maxPlatformStorageBytes: 10737418240,
@@ -38,12 +40,13 @@ export function record(s: State, u: Row, amount: number, frozen: number, kind: s
 export function member(a: Row, uid: string) { const m = a.members.find((m: Row) => m.userId === uid && !m.removed); ensure(m, '没有活动访问权限', 403, 'FORBIDDEN'); return m }
 export function manage(a: Row, uid: string, owner = false) { const m = member(a, uid); ensure(owner ? m.role === 'owner' : ['owner','collaborator'].includes(m.role), '没有操作权限', 403, 'FORBIDDEN'); return m }
 export function writable(a: Row) { ensure(a.status !== 'archived', '活动已归档，请先恢复', 409, 'ARCHIVED') }
+export function articleForRole(a:Row,role:string){return role==='participant'?a.versions.find((v:Row)=>v.id===a.finalId&&v.status==='final'):a.versions[a.versions.length-1]}
 export function activityView(a: Row, uid: string, s: State) {
- const m = member(a, uid), manager = m.role !== 'participant'
- return { id: a.id, name: a.name, description: a.description, announcement: a.announcement, status: a.status, revision: a.revision,
+ const m = member(a, uid), manager = m.role !== 'participant', readable = articleForRole(a,m.role)
+ return { imageLimit: imageLimits(s).maxActivityImages, batchImageLimit: imageLimits(s).maxImages, imageCount: s.uploads.filter(x=>x.activityId===a.id&&!x.deleted&&x.used).length, id: a.id, name: a.name, description: a.description, announcement: a.announcement, status: a.status, revision: a.revision,
    role: m.role, aiAuthorized: m.role === 'owner' || !!m.ai, aiPaused: a.aiPaused,
    inviteCode: manager ? a.inviteCode : undefined, memberCount: a.members.filter((x: Row) => !x.removed).length,
-   materialCount: a.materials.filter((x: Row) => !x.withdrawn).length, articleStatus: a.versions.length&&a.versions[a.versions.length-1].status==='draft'?'draft':a.publishedVersion===a.finalId&&a.publishedAt?'published':a.finalId?'final':'none',
+   materialCount: a.materials.filter((x: Row) => !x.withdrawn).length, articleStatus: readable?.status==='draft'?'draft':a.publishedVersion===a.finalId&&a.publishedAt?'published':a.finalId?'final':'none',
    latestTask: manager ? s.tasks.filter(t=>t.activityId===a.id).slice(-1).map(t=>({id:t.id,stage:t.stage}))[0] : undefined,
    ownerName: s.users.find(u => u.id === a.ownerId)?.name, ownerBalance: manager ? s.users.find(u => u.id === a.ownerId)?.balance : undefined }
 }
